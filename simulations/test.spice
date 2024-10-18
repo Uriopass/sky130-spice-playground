@@ -1,0 +1,159 @@
+Custom simulation
+.include "./lib/prelude.spice"
+
+Vgnd Vgnd 0 0
+Vdd Vdd Vgnd 1.8
+Vclk clk Vgnd PULSE(0 1.8 0n 0.2n 0.2n 4.6n 10.0n)
+
+.include ./sky130_fd_sc_hd/cells/and3/sky130_fd_sc_hd__and3_2.spice
+.include ./sky130_fd_sc_hd/cells/and4/sky130_fd_sc_hd__and4_2.spice
+.include ./sky130_fd_sc_hd/cells/dfxtp/sky130_fd_sc_hd__dfxtp_2.spice
+.include ./sky130_fd_sc_hd/cells/or2/sky130_fd_sc_hd__or2_2.spice
+
+X_10620_ clk _10620_/D Vgnd Vgnd Vdd Vdd _10620_/Q sky130_fd_sc_hd__dfxtp_2
+X_08346_ _08346_/A _08346_/B _08346_/C _08346_/D Vgnd Vgnd Vdd Vdd _08346_/X sky130_fd_sc_hd__and4_2
+X_08354_ _08354_/A _08354_/B _08354_/C _08354_/D Vgnd Vgnd Vdd Vdd _08354_/X sky130_fd_sc_hd__and4_2
+X_08362_ _08362_/A _08362_/B _08362_/C _08362_/D Vgnd Vgnd Vdd Vdd _08362_/X sky130_fd_sc_hd__and4_2
+X_08370_ _08370_/A _08370_/B _08370_/C _08370_/D Vgnd Vgnd Vdd Vdd _08370_/X sky130_fd_sc_hd__and4_2
+X_08378_ _08378_/A _08378_/B _08378_/C _08378_/D Vgnd Vgnd Vdd Vdd _08378_/X sky130_fd_sc_hd__and4_2
+X_08386_ _08386_/A _08386_/B _08386_/C _08386_/D Vgnd Vgnd Vdd Vdd _08386_/X sky130_fd_sc_hd__and4_2
+X_08394_ _08394_/A _08394_/B _08394_/C _08394_/D Vgnd Vgnd Vdd Vdd _08394_/X sky130_fd_sc_hd__and4_2
+X_08402_ _08402_/A _08402_/B _08402_/C _08402_/D Vgnd Vgnd Vdd Vdd _08402_/X sky130_fd_sc_hd__and4_2
+X_08410_ _08410_/A _08410_/B _08410_/C _08410_/D Vgnd Vgnd Vdd Vdd _08410_/X sky130_fd_sc_hd__and4_2
+X_08419_ _08419_/A _08419_/B _08419_/C _08419_/D Vgnd Vgnd Vdd Vdd _08419_/X sky130_fd_sc_hd__and4_2
+X_08426_ _08426_/A _08426_/B _08426_/C _08426_/D Vgnd Vgnd Vdd Vdd _08426_/X sky130_fd_sc_hd__and4_2
+X_08434_ _08434_/A _08434_/B _08434_/C _08434_/D Vgnd Vgnd Vdd Vdd _08434_/X sky130_fd_sc_hd__and4_2
+X_08442_ _08442_/A _08442_/B _08442_/C _08442_/D Vgnd Vgnd Vdd Vdd _08442_/X sky130_fd_sc_hd__and4_2
+X_08450_ _08450_/A _08450_/B _08450_/C _08450_/D Vgnd Vgnd Vdd Vdd _08450_/X sky130_fd_sc_hd__and4_2
+X_08458_ _08458_/A _08458_/B _08458_/C _08458_/D Vgnd Vgnd Vdd Vdd _08458_/X sky130_fd_sc_hd__and4_2
+X_08466_ _08466_/A _08466_/B _08466_/C _08466_/D Vgnd Vgnd Vdd Vdd _08466_/X sky130_fd_sc_hd__and4_2
+X_08475_ _08475_/A _08475_/B _08475_/C _08475_/D Vgnd Vgnd Vdd Vdd _08475_/X sky130_fd_sc_hd__and4_2
+X_08483_ _08483_/A _08483_/B _08483_/C _08483_/D Vgnd Vgnd Vdd Vdd _08483_/X sky130_fd_sc_hd__and4_2
+X_08495_ _08495_/A _08495_/B _08495_/C _08495_/D Vgnd Vgnd Vdd Vdd _08495_/X sky130_fd_sc_hd__and4_2
+X_08501_ _08501_/A _08501_/B _08501_/C Vgnd Vgnd Vdd Vdd _08501_/X sky130_fd_sc_hd__and3_2
+X_08504_ _08504_/A _08504_/B Vgnd Vgnd Vdd Vdd _08504_/X sky130_fd_sc_hd__or2_2
+X_08506_ _08506_/A _08506_/B _08506_/C Vgnd Vgnd Vdd Vdd _08506_/X sky130_fd_sc_hd__and3_2
+X_10680_ clk _10680_/D Vgnd Vgnd Vdd Vdd _10680_/Q sky130_fd_sc_hd__dfxtp_2
+
+V_08370_/C _08370_/C Vgnd 1.8
+V_08450_/B _08450_/B Vgnd 1.8
+V_08458_/A _08458_/A Vgnd 1.8
+V_10620_/D _10620_/D Vgnd 1.8
+V_08378_/A _08378_/A Vgnd 1.8
+V_08354_/C _08354_/C Vgnd 1.8
+V_08410_/C _08410_/C Vgnd 1.8
+V_08410_/A _08410_/A Vgnd 1.8
+V_08410_/B _08410_/B Vgnd 1.8
+V_08419_/B _08419_/B Vgnd 1.8
+V_08394_/C _08394_/C Vgnd 1.8
+V_08434_/C _08434_/C Vgnd 1.8
+V_08370_/A _08370_/A Vgnd 1.8
+V_08354_/B _08354_/B Vgnd 1.8
+V_08362_/A _08362_/A Vgnd 1.8
+V_08495_/A _08495_/A Vgnd 1.8
+V_08442_/C _08442_/C Vgnd 1.8
+V_08442_/A _08442_/A Vgnd 1.8
+V_08378_/B _08378_/B Vgnd 1.8
+V_08394_/B _08394_/B Vgnd 1.8
+V_08506_/A _08506_/A Vgnd 0.0
+V_08475_/B _08475_/B Vgnd 1.8
+V_08495_/D _08495_/D Vgnd 1.8
+V_08458_/B _08458_/B Vgnd 1.8
+V_10680_/D _10680_/D Vgnd 1.8
+V_08495_/B _08495_/B Vgnd 1.8
+V_08426_/B _08426_/B Vgnd 1.8
+V_08370_/B _08370_/B Vgnd 1.8
+V_08504_/A _08504_/A Vgnd 0.0
+V_08506_/C _08506_/C Vgnd 0.0
+V_08362_/C _08362_/C Vgnd 1.8
+V_08419_/A _08419_/A Vgnd 1.8
+V_08466_/B _08466_/B Vgnd 1.8
+V_08386_/B _08386_/B Vgnd 1.8
+V_08386_/A _08386_/A Vgnd 1.8
+V_08402_/A _08402_/A Vgnd 1.8
+V_08419_/C _08419_/C Vgnd 1.8
+V_08434_/B _08434_/B Vgnd 1.8
+V_08466_/C _08466_/C Vgnd 1.8
+V_08346_/A _08346_/A Vgnd 1.8
+V_08483_/C _08483_/C Vgnd 1.8
+V_08402_/C _08402_/C Vgnd 1.8
+V_08450_/A _08450_/A Vgnd 1.8
+V_08450_/C _08450_/C Vgnd 1.8
+V_08475_/C _08475_/C Vgnd 1.8
+V_08501_/B _08501_/B Vgnd 0.0
+V_08346_/D _08346_/D Vgnd 1.8
+V_08386_/C _08386_/C Vgnd 1.8
+V_08394_/A _08394_/A Vgnd 1.8
+V_08378_/C _08378_/C Vgnd 1.8
+V_08466_/A _08466_/A Vgnd 1.8
+V_08426_/A _08426_/A Vgnd 1.8
+V_08458_/C _08458_/C Vgnd 1.8
+V_08362_/B _08362_/B Vgnd 1.8
+V_08483_/A _08483_/A Vgnd 1.8
+V_08426_/C _08426_/C Vgnd 1.8
+V_08346_/C _08346_/C Vgnd 1.8
+V_08402_/B _08402_/B Vgnd 1.8
+V_08483_/B _08483_/B Vgnd 1.8
+V_08501_/A _08501_/A Vgnd 0.0
+V_08475_/A _08475_/A Vgnd 1.8
+V_08434_/A _08434_/A Vgnd 1.8
+V_08442_/B _08442_/B Vgnd 1.8
+V_08354_/A _08354_/A Vgnd 1.8
+
+RW0 _10620_/Q _08346_/B 6277.735
+RW1 _08346_/X _08354_/D 6277.735
+RW2 _08354_/X _08362_/D 6277.735
+RW3 _08362_/X _08370_/D 6277.735
+RW4 _08370_/X _08378_/D 6277.735
+RW5 _08378_/X _08386_/D 6277.735
+RW6 _08386_/X _08394_/D 6277.735
+RW7 _08394_/X _08402_/D 6277.735
+RW8 _08402_/X _08410_/D 6277.735
+RW9 _08410_/X _08419_/D 6277.735
+RW10 _08419_/X _08426_/D 6277.735
+RW11 _08426_/X _08434_/D 6277.735
+RW12 _08434_/X _08442_/D 6277.735
+RW13 _08442_/X _08450_/D 6277.735
+RW14 _08450_/X _08458_/D 6277.735
+RW15 _08458_/X _08466_/D 6277.735
+RW16 _08466_/X _08475_/D 6426.735
+RW17 _08475_/X _08483_/D 6277.735
+RW18 _08483_/X _08495_/C 6277.735
+RW19 _08495_/X _08501_/C 4775.256
+RW20 _08501_/X _08504_/B 6277.735
+RW21 _08504_/X _08506_/B 1733.9576
+RW22 _08506_/X _10680_/D 1733.9576
+
+CW0 _08346_/B Vgnd 0.0131965615p
+CW1 _08354_/D Vgnd 0.0131965615p
+CW2 _08362_/D Vgnd 0.0131965615p
+CW3 _08370_/D Vgnd 0.0131965615p
+CW4 _08378_/D Vgnd 0.0131965615p
+CW5 _08386_/D Vgnd 0.0131965615p
+CW6 _08394_/D Vgnd 0.0131965615p
+CW7 _08402_/D Vgnd 0.0131965615p
+CW8 _08410_/D Vgnd 0.0131965615p
+CW9 _08419_/D Vgnd 0.0131965615p
+CW10 _08426_/D Vgnd 0.0131965615p
+CW11 _08434_/D Vgnd 0.0131965615p
+CW12 _08442_/D Vgnd 0.0131965615p
+CW13 _08450_/D Vgnd 0.0131965615p
+CW14 _08458_/D Vgnd 0.0131965615p
+CW15 _08466_/D Vgnd 0.0131965615p
+CW16 _08475_/D Vgnd 0.011224963p
+CW17 _08483_/D Vgnd 0.0131965615p
+CW18 _08495_/C Vgnd 0.0131965615p
+CW19 _08501_/C Vgnd 0.008910184p
+CW20 _08504_/B Vgnd 0.0131965615p
+CW21 _08506_/B Vgnd 0.0023304995p
+CW22 _10680_/D Vgnd 0.0023304995p
+
+
+
+.tran 0.01n 10n
+.control
+run
+plot V(clk) V(_08346_/X) V(_08362_/X) V(_08402_/X) V(_08475_/X) V(_08419_/X) V(_08450_/X) V(_08442_/X) V(_08394_/X) V(_08410_/X) V(_08458_/X) V(_08370_/X) V(_08495_/X) V(_08501_/X) V(_08426_/X) V(_08504_/X) V(_08466_/X) V(_08354_/X) V(_10620_/Q) V(_08434_/X) V(_08483_/X) V(_08506_/X) V(_08378_/X) V(_08386_/X) 
+.endc
+.end
+
