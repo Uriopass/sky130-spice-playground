@@ -51,6 +51,26 @@ bins_pfet = [
 and4_counter = 0
 
 
+def ad(W):
+    return 0.29 * W
+
+
+def ap(W):
+    return 2 * (W + 0.29)
+
+
+def pfet(name, D, G, S, W):
+    return f"""
+X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt w={W} l=0.15 ad={ad(W)} as={ad(W)} pd={ap(W)} ps={ap(W)}
+"""
+
+
+def nfet(name, D, G, S, W):
+    return f"""
+X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8 w={W} l=0.15 ad={ad(W)} as={ad(W)} pd={ap(W)} ps={ap(W)}
+"""
+
+
 def sw_and4_N(A, B, C, D, X, N):
     global and4_counter
     and4_counter += 1
@@ -58,23 +78,21 @@ def sw_and4_N(A, B, C, D, X, N):
 
     inverter = []
     for j in range(N):
-        inverter.append(f"""
-XA{i}_{j}p Vdd  o_{i} {X} Vdd  sky130_fd_pr__pfet_01v8_hvt w=1.0  l=0.15
-XA{i}_{j}n Vgnd o_{i} {X} Vgnd sky130_fd_pr__nfet_01v8     w=0.65 l=0.15
-""")
+        inverter.append(pfet(f"A{i}_{j}p", "Vdd", f"o_{i}", X, 1.0))
+        inverter.append(nfet(f"A{i}_{j}n", "Vgnd", f"o_{i}", X, 0.65))
 
     inverter = "\n".join(inverter)
 
     return f"""
-XA{i}_4 o_{i} {A} Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.42 l=0.15
-XA{i}_5 o_{i} {B} Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.42 l=0.15
-XA{i}_6 o_{i} {C} Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.42 l=0.15
-XA{i}_7 o_{i} {D} Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.42 l=0.15
+{pfet(f"A{i}_4", f"o_{i}", A, "Vdd", 0.42)}
+{pfet(f"A{i}_5", f"o_{i}", B, "Vdd", 0.42)}
+{pfet(f"A{i}_6", f"o_{i}", C, "Vdd", 0.42)}
+{pfet(f"A{i}_7", f"o_{i}", D, "Vdd", 0.42)}
 
-XA{i}_0 i0_{i} {A} Vgnd   Vgnd sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
-XA{i}_1 i1_{i} {B} i0_{i} Vgnd sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
-XA{i}_2 i2_{i} {C} i1_{i} Vgnd sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
-XA{i}_3  o_{i} {D} i2_{i} Vgnd sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
+{nfet(f"A{i}_0", f"i0_{i}", A, "Vgnd", 0.42)}
+{nfet(f"A{i}_1", f"i1_{i}", B, f"i0_{i}", 0.42)}
+{nfet(f"A{i}_2", f"i2_{i}", C, f"i1_{i}", 0.42)}
+{nfet(f"A{i}_3", f"o_{i}", D, f"i2_{i}", 0.42)}
 
 {inverter}
 """
@@ -85,18 +103,18 @@ def and4(A, B, C, D, X, config):
     and4_counter += 1
     i = and4_counter
     return f"""
-XA{i}_7 o_{i} {A} Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w={config["W_ABC_pfet"]} l=0.15
-XA{i}_6 o_{i} {B} Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w={config["W_ABC_pfet"]} l=0.15
-XA{i}_5 o_{i} {C} Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w={config["W_ABC_pfet"]} l=0.15
-XA{i}_4 o_{i} {D} Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w={config["W_D_pfet"]}   l=0.15
+{pfet(f"A{i}_7", f"o_{i}", A, "Vdd", config["W_ABC_pfet"])}
+{pfet(f"A{i}_6", f"o_{i}", B, "Vdd", config["W_ABC_pfet"])}
+{pfet(f"A{i}_5", f"o_{i}", C, "Vdd", config["W_ABC_pfet"])}
+{pfet(f"A{i}_4", f"o_{i}", D, "Vdd", config["W_D_pfet"])}
 
-XA{i}_0 i0_{i} {A}   Vgnd Vgnd sky130_fd_pr__nfet_01v8 w={config["W_ABC_nfet"]} l=0.15
-XA{i}_1 i1_{i} {B} i0_{i} Vgnd sky130_fd_pr__nfet_01v8 w={config["W_ABC_nfet"]} l=0.15
-XA{i}_2 i2_{i} {C} i1_{i} Vgnd sky130_fd_pr__nfet_01v8 w={config["W_ABC_nfet"]} l=0.15
-XA{i}_3  o_{i} {D} i2_{i} Vgnd sky130_fd_pr__nfet_01v8 w={config["W_D_nfet"]} l=0.15
+{nfet(f"A{i}_0", f"i0_{i}", A, "Vgnd", config["W_ABC_nfet"])}
+{nfet(f"A{i}_1", f"i1_{i}", B, f"i0_{i}", config["W_ABC_nfet"])}
+{nfet(f"A{i}_2", f"i2_{i}", C, f"i1_{i}", config["W_ABC_nfet"])}
+{nfet(f"A{i}_3", f"o_{i}", D, f"i2_{i}", config["W_D_nfet"])}
 
-XA{i}_9 Vdd  o_{i} {X} Vdd sky130_fd_pr__pfet_01v8_hvt w={config["W_inv_pfet"]} l=0.15
-XA{i}_8 Vgnd o_{i} {X} Vgnd sky130_fd_pr__nfet_01v8 w={config["W_inv_nfet"]} l=0.15
+{pfet(f"A{i}_9", "Vdd", f"o_{i}", X, config["W_inv_pfet"])}
+{nfet(f"A{i}_8", "Vgnd", f"o_{i}", X, config["W_inv_nfet"])}
 """
 
 
@@ -115,26 +133,19 @@ XF{i} clk {D} Vgnd Vgnd Vdd Vdd {Q} sky130_fd_sc_hd__dfxtp_2
 def wire(pinout, next_pinin, extra_fanout):
     load_model = [23.2746, 32.1136, 48.4862, 64.0974, 86.2649, 84.2649]
 
-    def load_model_extrapolate(fanout):
-        slope = 8.36
-        if fanout <= 0:
-            return 0
-        if fanout <= len(load_model):
-            return load_model[fanout - 1]
-        else:
-            return load_model[-1] + slope * (fanout - len(load_model))
+    slope = 8.36
+    if extra_fanout <= 0:
+        mult = 0
+    elif extra_fanout <= len(load_model):
+        mult = load_model[extra_fanout - 1]
+    else:
+        mult = load_model[-1] + slope * (extra_fanout - len(load_model))
 
     res_base = 0.0745 * 1000.0  # in ohms
     capa_base = 1.42e-5  # in picofarads
 
-    fanout_res = extra_fanout + 1
-    fanout_capa = extra_fanout
-
-    mult_res = load_model_extrapolate(fanout_res)
-    mult_capa = load_model_extrapolate(fanout_capa)
-
-    res_wire = res_base * mult_res
-    capa_wire = capa_base * mult_capa
+    res_wire = res_base * mult
+    capa_wire = capa_base * mult
 
     return f"""
 Cfanout_{pinout} {pinout} Vgnd {capa_wire}p
@@ -268,15 +279,15 @@ horiz_bars = [
     })
 ]
 
-for W in bins_nfet:
+for W in bins_pfet:
     config = {
         "W_D_pfet": 0.42,
         "W_D_nfet": 0.42,
 
         "W_ABC_pfet": 0.42,
-        "W_ABC_nfet": W,
+        "W_ABC_nfet": 0.42,
 
-        "W_inv_pfet": 1.0,
+        "W_inv_pfet": W,
         "W_inv_nfet": 0.65,
 
         "fanout": 4,
@@ -300,18 +311,3 @@ ax.set_ylim(bottom=0)
 ax.set_xlabel("W")
 ax.set_ylabel("Delay (ns)")
 f.savefig("simulations/and4_test.png")
-
-"""
-# config optimale:
-    config = {
-    "W_D_nfet": 0.58,
-    "W_D_pfet": 0.36,
-
-    "W_ABC_nfet": W,
-    "W_ABC_pfet": 0.36,
-
-    "W_inv_nfet": 0.36,
-    "W_inv_pfet": 2.0,
-
-    "fanout": 4,
-}"""
