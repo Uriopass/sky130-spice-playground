@@ -1,4 +1,11 @@
-.lib "./sky130_fd_pr/models/sky130.lib.spice" tt
+* .lib "./sky130_fd_pr/models/sky130.lib.spice" tt
+
+.include "./sky130_fd_pr/cells/nfet_01v8/sky130_fd_pr__nfet_01v8__tt.corner.spice"
+.include "./sky130_fd_pr/cells/pfet_01v8_hvt/sky130_fd_pr__pfet_01v8_hvt__tt.corner.spice"
+.include "./sky130_fd_pr/models/corners/tt/nonfet.spice"
+.include "./sky130_fd_pr/cells/nfet_01v8/sky130_fd_pr__nfet_01v8__mismatch.corner.spice"
+.include "./sky130_fd_pr/cells/pfet_01v8_hvt/sky130_fd_pr__pfet_01v8_hvt__mismatch.corner.spice"
+.include "./sky130_fd_pr/models/all.spice"
 
 .control
 set hcopydevtype=postscript
