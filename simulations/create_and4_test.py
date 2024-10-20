@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import bisect
 
 bins_nfet = [
     0.36,
@@ -60,14 +61,22 @@ def perim(W):
 
 
 def pfet(name, D, G, S, W):
+    closest_bin = bins_pfet[min(bisect.bisect_left(bins_pfet, W), len(bins_pfet) - 1)]
+    mult = W / closest_bin
+    ar = area(W) / mult
+    pe = perim(W) / mult
     return f"""
-X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt w={W} l=0.15 ad={area(W)} as={area(W)} pd={perim(W)} ps={perim(W)}
+X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt w={closest_bin} l=0.15 ad={ar} as={ar} pd={pe} ps={pe} m={mult}
 """
 
 
 def nfet(name, D, G, S, W):
+    closest_bin = bins_nfet[min(bisect.bisect_left(bins_nfet, W), len(bins_nfet) - 1)]
+    mult = W / closest_bin
+    ar = area(W) / mult
+    pe = perim(W) / mult
     return f"""
-X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8 w={W} l=0.15 ad={area(W)} as={area(W)} pd={perim(W)} ps={perim(W)}
+X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8 w={closest_bin} l=0.15 ad={ar} as={ar} pd={pe} ps={pe} m={mult}
 """
 
 
@@ -337,7 +346,7 @@ def run_sim(config):
         print(output_err)
         return -1.0
 
-    print(f"delay = {tend - tstart:.4} ns  conf:{config_str}")
+    print(f"delay = {tend - tstart:.4f} ns  conf:{config_str}")
     return tend - tstart
 
 
@@ -357,13 +366,14 @@ horiz_bars = [
     }),
 ]
 
-for W in bins_nfet:
+for i in range(3, 30):
+    W = i
     config = {
         "W_D_pfet": 0.7,
         "W_D_nfet": 0.42,
 
         "W_ABC_pfet": 0.36,
-        "W_ABC_nfet": 1.0,
+        "W_ABC_nfet": W,
 
         "W_inv_pfet": 1.65,
         "W_inv_nfet": 0.74,
