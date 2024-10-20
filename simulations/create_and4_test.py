@@ -51,23 +51,23 @@ bins_pfet = [
 and4_counter = 0
 
 
-def ad(W):
-    return 0.29 * W
+def area(W):
+    return 0.15 * W
 
 
-def ap(W):
+def perim(W):
     return 2 * (W + 0.29)
 
 
 def pfet(name, D, G, S, W):
     return f"""
-X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt w={W} l=0.15 ad={ad(W)} as={ad(W)} pd={ap(W)} ps={ap(W)}
+X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt w={W} l=0.15 ad={area(W)} as={area(W)} pd={perim(W)} ps={perim(W)}
 """
 
 
 def nfet(name, D, G, S, W):
     return f"""
-X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8 w={W} l=0.15 ad={ad(W)} as={ad(W)} pd={ap(W)} ps={ap(W)}
+X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8 w={W} l=0.15 ad={area(W)} as={area(W)} pd={perim(W)} ps={perim(W)}
 """
 
 
