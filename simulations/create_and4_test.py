@@ -95,6 +95,39 @@ def sw_and4_N(A, B, C, D, X, N):
 {nfet(f"A{i}_3", f"o_{i}", D, f"i2_{i}", 0.42)}
 
 {inverter}
+
+C0_{i} Vdd {B} 0.023081f
+C1_{i} o_{i} {D} 0.106582f
+C2_{i} Vdd o_{i} 0.082046f
+C3_{i} {X} Vdd 0.011072f
+C5_{i} o_{i} {C} 0.051593f
+C6_{i} Vgnd {B} 0.045272f
+C7_{i} {A} o_{i} 0.15343f
+C8_{i} Vdd {D} 0.020729f
+C10_{i} Vdd {B} 0.064328f
+C11_{i} Vdd {C} 0.021032f
+C12_{i} {C} {B} 0.160614f
+C13_{i} {A} Vdd 0.043995f
+C14_{i} Vgnd {D} 0.089796f
+C15_{i} {A} {B} 0.083909f
+C16_{i} {X} o_{i} 0.075371f
+C17_{i} Vgnd {C} 0.040816f
+C18_{i} Vgnd {A} 0.015122f
+C19_{i} Vdd {D} 0.078225f
+C20_{i} o_{i} Vdd 0.326283f
+C21_{i} o_{i} {B} 0.129725f
+C22_{i} {D} {C} 0.180159f
+C23_{i} {X} Vdd 0.094506f
+C24_{i} Vdd {C} 0.060876f
+C25_{i} {A} Vdd 0.090662f
+C26_{i} Vgnd o_{i} 0.13176f
+C27_{i} Vgnd {X} 0.09025f
+C29_{i} {X} Vgnd 0.093317f
+C31_{i} {D} Vgnd 0.130267f
+C32_{i} {C} Vgnd 0.109828f
+C33_{i} {B} Vgnd 0.112123f
+C34_{i} {A} Vgnd 0.220977f
+C36_{i} o_{i} Vgnd 0.174893f
 """
 
 
@@ -115,6 +148,39 @@ def and4(A, B, C, D, X, config):
 
 {pfet(f"A{i}_9", "Vdd", f"o_{i}", X, config["W_inv_pfet"])}
 {nfet(f"A{i}_8", "Vgnd", f"o_{i}", X, config["W_inv_nfet"])}
+
+C0_{i} Vdd {B} 0.023081f
+C1_{i} o_{i} {D} 0.106582f
+C2_{i} Vdd o_{i} 0.082046f
+C3_{i} {X} Vdd 0.011072f
+C5_{i} o_{i} {C} 0.051593f
+C6_{i} Vgnd {B} 0.045272f
+C7_{i} {A} o_{i} 0.15343f
+C8_{i} Vdd {D} 0.020729f
+C10_{i} Vdd {B} 0.064328f
+C11_{i} Vdd {C} 0.021032f
+C12_{i} {C} {B} 0.160614f
+C13_{i} {A} Vdd 0.043995f
+C14_{i} Vgnd {D} 0.089796f
+C15_{i} {A} {B} 0.083909f
+C16_{i} {X} o_{i} 0.075371f
+C17_{i} Vgnd {C} 0.040816f
+C18_{i} Vgnd {A} 0.015122f
+C19_{i} Vdd {D} 0.078225f
+C20_{i} o_{i} Vdd 0.326283f
+C21_{i} o_{i} {B} 0.129725f
+C22_{i} {D} {C} 0.180159f
+C23_{i} {X} Vdd 0.094506f
+C24_{i} Vdd {C} 0.060876f
+C25_{i} {A} Vdd 0.090662f
+C26_{i} Vgnd o_{i} 0.13176f
+C27_{i} Vgnd {X} 0.09025f
+C29_{i} {X} Vgnd 0.093317f
+C31_{i} {D} Vgnd 0.130267f
+C32_{i} {C} Vgnd 0.109828f
+C33_{i} {B} Vgnd 0.112123f
+C34_{i} {A} Vgnd 0.220977f
+C36_{i} o_{i} Vgnd 0.174893f
 """
 
 
@@ -142,13 +208,13 @@ def wire(pinout, next_pinin, extra_fanout):
         mult = load_model[-1] + slope * (extra_fanout - len(load_model))
 
     res_base = 0.0745 * 1000.0  # in ohms
-    capa_base = 1.42e-5  # in picofarads
+    capa_base = 0.0142  # in femtofarads
 
     res_wire = res_base * mult
     capa_wire = capa_base * mult
 
     return f"""
-Cfanout_{pinout} {pinout} Vgnd {capa_wire}p
+Cfanout_{pinout} {pinout} Vgnd {capa_wire}f
 Rwire_{pinout} {pinout} {next_pinin} {res_wire}
 """
 
@@ -158,6 +224,10 @@ def in_one(pin):
 V{pin} {pin} Vgnd 1.8
 """
 
+def in_zero(pin):
+    return f"""
+V{pin} {pin} Vgnd 0
+"""
 
 def genspice(config):
     cells = []
@@ -166,8 +236,16 @@ def genspice(config):
     N = 10
     to_plot = []
 
-    addsp(f".ic V(DstartQ)=0")
-    addsp(in_one(f"DstartD"))
+    transition = config.get("transition", "rise")
+
+    if transition == "rise":
+        addsp(f".ic V(DstartQ)=0")
+        addsp(in_one(f"DstartD"))
+    elif transition == "fall":
+        addsp(f".ic V(DstartQ)=1.8")
+        addsp(in_zero(f"DstartD"))
+    else:
+        raise ValueError(f"Unknown transition {transition}")
 
     addsp(flipflop(f"DstartD", f"DstartQ"))
     addsp(flipflop(f"DendD", f"DendQ"))
@@ -245,14 +323,21 @@ def run_sim(config):
         if line.startswith("tstart"):
             tstart = float(line.split()[2]) * 1e9
 
-    config_str = " ".join([f"{k}={v:.2f}" for k, v in config.items()])
+    config_str = ""
+    for k, v in config.items():
+        if k == "transition":
+            config_str += f"{k}={v} "
+            continue
+        config_str += f"{k}={v:.2f} "
+
+    config_str = config_str.strip()
 
     if tend is None or tstart is None:
         print(f"{config_str} failed")
         print(output_err)
         return -1.0
 
-    print(f"{config_str} delay = {tend - tstart:.4} ns")
+    print(f"delay = {tend - tstart:.4} ns  conf:{config_str}")
     return tend - tstart
 
 
@@ -266,35 +351,31 @@ horiz_bars = [
         "fanout": 4,
     }),
     run_sim({
-        "sw_and4_N": 2,
+        "sw_and4_N": 1,
         "fanout": 4,
+        "transition": "fall",
     }),
-    run_sim({
-        "sw_and4_N": 4,
-        "fanout": 4,
-    }),
-    run_sim({
-        "sw_and4_N": 8,
-        "fanout": 4,
-    })
 ]
 
-for W in bins_pfet:
+for W in bins_nfet:
     config = {
-        "W_D_pfet": 0.42,
+        "W_D_pfet": 0.7,
         "W_D_nfet": 0.42,
 
-        "W_ABC_pfet": 0.42,
-        "W_ABC_nfet": 0.42,
+        "W_ABC_pfet": 0.36,
+        "W_ABC_nfet": 1.0,
 
-        "W_inv_pfet": W,
-        "W_inv_nfet": 0.65,
+        "W_inv_pfet": 1.65,
+        "W_inv_nfet": 0.74,
 
         "fanout": 4,
     }
 
     xs.append(W)
     ys.append(run_sim(config))
+
+    config["transition"] = "fall"
+    ys2.append(run_sim(config))
 
 f, ax = plt.subplots()
 ax.plot(xs, ys)
