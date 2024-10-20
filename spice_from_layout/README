@@ -1,0 +1,5 @@
+## How to run extract
+
+```bash
+python3 gen_tcl.py
+```
