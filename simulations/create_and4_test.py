@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import bisect
 
+
 bins_nfet = [
     0.36,
     0.39,
@@ -302,7 +303,7 @@ def run_sim(config):
     
     {cells_spice}
     
-    .tran 0.01n 5n
+    .tran 0.02n 8n
 
     {measures_spice}
     
@@ -344,11 +345,73 @@ def run_sim(config):
     if tend is None or tstart is None:
         print(f"{config_str} failed")
         print(output_err)
-        return -1.0
+        return None
 
     print(f"delay = {tend - tstart:.4f} ns  conf:{config_str}")
     return tend - tstart
 
+
+def cost_fun(D_pfet, D_nfet, ABC_pfet, ABC_nfet, inv_pfet, inv_nfet):
+    config = {
+        "W_D_pfet": D_pfet,
+        "W_D_nfet": D_nfet,
+
+        "W_ABC_pfet": ABC_pfet,
+        "W_ABC_nfet": ABC_nfet,
+
+        "W_inv_pfet": inv_pfet,
+        "W_inv_nfet": inv_nfet,
+
+        "fanout": 4,
+    }
+
+    delay_rise = run_sim(config)
+    delay_fall = run_sim({**config, "transition": "fall"})
+
+    return -max(delay_rise, delay_fall)
+
+def bayesian_opt():
+    from bayes_opt import BayesianOptimization
+
+    base_rise = run_sim({
+        "sw_and4_N": 1,
+        "fanout": 4,
+    }),
+    base_fall = run_sim({
+        "sw_and4_N": 1,
+        "fanout": 4,
+        "transition": "fall",
+    }),
+
+    print(f"Base rise: {base_rise} fall: {base_fall}")
+
+    fet_bounds = (0.36, 4.0)
+
+    # Bounded region of parameter space
+    pbounds = {"D_pfet": fet_bounds,
+               "D_nfet": fet_bounds,
+
+                "ABC_pfet": fet_bounds,
+                "ABC_nfet": fet_bounds,
+
+                "inv_pfet": fet_bounds,
+                "inv_nfet": fet_bounds,
+               }
+
+    optimizer = BayesianOptimization(
+        f=cost_fun,
+        pbounds=pbounds,
+        random_state=2,
+    )
+
+    optimizer.maximize(
+        init_points=10,
+        n_iter=1000,
+
+    )
+
+#bayesian_opt()
+#exit(0)
 
 xs = []
 ys = []
@@ -366,17 +429,17 @@ horiz_bars = [
     }),
 ]
 
-for i in range(3, 30):
-    W = i
+for i in range(20):
+    W = 0.5 + i / 20
     config = {
-        "W_D_pfet": 0.7,
-        "W_D_nfet": 0.42,
+        "W_D_pfet": W * 1.7,
+        "W_D_nfet": W * 0.8,
 
         "W_ABC_pfet": 0.36,
-        "W_ABC_nfet": W,
+        "W_ABC_nfet": 7.0,
 
-        "W_inv_pfet": 1.65,
-        "W_inv_nfet": 0.74,
+        "W_inv_pfet": W * 1.7,
+        "W_inv_nfet": W * 0.8,
 
         "fanout": 4,
     }
@@ -395,8 +458,6 @@ ax.legend()
 
 for bar in horiz_bars:
     ax.axhline(y=bar, color='r', linestyle='--')
-
-print(ys)
 
 ax.set_ylim(bottom=0)
 ax.set_xlabel("W")
