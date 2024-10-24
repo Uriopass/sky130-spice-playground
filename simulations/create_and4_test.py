@@ -54,11 +54,11 @@ and4_counter = 0
 
 
 def area(W):
-    return 0.15 * W
+    return 0.0 * 0.15 * W
 
 
 def perim(W):
-    return 2 * (W + 0.29)
+    return 0.0*(W + 2*0.15)
 
 
 def pfet(name, D, G, S, W):
@@ -149,48 +149,49 @@ def and4(A, B, C, D, X, config):
 {pfet(f"A{i}_7", f"o_{i}", A, "Vdd", config["W_ABC_pfet"])}
 {pfet(f"A{i}_6", f"o_{i}", B, "Vdd", config["W_ABC_pfet"])}
 {pfet(f"A{i}_5", f"o_{i}", C, "Vdd", config["W_ABC_pfet"])}
-{pfet(f"A{i}_4", f"o_{i}", D, "Vdd", config["W_D_pfet"])}
 
 {nfet(f"A{i}_0", f"i0_{i}", A, "Vgnd", config["W_ABC_nfet"])}
 {nfet(f"A{i}_1", f"i1_{i}", B, f"i0_{i}", config["W_ABC_nfet"])}
 {nfet(f"A{i}_2", f"i2_{i}", C, f"i1_{i}", config["W_ABC_nfet"])}
+
+{pfet(f"A{i}_4", f"o_{i}", D, "Vdd", config["W_D_pfet"])}
 {nfet(f"A{i}_3", f"o_{i}", D, f"i2_{i}", config["W_D_nfet"])}
 
 {pfet(f"A{i}_9", "Vdd", f"o_{i}", X, config["W_inv_pfet"])}
 {nfet(f"A{i}_8", "Vgnd", f"o_{i}", X, config["W_inv_nfet"])}
 
-C0_{i} Vdd {B} 0.023081f
-C1_{i} o_{i} {D} 0.106582f
-C2_{i} Vdd o_{i} 0.082046f
-C3_{i} {X} Vdd 0.011072f
-C5_{i} o_{i} {C} 0.051593f
-C6_{i} Vgnd {B} 0.045272f
-C7_{i} {A} o_{i} 0.15343f
-C8_{i} Vdd {D} 0.020729f
-C10_{i} Vdd {B} 0.064328f
-C11_{i} Vdd {C} 0.021032f
-C12_{i} {C} {B} 0.160614f
-C13_{i} {A} Vdd 0.043995f
-C14_{i} Vgnd {D} 0.089796f
-C15_{i} {A} {B} 0.083909f
-C16_{i} {X} o_{i} 0.075371f
-C17_{i} Vgnd {C} 0.040816f
-C18_{i} Vgnd {A} 0.015122f
-C19_{i} Vdd {D} 0.078225f
-C20_{i} o_{i} Vdd 0.326283f
-C21_{i} o_{i} {B} 0.129725f
-C22_{i} {D} {C} 0.180159f
-C23_{i} {X} Vdd 0.094506f
-C24_{i} Vdd {C} 0.060876f
-C25_{i} {A} Vdd 0.090662f
-C26_{i} Vgnd o_{i} 0.13176f
-C27_{i} Vgnd {X} 0.09025f
-C29_{i} {X} Vgnd 0.093317f
-C31_{i} {D} Vgnd 0.130267f
-C32_{i} {C} Vgnd 0.109828f
-C33_{i} {B} Vgnd 0.112123f
-C34_{i} {A} Vgnd 0.220977f
-C36_{i} o_{i} Vgnd 0.174893f
+* C0_{i} Vdd {B} 0.023081f
+* C1_{i} o_{i} {D} 0.106582f
+* C2_{i} Vdd o_{i} 0.082046f
+* C3_{i} {X} Vdd 0.011072f
+* C5_{i} o_{i} {C} 0.051593f
+* C6_{i} Vgnd {B} 0.045272f
+* C7_{i} {A} o_{i} 0.15343f
+* C8_{i} Vdd {D} 0.020729f
+* C10_{i} Vdd {B} 0.064328f
+* C11_{i} Vdd {C} 0.021032f
+* C12_{i} {C} {B} 0.160614f
+* C13_{i} {A} Vdd 0.043995f
+* C14_{i} Vgnd {D} 0.089796f
+* C15_{i} {A} {B} 0.083909f
+* C16_{i} {X} o_{i} 0.075371f
+* C17_{i} Vgnd {C} 0.040816f
+* C18_{i} Vgnd {A} 0.015122f
+* C19_{i} Vdd {D} 0.078225f
+* C20_{i} o_{i} Vdd 0.326283f
+* C21_{i} o_{i} {B} 0.129725f
+* C22_{i} {D} {C} 0.180159f
+* C23_{i} {X} Vdd 0.094506f
+* C24_{i} Vdd {C} 0.060876f
+* C25_{i} {A} Vdd 0.090662f
+* C26_{i} Vgnd o_{i} 0.13176f
+* C27_{i} Vgnd {X} 0.09025f
+* C29_{i} {X} Vgnd 0.093317f
+* C31_{i} {D} Vgnd 0.130267f
+* C32_{i} {C} Vgnd 0.109828f
+* C33_{i} {B} Vgnd 0.112123f
+* C34_{i} {A} Vgnd 0.220977f
+* C36_{i} o_{i} Vgnd 0.174893f
 """
 
 
@@ -217,7 +218,7 @@ def wire(pinout, next_pinin, extra_fanout):
     else:
         mult = load_model[-1] + slope * (extra_fanout - len(load_model))
 
-    res_base = 0.0745 * 1000.0  # in ohms
+    res_base = 0.0 * 0.0745 * 1000.0  # in ohms
     capa_base = 0.0142  # in femtofarads
 
     res_wire = res_base * mult
@@ -260,7 +261,7 @@ def genspice(config):
     addsp(flipflop(f"DstartD", f"DstartQ"))
     addsp(flipflop(f"DendD", f"DendQ"))
 
-    last_out = f"DstartQ"
+    last_out = f"clk"
 
     for i in range(N):
         addsp(in_one(f"A{i}"))
@@ -351,13 +352,13 @@ def run_sim(config):
     return tend - tstart
 
 
-def cost_fun(D_pfet, D_nfet, ABC_pfet, ABC_nfet, inv_pfet, inv_nfet):
+def cost_fun(D_pfet, D_nfet, inv_pfet, inv_nfet):
     config = {
         "W_D_pfet": D_pfet,
         "W_D_nfet": D_nfet,
 
-        "W_ABC_pfet": ABC_pfet,
-        "W_ABC_nfet": ABC_nfet,
+        "W_ABC_pfet": 0.36,#ABC_pfet,
+        "W_ABC_nfet": 20.0,#ABC_nfet,
 
         "W_inv_pfet": inv_pfet,
         "W_inv_nfet": inv_nfet,
@@ -391,8 +392,8 @@ def bayesian_opt():
     pbounds = {"D_pfet": fet_bounds,
                "D_nfet": fet_bounds,
 
-                "ABC_pfet": fet_bounds,
-                "ABC_nfet": fet_bounds,
+                #"ABC_pfet": fet_bounds,
+                #"ABC_nfet": (1.0, 20.0),
 
                 "inv_pfet": fet_bounds,
                 "inv_nfet": fet_bounds,
@@ -410,8 +411,8 @@ def bayesian_opt():
 
     )
 
-#bayesian_opt()
-#exit(0)
+# bayesian_opt()
+# exit(0)
 
 xs = []
 ys = []
@@ -431,15 +432,16 @@ horiz_bars = [
 
 for i in range(20):
     W = 0.5 + i / 20
+    v = 1.0
     config = {
-        "W_D_pfet": W * 1.7,
-        "W_D_nfet": W * 0.8,
+        "W_D_pfet":  1.7 * v,
+        "W_D_nfet":  0.8 * v,
 
         "W_ABC_pfet": 0.36,
-        "W_ABC_nfet": 7.0,
+        "W_ABC_nfet": 200.0,
 
-        "W_inv_pfet": W * 1.7,
-        "W_inv_nfet": W * 0.8,
+        "W_inv_pfet":  1.7 * v,
+        "W_inv_nfet":  0.8 * v,
 
         "fanout": 4,
     }
