@@ -54,11 +54,11 @@ and4_counter = 0
 
 
 def area(W):
-    return 0.0 * 0.15 * W
+    return 0.15 * W
 
 
 def perim(W):
-    return 0.0*(W + 2*0.15)
+    return W + 2*0.15
 
 
 def pfet(name, D, G, S, W):

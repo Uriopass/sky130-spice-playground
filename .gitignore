@@ -3,3 +3,5 @@ plots
 simulations/and4_test.png
 simulations/and4_test.spice
 venv
+output.txt
+test.txt

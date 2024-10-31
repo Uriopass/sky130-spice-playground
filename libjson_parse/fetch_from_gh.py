@@ -23,7 +23,11 @@ cells = ["sky130_fd_sc_hd__or4_1",
          "sky130_fd_sc_hd__o21a_1",
          "sky130_fd_sc_hd__nand2b_1",
          "sky130_fd_sc_hd__and2_1",
-         "sky130_fd_sc_hd__a41o_1"]
+         "sky130_fd_sc_hd__a41o_1",
+         "sky130_fd_sc_hd__dfxtp_2",
+         "sky130_fd_sc_hd__and3_2",
+         "sky130_fd_sc_hd__and3b_2",
+         ]
 
 all_cells_size_1 = [
     "sky130_fd_sc_hd__a2111o_1",
@@ -56,6 +60,12 @@ all_cells_size_1 = [
     "sky130_fd_sc_hd__and4_1",
     "sky130_fd_sc_hd__and4b_1",
     "sky130_fd_sc_hd__and4bb_1",
+    "sky130_fd_sc_hd__and4_2",
+    "sky130_fd_sc_hd__and4b_2",
+    "sky130_fd_sc_hd__and4bb_2",
+    "sky130_fd_sc_hd__and4_4",
+    "sky130_fd_sc_hd__and4b_4",
+    "sky130_fd_sc_hd__and4bb_4",
     "sky130_fd_sc_hd__buf_1",
     "sky130_fd_sc_hd__bufbuf_8",
     "sky130_fd_sc_hd__bufinv_8",
