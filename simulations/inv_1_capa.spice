@@ -1,0 +1,85 @@
+INV1 cell simulation
+.include "./lib/prelude.spice"
+
+.include "./sky130_fd_sc_hd/cells/inv/sky130_fd_sc_hd__inv_1.spice"
+
+.subckt e_sky130_fd_sc_hd__inv_4 A VGND VNB VPB VPWR Y
+X0 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.135 ps=1.27 w=1 l=0.15
+X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
+X2 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.169 ps=1.82 w=0.65 l=0.15
+X3 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
+X4 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
+X5 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.26 ps=2.52 w=1 l=0.15
+X6 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.08775 ps=0.92 w=0.65 l=0.15
+X7 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
+C0 VPWR Y 0.361779f
+C1 VGND A 0.081909f
+C2 VGND Y 0.262586f
+C3 VGND VPWR 0.050092f
+C4 VPB A 0.141975f
+C5 VPB Y 0.015896f
+C6 Y A 0.359887f
+C7 VPB VPWR 0.065385f
+C8 VPWR A 0.098226f
+C9 VGND VNB 0.326816f
+C10 Y VNB 0.084947f
+C11 VPWR VNB 0.296394f
+C12 A VNB 0.451855f
+C13 VPB VNB 0.516168f
+.ends
+
+.subckt e_sky130_fd_sc_hd__inv_1 A VGND VNB VPB VPWR Y
+X0 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.169 ps=1.82 w=0.65 l=0.15
+X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.26 ps=2.52 w=1 l=0.15
+
+C0 VPB VPWR 0.054478f
+C1 A Y 0.047605f
+C2 VGND A 0.040045f
+C3 VGND Y 0.099841f
+C4 A VPWR 0.037031f
+C5 VPB A 0.045062f
+C6 Y VPWR 0.127579f
+C7 VPB Y 0.017744f
+C8 VGND VPWR 0.033816f
+C9 VGND VNB 0.251126f
+C10 Y VNB 0.096099f
+C11 VPWR VNB 0.218922f
+C12 A VNB 0.166643f
+C13 VPB VNB 0.338976f
+.ends
+
+Vgnd Vgnd 0 0
+Vdd Vdd 0 1.8
+
+xcell0 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_4
+
+xcell21 A2 Vgnd Vgnd Vdd Vdd Y2 sky130_fd_sc_hd__inv_1
+
+Cout Y Vgnd 100000f
+Cout2 Y2 Vgnd 100000f
+
+R1ohm A R1 10k
+R2ohm A2 R2 10k
+
+Vr1 R1 Vgnd pulse(0 1.8 0n 0n 0n 20n 20n)
+Vr2 R2 Vgnd pulse(0 1.8 0n 0n 0n 20n 20n)
+
+.tran 0.1p 0.1n 0
+
+.control
+run
+
+meas tran dt1s when V(A)=0.1
+meas tran dt2s when V(A2)=0.1
+meas tran dt1 when V(A)=0.2
+meas tran dt2 when V(A2)=0.2
+print (dt1 - dt1s) / (1k * 0.1)
+print (dt2 - dt2s) / (1k * 0.1)
+
+plot V(A) V(A2) V(R1)
+
+set filetype=ascii
+
+write output.txt V(A)
+
+.endc
