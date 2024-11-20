@@ -1,197 +1,25 @@
 INV1 cell simulation
-.include "./lib/prelude.spice"
+.include "prelude.spice"
 
-.include "./sky130_fd_sc_hd/cells/inv/sky130_fd_sc_hd__inv_1.spice"
-.include "./sky130_fd_sc_hd/cells/inv/sky130_fd_sc_hd__inv_2.spice"
-.include "./sky130_fd_sc_hd/cells/inv/sky130_fd_sc_hd__inv_4.spice"
+*.include "../sky130_fd_sc_hd/cells/inv/sky130_fd_sc_hd__inv_1.spice"
+*.include "../sky130_fd_sc_hd/cells/inv/sky130_fd_sc_hd__inv_2.spice"
+*.include "../sky130_fd_sc_hd/cells/inv/sky130_fd_sc_hd__inv_4.spice"
 
-.subckt e_sky130_fd_sc_hd__inv_2 A VGND VNB VPB VPWR Y
-X0 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.26 ps=2.52 w=1 l=0.15
-X1 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.08775 ps=0.92 w=0.65 l=0.15
-X2 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.169 ps=1.82 w=0.65 l=0.15
-X3 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.135 ps=1.27 w=1 l=0.15
+.include "inv_hs.spice"
 
-C0 A Y 0.089386f
-C1 VPWR VPB 0.052063f
-C2 VPWR VGND 0.042274f
-C3 A VPB 0.074183f
-C4 Y VGND 0.154601f
-C5 Y VPWR 0.209105f
-C6 A VGND 0.063754f
-C7 A VPWR 0.06305f
-C8 VGND VNB 0.266187f
-C9 Y VNB 0.03316f
-C10 VPWR VNB 0.246044f
-C11 A VNB 0.262807f
-C12 VPB VNB 0.338976f
-.ends
-
-.subckt e_sky130_fd_sc_hd__inv_4 A VGND VNB VPB VPWR Y
-X0 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.135 ps=1.27 w=1 l=0.15
-X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X2 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.169 ps=1.82 w=0.65 l=0.15
-X3 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X4 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X5 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.26 ps=2.52 w=1 l=0.15
-X6 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.08775 ps=0.92 w=0.65 l=0.15
-X7 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-C0 VPWR Y 0.361779f
-C1 VGND A 0.081909f
-C2 VGND Y 0.262586f
-C3 VGND VPWR 0.050092f
-C4 VPB A 0.141975f
-C5 VPB Y 0.015896f
-C6 Y A 0.359887f
-C7 VPB VPWR 0.065385f
-C8 VPWR A 0.098226f
-C9 VGND VNB 0.326816f
-C10 Y VNB 0.084947f
-C11 VPWR VNB 0.296394f
-C12 A VNB 0.451855f
-C13 VPB VNB 0.516168f
-.ends
-
-
-.subckt e_sky130_fd_sc_hd__inv_8 A VGND VNB VPB VPWR Y
-X0 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X2 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X3 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X4 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X5 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.26 ps=2.52 w=1 l=0.15
-X6 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.169 ps=1.82 w=0.65 l=0.15
-X7 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.135 ps=1.27 w=1 l=0.15
-X8 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X9 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X10 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X11 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X12 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X13 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X14 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X15 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.08775 ps=0.92 w=0.65 l=0.15
-
-C0 VPWR A 0.127577f
-C1 Y VPB 0.034787f
-C2 Y VGND 0.574497f
-C3 VPWR VPB 0.100209f
-C4 VPWR VGND 0.085433f
-C5 VPB A 0.254088f
-C6 VGND A 0.116857f
-C7 VPWR Y 0.779949f
-C8 Y A 0.829319f
-C9 VGND VNB 0.51049f
-C10 Y VNB 0.126735f
-C11 VPWR VNB 0.449913f
-C12 A VNB 0.771261f
-C13 VPB VNB 0.870552f
-.ends
-
-.subckt e_sky130_fd_sc_hd__inv_16 A VGND VNB VPB VPWR Y
-X0 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X1 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.135 ps=1.27 w=1 l=0.15
-X2 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X3 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X4 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X5 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X6 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.26 ps=2.52 w=1 l=0.15
-X7 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.08775 ps=0.92 w=0.65 l=0.15
-X8 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X9 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X10 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X11 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X12 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X13 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X14 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X15 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X16 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.169 ps=1.82 w=0.65 l=0.15
-X17 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X18 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X19 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X20 VGND A Y VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X21 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X22 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X23 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X24 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X25 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X26 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X27 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X28 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X29 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-X30 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
-X31 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15
-
-C0 VPB A 0.525745f
-C1 Y VGND 1.06261f
-C2 VPWR VGND 0.160762f
-C3 VGND A 0.265874f
-C4 VGND VPB 0.013189f
-C5 VPWR Y 1.46621f
-C6 Y A 1.4347f
-C7 VPWR A 0.280261f
-C8 Y VPB 0.03049f
-C9 VPWR VPB 0.159316f
-C10 VGND VNB 0.864536f
-C11 Y VNB 0.055057f
-C12 VPWR VNB 0.737072f
-C13 A VNB 1.54575f
-C14 VPB VNB 1.49072f
-.ends
-
-
-.subckt e_sky130_fd_sc_hd__inv_1 A VGND VNB VPB VPWR Y
-X0 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.169 ps=1.82 w=0.65 l=0.15
-X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.26 ps=2.52  w=1 l=0.15
-
-C1 A Y 0.047605f
-C2 VGND A 0.040045f
-C3 VGND Y 0.099841f
-C4 A VPWR 0.037031f
-C5 VPB A 0.045062f
-C6 Y VPWR 0.127579f
-C7 VPB Y 0.017744f
-C10 Y VNB 0.096099f
-C12 A VNB 0.166643f
-
-C8 VGND VPWR 0.033816f
-C13 VPB VNB 0.338976f
-C11 VPWR VNB 0.218922f
-.ends
-
-.param cval=1f
+.param cval={{cval}}
 .param risefall=0.01666n
 
-*xcell A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_16
-
-xcell10 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_16
-*xcell20 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell30 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell40 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell11 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell21 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell31 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell41 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell12 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell22 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell32 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell42 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell13 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell23 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell33 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-*xcell43 A Vgnd Vgnd Vdd Vdd Y e_sky130_fd_sc_hd__inv_1
-
-
-xcell2 A2 Vgnd Vgnd Vdd Vdd Y2 e_sky130_fd_sc_hd__inv_1
+xcell  A Vgnd Vgnd Vdd Vdd Y {{celltype}}
 
 Vgnd Vgnd 0 0
 Vdd Vdd Vgnd 1.8
 
-Va  A  Vgnd pulse(0 1.8 0 {risefall} {risefall} 10n 20n)
-Va2 A2 Vgnd pulse(0 1.8 0 {risefall} {risefall} 10n 20n)
+Va  A  Vgnd pulse(1.8 0 0 {risefall} {risefall} 15n 20n)
 
-Cout  Y  Vgnd {cval}
-Cout2 Y2 Vgnd {cval}
+Ccout Y  Vgnd {cval}
 
-.tran 1p 20n 0
+.tran 3p 5n 0
 
 * .measure tran t_start_fall when V(A)=0.9 cross=1
 * .measure tran t_end_fall   when V(Y)=0.9 cross=1
@@ -202,36 +30,44 @@ Cout2 Y2 Vgnd {cval}
 
 .control
 
-let loops = 6
-let i = 0
-let fall_times = vector(loops)
-let rise_times = vector(loops)
-let cval_vec   = vector(loops)
-set cvals = ( 1.6818300000p )
-
-foreach cval_l $cvals
-    alterparam cval = $cval_l
-    reset
-    run
-    meas tran t_start_fall when V(A)=0.9 cross=1
-    meas tran t_end_fall   when V(Y)=0.9 cross=1
-
-    meas tran t_start_rise when V(A)=0.9 cross=2
-    meas tran t_end_rise   when V(Y)=0.9 cross=2
-    let fall_times[i] = t_end_fall - t_start_fall
-    let rise_times[i] = t_end_rise - t_start_rise
-    let cval_vec[i] = $cval_l
-    let i = i + 1
-
-    plot V(A) V(Y) V(A2) V(Y2)
-    print t_end_fall - t_start_fall
-    print t_end_rise - t_start_rise
-end
+* let loops = 6
+* let i = 0
+* let fall_times = vector(loops)
+* let rise_times = vector(loops)
+* let cval_vec   = vector(loops)
+* set cvals = ( 1.6818300000p )
+*
+* foreach cval_l $cvals
+*     alterparam cval = $cval_l
+*     reset
+*     run
+*     meas tran t_start_fall when V(A)=0.9 cross=1
+*     meas tran t_end_fall   when V(Y)=0.9 cross=1
+*
+*     meas tran t_start_rise when V(A)=0.9 cross=2
+*     meas tran t_end_rise   when V(Y)=0.9 cross=2
+*     let fall_times[i] = t_end_fall - t_start_fall
+*     let rise_times[i] = t_end_rise - t_start_rise
+*     let cval_vec[i] = $cval_l
+*     let i = i + 1
+*
+*     plot V(A) V(Y) V(A2) V(Y2)
+*     print t_end_fall - t_start_fall
+*     print t_end_rise - t_start_rise
+* end
 
 * print (fall_times[1] - fall_times[0]) / (cval_vec[1] - cval_vec[0])
 * print (rise_times[1] - rise_times[0]) / (cval_vec[1] - cval_vec[0])
 
 * plot fall_times vs cval_vec rise_times vs cval_vec
 * plot V(A) V(Y) V(A2) V(Y2)
+
+run
+
+*meas tran t_start_fall when V(A)=0.9 cross=2
+*meas tran t_end_fall   when V(Y)=0.9 cross=2
+
+meas tran t_start_rise when V(A)=0.9 cross=1
+meas tran t_end_rise   when V(Y)=0.9 cross=1
 
 .endc

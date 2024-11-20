@@ -20,6 +20,25 @@ def run_spice(content):
     os.remove(temp_file)
     return output, output_err
 
+def parse_measures(stdout):
+    """
+    Parse the measures from a spice output
+    e.g lines that look like t_start = 1.0
+    :param stdout: The stdout from the spice simulation
+    :return: A dictionary containing the measures
+    """
+    measures = {}
+    for line in stdout.split("\n"):
+        vals = line.strip().split()
+        if len(vals) != 3:
+            continue
+        if vals[1] != "=":
+            continue
+        if not vals[2][0].isdigit():
+            continue
+        measures[vals[0]] = float(vals[2])
+    return measures
+
 def parse_voltage(file_path):
     """
     Parse the voltage data from a spice output file

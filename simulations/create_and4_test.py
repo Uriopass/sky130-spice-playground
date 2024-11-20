@@ -214,7 +214,7 @@ def run_sim(config):
     measures_spice = "\n".join(measures)
 
     spice = f"""
-    .include "./lib/prelude.spice"
+    .include "prelude.spice"
     
     Vgnd Vgnd 0 0
     Vdd Vdd Vgnd 1.8
