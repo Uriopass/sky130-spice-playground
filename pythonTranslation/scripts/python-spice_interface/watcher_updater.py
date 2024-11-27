@@ -51,10 +51,9 @@ def run(filename):
             if name in measures:
                 value = measures[name]*1e9
                 lines[i] += f" {value:.2f}n"
-
         content = "\n".join(lines)
 
-    with open("timings_"+filename, 'w') as f:
+    with open(filename, 'w') as f:
         f.write(content)
 def watch_and_run(filename):
     try:

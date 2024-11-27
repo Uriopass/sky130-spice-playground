@@ -201,6 +201,8 @@ spice = spice.split('\\n')
             else:
                 python_code += line + '\n'
 
+        all_pins = list(all_pins)
+        all_pins.sort()
         for pin in all_pins:
             if pin == "Vdd" or pin == "Vgnd":
                 continue
