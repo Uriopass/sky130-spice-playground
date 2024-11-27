@@ -39,7 +39,7 @@ def parse_spice(spice_path):
             else:
                 i += 1
         elif line.startswith("* celltype"):
-            celltype = line.split(" ")[-1]
+            celltype = line[10:]
             i += 1
         elif line == "* cell":
 
@@ -253,8 +253,19 @@ for line in to_clear: spice[line] = ''
     python_code += f"""
 
 spice[{plotline}] = ""
+
 for name in timings_to_track:
-    spice.insert({plotline}, f"meas tran {{name}} when V({{name}}) = 0.9")
+    spice.insert({plotline}+1, f"meas tran fall_{{name}} when V({{name}}) = 0.9")
+spice.insert({plotline}+1,"run")
+spice.insert({plotline}+1,"reset")
+spice.insert({plotline}+1, "alterparam v_start=0")
+spice.insert({plotline}+1, "alterparam v_q_ic=1.8")
+
+for name in timings_to_track:
+    spice.insert({plotline}+1, f"meas tran rise_{{name}} when V({{name}}) = 0.9")
+spice.insert({plotline}+1, "run")
+spice.insert({plotline}+1, "alterparam v_start=1.8")
+spice.insert({plotline}+1, "alterparam v_q_ic=0")
 
 spice = "\\n".join(spice)
 file_name = "../../../simulations/generated_out.spice"

@@ -48,8 +48,12 @@ def run(filename):
             name = lines[i].split(" ")[-1]
             lines[i] += ':'
             name = name.lower()
-            if name in measures:
-                value = measures[name]*1e9
+            if 'rise_'+name in measures:
+                value = measures['rise_'+name]*1e9
+                lines[i] += f" {value:.2f}n"
+
+            if 'fall_'+name in measures:
+                value = measures['fall_'+name]*1e9
                 lines[i] += f" {value:.2f}n"
         content = "\n".join(lines)
 
