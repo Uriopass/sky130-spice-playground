@@ -9,7 +9,9 @@ Vgnd Vgnd 0 0
 Vdd Vdd Vgnd 1.8
 Vclk clk Vgnd PULSE(0 1.8 0n 0.2n 0 0 0)
 
-* 814_dfxtp_1/Q -> 814_dfxtp_1/Q (↗): dfxtp
+
+* transition 814_dfxtp_1/Q -> 814_dfxtp_1/Q (↗)
+* celltype dfxtp
 * pins 
 VI0/D I0/D Vgnd 1.8
 
@@ -105,7 +107,9 @@ C62_I0 I0/temp6 Vgnd 0.133203f
 C63_I0 I0/temp8 Vgnd 0.142309f 
 C64_I0 I0/temp9 Vgnd 0.284262f 
 C65_I0 I0/temp3 Vgnd 0.449511f 
-* 163_clkbuf_4/A -> 163_clkbuf_4/X (↗): clkbuf
+
+* transition 163_clkbuf_4/A -> 163_clkbuf_4/X (↗)
+* celltype clkbuf
 CI1/X_fanout I1/X Vgnd 0.016008p
 * pins 
 
@@ -141,7 +145,9 @@ C16_I1 Vdd Vgnd 0.307647f
 C17_I1 I1/A Vgnd 0.147639f 
 C18_I1 Vdd Vgnd 0.604764f 
 C19_I1 I1/temp0 Vgnd 0.542977f 
-* 147_buf_4/A -> 147_buf_4/X (↗): buf
+
+* transition 147_buf_4/A -> 147_buf_4/X (↗)
+* celltype buf
 CI2/X_fanout I2/X Vgnd 0.029571002p
 * pins 
 
@@ -175,7 +181,9 @@ C14_I2 Vdd Vgnd 0.325078f
 C15_I2 I2/A Vgnd 0.139971f 
 C16_I2 Vdd Vgnd 0.604764f 
 C17_I2 I2/temp0 Vgnd 0.461463f 
-* 129_mux2_1/S -> 129_mux2_1/X (↗): mux2
+
+* transition 129_mux2_1/S -> 129_mux2_1/X (↗)
+* celltype mux2
 CI3/X_fanout I3/X Vgnd 0.001558p
 * pins 
 * maxw_p I3/A1 167.513 slack 0.7258 ns
@@ -243,7 +251,9 @@ C35_I3 I3/X Vgnd 0.092356f
 C36_I3 Vdd Vgnd 0.870552f 
 C37_I3 I3/temp5 Vgnd 0.246761f 
 C38_I3 I3/temp1 Vgnd 0.139466f 
-* 019_mux2_2/A0 -> 019_mux2_2/X (↘): mux2
+
+* transition 019_mux2_2/A0 -> 019_mux2_2/X (↘)
+* celltype mux2
 CI4/X_fanout I4/X Vgnd 0.013917p
 * pins 
 * maxw_p I4/S 58.459 slack 0.39200017 ns
@@ -315,7 +325,9 @@ C36_I4 I4/A1 Vgnd 0.161724f
 C37_I4 Vdd Vgnd 0.870552f 
 C38_I4 I4/temp4 Vgnd 0.21626f 
 C39_I4 I4/temp5 Vgnd 0.226921f 
-* 022_xor2_1/B -> 022_xor2_1/X (↘): xor2
+
+* transition 022_xor2_1/B -> 022_xor2_1/X (↘)
+* celltype xor2
 CI5/X_fanout I5/X Vgnd 0.004687p
 * pins 
 * maxw_p I5/A 319.424 slack 1.3839998 ns
@@ -368,7 +380,9 @@ C27_I5 I5/A Vgnd 0.166719f
 C28_I5 I5/B Vgnd 0.213371f 
 C29_I5 Vdd Vgnd 0.69336f 
 C30_I5 I5/temp3 Vgnd 0.254573f 
-* 151_a21o_1/A2 -> 151_a21o_1/X (↘): a21o
+
+* transition 151_a21o_1/A2 -> 151_a21o_1/X (↘)
+* celltype a21o
 CI6/X_fanout I6/X Vgnd 0.007073p
 * pins 
 * maxw_p I6/A1 71.979 slack 0.7258 ns
@@ -429,7 +443,9 @@ C32_I6 I6/B1 Vgnd 0.108793f
 C33_I6 Vdd Vgnd 0.604764f 
 C34_I6 I6/temp0 Vgnd 0.034794f 
 C35_I6 I6/temp2 Vgnd 0.147141f 
-* 070_a211o_1/A2 -> 070_a211o_1/X (↘): a211o
+
+* transition 070_a211o_1/A2 -> 070_a211o_1/X (↘)
+* celltype a211o
 CI7/X_fanout I7/X Vgnd 0.004707p
 * pins 
 * maxw_p I7/B1 198.255 slack 0.8590002 ns
@@ -505,7 +521,9 @@ C38_I7 I7/A1 Vgnd 0.090508f
 C39_I7 I7/A2 Vgnd 0.107869f 
 C40_I7 Vdd Vgnd 0.69336f 
 C41_I7 I7/temp2 Vgnd 0.209712f 
-* 001_a311o_2/A3 -> 001_a311o_2/X (↘): a311o
+
+* transition 001_a311o_2/A3 -> 001_a311o_2/X (↘)
+* celltype a311o
 CI8/X_fanout I8/X Vgnd 0.0070869997p
 * pins 
 * maxw_p I8/C1 178.637 slack 0.77399963 ns
@@ -598,7 +616,9 @@ C46_I8 I8/A2 Vgnd 0.093376f
 C47_I8 I8/A3 Vgnd 0.091528f 
 C48_I8 Vdd Vgnd 0.870552f 
 C49_I8 I8/temp2 Vgnd 0.318697f 
-* 001_a221oi_2/A2 -> 001_a221oi_2/Y (↘): a221oi
+
+* transition 001_a221oi_2/A2 -> 001_a221oi_2/Y (↘)
+* celltype a221oi
 CI9/Y_fanout I9/Y Vgnd 0.002373p
 * pins 
 * maxw_p I9/A1 71.979 slack 0.7258 ns
@@ -707,7 +727,9 @@ C55_I9 I9/C1 Vgnd 0.254689f
 C56_I9 Vdd Vgnd 1.13634f 
 C57_I9 I9/temp1 Vgnd 0.037561f 
 C58_I9 I9/temp0 Vgnd 0.029158f 
-* 018_or4_1/A -> 018_or4_1/X (↗): or4
+
+* transition 018_or4_1/A -> 018_or4_1/X (↗)
+* celltype or4
 CI10/X_fanout I10/X Vgnd 0.00152p
 * pins 
 * maxw_p I10/B 139.517 slack 1.2089995 ns
@@ -775,7 +797,9 @@ C31_I10 I10/B Vgnd 0.114665f
 C32_I10 Vdd Vgnd 0.289978f 
 C33_I10 Vdd Vgnd 0.604764f 
 C34_I10 I10/temp0 Vgnd 0.162914f 
-* 003_a21oi_2/A1 -> 003_a21oi_2/Y (↗): a21oi
+
+* transition 003_a21oi_2/A1 -> 003_a21oi_2/Y (↗)
+* celltype a21oi
 CI11/Y_fanout I11/Y Vgnd 0.007154p
 * pins 
 * maxw_p I11/A2 115.436 slack 1.1639996 ns
@@ -838,7 +862,9 @@ C29_I11 I11/A1 Vgnd 0.172911f
 C30_I11 I11/A2 Vgnd 0.23941f 
 C31_I11 Vdd Vgnd 0.69336f 
 C32_I11 I11/temp2 Vgnd 0.04879f 
-* 096_o211a_1/A1 -> 096_o211a_1/X (↘): o211a
+
+* transition 096_o211a_1/A1 -> 096_o211a_1/X (↘)
+* celltype o211a
 CI12/X_fanout I12/X Vgnd 0.007306p
 * pins 
 * maxw_p I12/A2 256.186 slack 2.2199998 ns
@@ -917,7 +943,9 @@ C41_I12 I12/A1 Vgnd 0.098893f
 C42_I12 Vdd Vgnd 0.781956f 
 C43_I12 I12/temp3 Vgnd 0.01011f 
 C44_I12 I12/temp2 Vgnd 0.225128f 
-* 006_a41o_1/A1 -> 006_a41o_1/X (↘): a41o
+
+* transition 006_a41o_1/A1 -> 006_a41o_1/X (↘)
+* celltype a41o
 CI13/X_fanout I13/X Vgnd 0.004739p
 * pins 
 * maxw_p I13/A3 155.502 slack 1.5679998 ns
@@ -1007,7 +1035,9 @@ C45_I13 I13/B1 Vgnd 0.112609f
 C46_I13 Vdd Vgnd 0.781956f 
 C47_I13 I13/temp0 Vgnd 0.036501f 
 C48_I13 I13/temp3 Vgnd 0.141534f 
-* 004_a21oi_2/A1 -> 004_a21oi_2/Y (↘): a21oi
+
+* transition 004_a21oi_2/A1 -> 004_a21oi_2/Y (↘)
+* celltype a21oi
 CI14/Y_fanout I14/Y Vgnd 0.004508p
 * pins 
 * maxw_p I14/A2 166.609 slack 1.6799998 ns
@@ -1068,7 +1098,9 @@ C29_I14 I14/A1 Vgnd 0.172911f
 C30_I14 I14/A2 Vgnd 0.23941f 
 C31_I14 Vdd Vgnd 0.69336f 
 C32_I14 I14/temp2 Vgnd 0.04879f 
-* 026_nand2b_1/A_N -> 026_nand2b_1/Y (↗): nand2b
+
+* transition 026_nand2b_1/A_N -> 026_nand2b_1/Y (↗)
+* celltype nand2b
 CI15/Y_fanout I15/Y Vgnd 0.0046929996p
 * pins 
 * maxw_p I15/B 222.145 slack 2.2399998 ns
@@ -1110,7 +1142,9 @@ C20_I15 Vdd Vgnd 0.278655f
 C21_I15 I15/B Vgnd 0.101877f 
 C22_I15 Vdd Vgnd 0.516168f 
 C23_I15 I15/temp1 Vgnd 0.168285f 
-* 196_nor2_1/A -> 196_nor2_1/Y (↗): nor2
+
+* transition 196_nor2_1/A -> 196_nor2_1/Y (↗)
+* celltype nor2
 CI16/Y_fanout I16/Y Vgnd 0.0038550003p
 * pins 
 * maxw_p I16/B 286.074 slack 2.4789994 ns
@@ -1147,7 +1181,9 @@ C17_I16 I16/Y Vgnd 0.060508f
 C18_I16 I16/A Vgnd 0.14927f 
 C19_I16 I16/B Vgnd 0.143121f 
 C20_I16 Vdd Vgnd 0.338976f 
-* 007_a311o_1/A2 -> 007_a311o_1/X (↘): a311o
+
+* transition 007_a311o_1/A2 -> 007_a311o_1/X (↘)
+* celltype a311o
 CI17/X_fanout I17/X Vgnd 0.004377p
 * pins 
 * maxw_p I17/C1 726.551 slack 3.1479995 ns
@@ -1239,7 +1275,9 @@ C48_I17 I17/A2 Vgnd 0.110292f
 C49_I17 I17/A3 Vgnd 0.090791f 
 C50_I17 Vdd Vgnd 0.781956f 
 C51_I17 I17/temp1 Vgnd 0.20459f 
-* 171_a21o_1/A1 -> 171_a21o_1/X (↘): a21o
+
+* transition 171_a21o_1/A1 -> 171_a21o_1/X (↘)
+* celltype a21o
 CI18/X_fanout I18/X Vgnd 0.0047270004p
 * pins 
 * maxw_p I18/A2 148.907 slack 3.0029995 ns
@@ -1301,7 +1339,9 @@ C32_I18 I18/B1 Vgnd 0.108793f
 C33_I18 Vdd Vgnd 0.604764f 
 C34_I18 I18/temp0 Vgnd 0.034794f 
 C35_I18 I18/temp2 Vgnd 0.147141f 
-* 080_o21a_1/B1 -> 080_o21a_1/X (↘): o21a
+
+* transition 080_o21a_1/B1 -> 080_o21a_1/X (↘)
+* celltype o21a
 * pins 
 * maxw_p I19/A1 71.979 slack 0.7258 ns
 * maxw_n I19/A1 122.471 slack 0.7258 ns
@@ -1362,7 +1402,9 @@ C32_I19 I19/B1 Vgnd 0.101193f
 C33_I19 Vdd Vgnd 0.604764f 
 C34_I19 I19/temp0 Vgnd 0.034813f 
 C35_I19 I19/temp1 Vgnd 0.158207f 
-* 112_a21oi_1/B1 -> 112_a21oi_1/Y (↘): a21oi
+
+* transition 112_a21oi_1/B1 -> 112_a21oi_1/Y (↘)
+* celltype a21oi
 * pins 
 * maxw_p I20/A2 826.949 slack 3.5829997 ns
 * maxw_n I20/A2 1407.033 slack 3.5829997 ns
@@ -1416,7 +1458,9 @@ C27_I20 I20/A1 Vgnd 0.098086f
 C28_I20 I20/B1 Vgnd 0.161998f 
 C29_I20 Vdd Vgnd 0.427572f 
 C30_I20 I20/temp1 Vgnd 0.034004f 
-* 032_xnor2_1/A -> 032_xnor2_1/Y (↗): xnor2
+
+* transition 032_xnor2_1/A -> 032_xnor2_1/Y (↗)
+* celltype xnor2
 * pins 
 * maxw_p I21/B 411.859 slack 3.5689998 ns
 * maxw_n I21/B 700.768 slack 3.5689998 ns
@@ -1466,7 +1510,9 @@ C26_I21 I21/B Vgnd 0.212328f
 C27_I21 Vdd Vgnd 0.69336f 
 C28_I21 I21/temp0 Vgnd 0.017425f 
 C29_I21 I21/temp2 Vgnd 0.199276f 
-* 135_a22o_1/B1 -> 135_a22o_1/X (↘): a22o
+
+* transition 135_a22o_1/B1 -> 135_a22o_1/X (↘)
+* celltype a22o
 * pins 
 * maxw_p I22/A1 71.979 slack 0.7258 ns
 * maxw_n I22/A1 122.471 slack 0.7258 ns
@@ -1539,7 +1585,9 @@ C38_I22 I22/B1 Vgnd 0.111541f
 C39_I22 I22/B2 Vgnd 0.126407f 
 C40_I22 Vdd Vgnd 0.69336f 
 C41_I22 I22/temp0 Vgnd 0.190287f 
-* 173_a21o_1/A2 -> 173_a21o_1/X (↘): a21o
+
+* transition 173_a21o_1/A2 -> 173_a21o_1/X (↘)
+* celltype a21o
 * pins 
 * maxw_p I23/A1 71.979 slack 0.7258 ns
 * maxw_n I23/A1 122.471 slack 0.7258 ns
@@ -1599,7 +1647,9 @@ C32_I23 I23/B1 Vgnd 0.108793f
 C33_I23 Vdd Vgnd 0.604764f 
 C34_I23 I23/temp0 Vgnd 0.034794f 
 C35_I23 I23/temp2 Vgnd 0.147141f 
-* 105_and2_1/B -> 105_and2_1/X (↘): and2
+
+* transition 105_and2_1/B -> 105_and2_1/X (↘)
+* celltype and2
 CI24/X_fanout I24/X Vgnd 0.001678p
 * pins 
 * maxw_p I24/A 0.000 slack 0 ns
@@ -1642,7 +1692,9 @@ C21_I24 I24/A Vgnd 0.173792f
 C22_I24 Vdd Vgnd 0.273451f 
 C23_I24 Vdd Vgnd 0.516168f 
 C24_I24 I24/temp1 Vgnd 0.177062f 
-* 685_dfxtp_1/D -> 685_dfxtp_1/D (↘): dfxtp
+
+* transition 685_dfxtp_1/D -> 685_dfxtp_1/D (↘)
+* celltype dfxtp
 CI25/D_fanout I25/D Vgnd 0.0059350003p
 * pins 
 
@@ -1793,9 +1845,10 @@ CW23 I24/B Vgnd 0.0023304995p
 CW24 I25/D Vgnd 0.0023304995p
 
 
+
 .tran 0.01n 8n
 .control
 run
-plot V(I12/X) V(I0/Q) V(I4/X) V(I9/Y) V(I24/X) V(I16/Y) V(I18/X) V(I8/X) V(I14/Y) V(I1/X) V(I11/Y) V(I13/X) V(I2/X) V(I3/X) V(I5/X) V(I15/Y) V(I17/X) V(I19/X) V(I20/Y) V(I21/Y) V(I22/X) V(I23/X) V(I25/D) V(I6/X) V(I10/X) V(I7/X)
+plot V(I12/X) V(I0/Q) V(I4/X) V(I9/Y) V(I24/X) V(I16/Y) V(I18/X) V(I8/X) V(I14/Y) V(I1/X) V(I11/Y) V(I13/X) V(I2/X) V(I3/X) V(I5/X) V(I15/Y) V(I17/X) V(I19/X) V(I20/Y) V(I21/Y) V(I22/X) V(I23/X) V(I25/D) V(I6/X) V(I10/X) V(I7/X) 
 .endc
 .end

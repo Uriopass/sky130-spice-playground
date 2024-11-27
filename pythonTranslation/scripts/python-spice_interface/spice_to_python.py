@@ -12,6 +12,7 @@ def parse_spice(spice_path):
     plotline = None
 
     i = 0
+    celltype = ""
     while i < len(spice_content):
         line = spice_content[i]
 
@@ -37,8 +38,9 @@ def parse_spice(spice_path):
                 line = spice_content[i]
             else:
                 i += 1
-                line = spice_content[i]
-
+        elif line.startswith("* celltype"):
+            celltype = line.split(" ")[-1]
+            i += 1
         elif line == "* cell":
 
             i += 1
@@ -76,7 +78,11 @@ def parse_spice(spice_path):
                 transistors.append(transistor)
                 i += 1
                 line = spice_content[i]
-            cells.append(transistors)
+            cells.append({
+                "celltype": celltype,
+                "transistors": transistors
+            })
+            celltype = ""
         else:
             i += 1
     return cells, plotline
@@ -179,7 +185,9 @@ spice = spice.split('\\n')
 
     for cell in cells:
         all_pins = set()
-        for transistor in cell:
+        celltype = cell["celltype"]
+        python_code += f"# === {celltype} ===\n"
+        for transistor in cell["transistors"]:
             all_pins.add(transistor["drain"])
             all_pins.add(transistor["gate"])
             all_pins.add(transistor["source"])

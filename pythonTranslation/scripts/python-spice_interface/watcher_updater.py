@@ -54,7 +54,7 @@ def run(filename):
 
         content = "\n".join(lines)
 
-    with open(filename, 'w') as f:
+    with open("timings_"+filename, 'w') as f:
         f.write(content)
 def watch_and_run(filename):
     try:
