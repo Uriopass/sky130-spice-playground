@@ -55,6 +55,10 @@ def parse_spice(spice_path):
                     line = spice_content[i]
                     continue
 
+                # sort drain and source
+                if transistor_parameters[1] < transistor_parameters[3]:
+                    transistor_parameters[1], transistor_parameters[3] = transistor_parameters[3], transistor_parameters[1]
+
                 transistor = {
                     "line": i,
                     "name": transistor_parameters[0][1:],
@@ -62,7 +66,7 @@ def parse_spice(spice_path):
                     "gate": transistor_parameters[2],
                     "source": transistor_parameters[3],
                     "bulk": transistor_parameters[4],
-                    "instance": transistor_parameters[5],
+                    "instance":  "pfet" if "pfet" in transistor_parameters[5] else "nfet",
                     "ad": transistor_parameters[6],
                     "pd": transistor_parameters[7],
                     "as": transistor_parameters[8],
@@ -70,17 +74,34 @@ def parse_spice(spice_path):
                     "w": float(transistor_parameters[10].split("=")[1]),
                     "l": float(transistor_parameters[11].split("=")[1])
                 }
-                if transistor["gate"] in pin_p_max_sizes.keys():
+                if transistor["gate"] in pin_p_max_sizes and transistor["instance"] == "pfet":
                     transistor["max_size"] = pin_p_max_sizes[transistor["gate"]]
-                elif transistor["gate"] in pin_n_max_sizes.keys():
+                elif transistor["gate"] in pin_n_max_sizes:
                     transistor["max_size"] = pin_n_max_sizes[transistor["gate"]]
 
                 transistors.append(transistor)
                 i += 1
                 line = spice_content[i]
+
+            lines_to_clear = []
+
+            # merge transistors
+            new_transistors = []
+            for transistor in transistors:
+                for new_transistor in new_transistors:
+                    if new_transistor["gate"] == transistor["gate"] and new_transistor["source"] == transistor["source"] and new_transistor["drain"] == transistor["drain"] and new_transistor["instance"] == transistor["instance"]:
+                        new_transistor["w"] += transistor["w"]
+                        lines_to_clear.append(transistor["line"])
+                        break
+                else:
+                    new_transistors.append(transistor)
+
+            new_transistors.sort(key=lambda x: (x["instance"] == "nfet", x["gate"]))
+
             cells.append({
                 "celltype": celltype,
-                "transistors": transistors
+                "transistors": new_transistors,
+                "lines_to_clear": lines_to_clear,
             })
             celltype = ""
         else:
@@ -183,19 +204,39 @@ with open("../../libs/ngspice/out.spice", 'r') as f:
 spice = spice.split('\\n')
 """
 
+    to_clear = []
+    for cell in cells:
+        to_clear.extend(cell["lines_to_clear"])
+    python_code += f"""
+to_clear = {to_clear}
+for line in to_clear: spice[line] = ''
+
+"""
+
     for cell in cells:
         all_pins = set()
         celltype = cell["celltype"]
         python_code += f"# === {celltype} ===\n"
+
+        size_name = max(len(transistor["name"]) for transistor in cell["transistors"])
+        size_drain = max(len(transistor["drain"]) for transistor in cell["transistors"])
+        size_gate = max(len(transistor["gate"]) for transistor in cell["transistors"])
+        size_source = max(len(transistor["source"]) for transistor in cell["transistors"])
+
         for transistor in cell["transistors"]:
             all_pins.add(transistor["drain"])
             all_pins.add(transistor["gate"])
             all_pins.add(transistor["source"])
-            function_name = "pfet" if "pfet" in transistor["instance"] else "nfet"
+            function_name = transistor["instance"]
 
-            line = f'spice[{transistor["line"]:>4}] = {function_name}({transistor["w"]:.2f}, "{transistor["name"]}", "{transistor["drain"]}", "{transistor["gate"]}", "{transistor["source"]}")'
-            if "max_size" in transistor.keys():
-                nb_spaces = 71 - len(line)
+            align_name = (size_name - len(transistor["name"])) * " "
+            align_drain = (size_drain - len(transistor["drain"])) * " "
+            align_gate = (size_gate - len(transistor["gate"])) * " "
+            align_source = (size_source - len(transistor["source"])) * " "
+
+            line = f'spice[{transistor["line"]:>4}] = {function_name}({transistor["w"]:.2f}, "{transistor["name"]}"{align_name}, {align_drain}"{transistor["drain"]}", {align_gate}"{transistor["gate"]}", {align_source}"{transistor["source"]}")'
+            if "max_size" in transistor:
+                nb_spaces = 80 - len(line)
 
                 python_code += line + nb_spaces * " " + f'# Max size: {transistor["max_size"]}\n'
             else:

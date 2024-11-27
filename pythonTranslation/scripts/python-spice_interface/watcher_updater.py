@@ -55,6 +55,7 @@ def run(filename):
 
     with open(filename, 'w') as f:
         f.write(content)
+        f.flush()
 def watch_and_run(filename):
     try:
         last_mtime = os.path.getmtime(filename)

@@ -9,6 +9,9 @@ Vgnd Vgnd 0 0
 Vdd Vdd Vgnd 1.8
 Vclk clk Vgnd PULSE(0 1.8 0n 0.2n 0 0 0)
 
+.ic V(I0/Q) = 0
+
+
 
 * transition 814_dfxtp_1/Q -> 814_dfxtp_1/Q (↗)
 * celltype dfxtp
