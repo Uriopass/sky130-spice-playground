@@ -1,4 +1,4 @@
-def get_cells(spice_path):
+def parse_spice(spice_path):
     with open(spice_path, 'r') as f:
         spice_content = f.read()
     spice_content = spice_content.split("\n")
@@ -9,10 +9,16 @@ def get_cells(spice_path):
     cells = []
     pin_p_max_sizes = {}
     pin_n_max_sizes = {}
+    plotline = None
 
     i = 0
     while i < len(spice_content):
         line = spice_content[i]
+
+        if line.startswith("plot "):
+            plotline = i
+            i += 1
+            continue
 
         if line == "* pins":
             pin_p_max_sizes = {}
@@ -73,10 +79,10 @@ def get_cells(spice_path):
             cells.append(transistors)
         else:
             i += 1
-    return cells
+    return cells, plotline
 
 
-def spice_to_python(cells):
+def spice_to_python(cells, plotline):
     python_code = """import bisect
 
 bins_nfet = [
@@ -129,6 +135,8 @@ bins_pfet = [
 
 MINSIZE = 0.36
 
+timings_to_track = set()
+
 def area(W):
     return 0.15 * W
 
@@ -139,6 +147,10 @@ def pfet(W, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: pfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
 
+    timings_to_track.add(D)
+    timings_to_track.add(G)
+    timings_to_track.add(S)
+
     closest_bin = bins_pfet[min(bisect.bisect_left(bins_pfet, W), len(bins_pfet) - 1)]
     mult = W / closest_bin
     ar = area(W) / mult
@@ -148,6 +160,10 @@ def pfet(W, name, D, G, S):
 def nfet(W, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: nfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
+
+    timings_to_track.add(D)
+    timings_to_track.add(G)
+    timings_to_track.add(S)
 
     closest_bin = bins_nfet[min(bisect.bisect_left(bins_nfet, W), len(bins_nfet) - 1)]
     mult = W / closest_bin
@@ -174,7 +190,12 @@ spice = spice.split('\\n')
                 python_code += line + '\n'
 
         python_code += "\n\n"
-    python_code += """
+    python_code += f"""
+
+spice[{plotline}] = ""
+for name in timings_to_track:
+    spice.insert({plotline}, f"meas tran {{name}} when V({{name}}) = 0.9")
+
 spice = "\\n".join(spice)
 file_name = "../../../simulations/generated_out.spice"
 with open(file_name, "w") as file:
@@ -189,9 +210,9 @@ with open(file_name, "w") as file:
 
 def main():
     spice_path = "../../libs/ngspice/out.spice"
-    cells = get_cells(spice_path)
+    cells, plotline = parse_spice(spice_path)
 
-    spice_to_python(cells)
+    spice_to_python(cells, plotline)
 
 
 if __name__ == "__main__":

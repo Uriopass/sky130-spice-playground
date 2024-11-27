@@ -1793,10 +1793,9 @@ CW23 I24/B Vgnd 0.0023304995p
 CW24 I25/D Vgnd 0.0023304995p
 
 
-
 .tran 0.01n 8n
 .control
 run
-plot V(I12/X) V(I0/Q) V(I4/X) V(I9/Y) V(I24/X) V(I16/Y) V(I18/X) V(I8/X) V(I14/Y) V(I1/X) V(I11/Y) V(I13/X) V(I2/X) V(I3/X) V(I5/X) V(I15/Y) V(I17/X) V(I19/X) V(I20/Y) V(I21/Y) V(I22/X) V(I23/X) V(I25/D) V(I6/X) V(I10/X) V(I7/X) 
+plot V(I12/X) V(I0/Q) V(I4/X) V(I9/Y) V(I24/X) V(I16/Y) V(I18/X) V(I8/X) V(I14/Y) V(I1/X) V(I11/Y) V(I13/X) V(I2/X) V(I3/X) V(I5/X) V(I15/Y) V(I17/X) V(I19/X) V(I20/Y) V(I21/Y) V(I22/X) V(I23/X) V(I25/D) V(I6/X) V(I10/X) V(I7/X)
 .endc
 .end

@@ -50,6 +50,8 @@ bins_pfet = [
 
 MINSIZE = 0.36
 
+timings_to_track = set()
+
 def area(W):
     return 0.15 * W
 
@@ -60,6 +62,10 @@ def pfet(W, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: pfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
 
+    timings_to_track.add(D)
+    timings_to_track.add(G)
+    timings_to_track.add(S)
+
     closest_bin = bins_pfet[min(bisect.bisect_left(bins_pfet, W), len(bins_pfet) - 1)]
     mult = W / closest_bin
     ar = area(W) / mult
@@ -69,6 +75,10 @@ def pfet(W, name, D, G, S):
 def nfet(W, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: nfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
+
+    timings_to_track.add(D)
+    timings_to_track.add(G)
+    timings_to_track.add(S)
 
     closest_bin = bins_nfet[min(bisect.bisect_left(bins_nfet, W), len(bins_nfet) - 1)]
     mult = W / closest_bin
@@ -422,6 +432,11 @@ spice[1671] = nfet(0.42, "22_I25", "I25/temp10", "I25/D", "Vgnd")
 spice[1672] = nfet(0.42, "23_I25", "Vgnd", "clk", "I25/temp3")
 
 
+
+
+spice[1798] = ""
+for name in timings_to_track:
+    spice.insert(1798, f"meas tran {name} when V({name}) = 0.9")
 
 spice = "\n".join(spice)
 file_name = "../../../simulations/generated_out.spice"
