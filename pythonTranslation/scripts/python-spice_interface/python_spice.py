@@ -114,6 +114,20 @@ spice[  36] = nfet(0.36, "20_I0", "I0/temp6", "I0/temp3", "I0/temp10")
 spice[  37] = nfet(0.65, "21_I0", "Vgnd", "I0/temp2", "I0/temp1")
 spice[  38] = nfet(0.42, "22_I0", "I0/temp10", "I0/D", "Vgnd")
 spice[  39] = nfet(0.42, "23_I0", "Vgnd", "clk", "I0/temp3")
+# timing for   I0/temp8:
+# timing for   I0/temp6:
+# timing for       I0/Q:
+# timing for       I0/D:
+# timing for   I0/temp1:
+# timing for   I0/temp5:
+# timing for   I0/temp2:
+# timing for   I0/temp7:
+# timing for  I0/temp10:
+# timing for   I0/temp4:
+# timing for   I0/temp3:
+# timing for   I0/temp0:
+# timing for   I0/temp9:
+# timing for        clk:
 
 
 spice[ 112] = pfet(1.00, "0_I1", "Vdd", "I1/A", "I1/temp0")
@@ -126,6 +140,9 @@ spice[ 118] = pfet(1.00, "6_I1", "Vdd", "I1/temp0", "I1/X")
 spice[ 119] = nfet(0.42, "7_I1", "I1/X", "I1/temp0", "Vgnd")
 spice[ 120] = pfet(1.00, "8_I1", "I1/X", "I1/temp0", "Vdd")
 spice[ 121] = pfet(1.00, "9_I1", "Vdd", "I1/temp0", "I1/X")
+# timing for       I1/A:
+# timing for       I1/X:
+# timing for   I1/temp0:
 
 
 spice[ 148] = pfet(1.00, "0_I2", "Vdd", "I2/temp0", "I2/X")
@@ -138,6 +155,9 @@ spice[ 154] = nfet(0.65, "6_I2", "Vgnd", "I2/temp0", "I2/X")
 spice[ 155] = nfet(0.65, "7_I2", "Vgnd", "I2/temp0", "I2/X")
 spice[ 156] = pfet(1.00, "8_I2", "Vdd", "I2/A", "I2/temp0")
 spice[ 157] = nfet(0.65, "9_I2", "Vgnd", "I2/A", "I2/temp0")
+# timing for       I2/A:
+# timing for   I2/temp0:
+# timing for       I2/X:
 
 
 spice[ 193] = pfet(0.42, "0_I3", "Vdd", "I3/temp5", "I3/temp3")
@@ -152,6 +172,16 @@ spice[ 201] = nfet(0.42, "8_I3", "I3/temp1", "I3/A1", "I3/temp2")      # Max siz
 spice[ 202] = nfet(0.42, "9_I3", "I3/temp2", "I3/S", "Vgnd")
 spice[ 203] = pfet(1.00, "10_I3", "Vdd", "I3/temp1", "I3/X")
 spice[ 204] = nfet(0.65, "11_I3", "Vgnd", "I3/temp1", "I3/X")
+# timing for       I3/S:
+# timing for   I3/temp0:
+# timing for   I3/temp2:
+# timing for   I3/temp4:
+# timing for      I3/A0:
+# timing for   I3/temp5:
+# timing for       I3/X:
+# timing for   I3/temp1:
+# timing for   I3/temp3:
+# timing for      I3/A1:
 
 
 spice[ 262] = pfet(0.64, "0_I4", "Vdd", "I4/S", "I4/temp0")            # Max size: 58.459
@@ -168,6 +198,16 @@ spice[ 272] = nfet(0.42, "10_I4", "I4/temp3", "I4/A1", "I4/temp5")     # Max siz
 spice[ 273] = pfet(1.00, "11_I4", "I4/X", "I4/temp5", "Vdd")
 spice[ 274] = pfet(0.64, "12_I4", "I4/temp4", "I4/S", "Vdd")           # Max size: 58.459
 spice[ 275] = nfet(0.65, "13_I4", "I4/X", "I4/temp5", "Vgnd")
+# timing for   I4/temp2:
+# timing for   I4/temp0:
+# timing for      I4/A0:
+# timing for   I4/temp3:
+# timing for       I4/S:
+# timing for   I4/temp4:
+# timing for   I4/temp1:
+# timing for       I4/X:
+# timing for      I4/A1:
+# timing for   I4/temp5:
 
 
 spice[ 328] = pfet(1.00, "0_I5", "I5/X", "I5/temp3", "I5/temp2")
@@ -180,6 +220,13 @@ spice[ 334] = nfet(0.65, "6_I5", "Vgnd", "I5/temp3", "I5/X")
 spice[ 335] = pfet(1.00, "7_I5", "I5/temp2", "I5/A", "Vdd")            # Max size: 319.424
 spice[ 336] = pfet(1.00, "8_I5", "Vdd", "I5/A", "I5/temp0")            # Max size: 319.424
 spice[ 337] = nfet(0.65, "9_I5", "I5/temp1", "I5/A", "Vgnd")           # Max size: 319.424
+# timing for   I5/temp2:
+# timing for   I5/temp3:
+# timing for       I5/X:
+# timing for   I5/temp1:
+# timing for   I5/temp0:
+# timing for       I5/A:
+# timing for       I5/B:
 
 
 spice[ 386] = nfet(0.65, "0_I6", "I6/temp2", "I6/B1", "Vgnd")          # Max size: 158.096
@@ -190,6 +237,13 @@ spice[ 390] = nfet(0.65, "4_I6", "Vgnd", "I6/temp2", "I6/X")
 spice[ 391] = nfet(0.65, "5_I6", "Vgnd", "I6/A2", "I6/temp1")
 spice[ 392] = pfet(1.00, "6_I6", "I6/temp0", "I6/A2", "Vdd")
 spice[ 393] = nfet(0.65, "7_I6", "I6/temp1", "I6/A1", "I6/temp2")      # Max size: 71.979
+# timing for      I6/A1:
+# timing for       I6/X:
+# timing for      I6/B1:
+# timing for   I6/temp1:
+# timing for   I6/temp2:
+# timing for      I6/A2:
+# timing for   I6/temp0:
 
 
 spice[ 454] = pfet(1.00, "0_I7", "Vdd", "I7/temp2", "I7/X")
@@ -202,6 +256,15 @@ spice[ 460] = pfet(1.00, "6_I7", "I7/temp3", "I7/A1", "Vdd")           # Max siz
 spice[ 461] = nfet(0.65, "7_I7", "I7/temp2", "I7/A1", "I7/temp0")      # Max size: 35.989
 spice[ 462] = pfet(1.00, "8_I7", "I7/temp1", "I7/B1", "I7/temp3")      # Max size: 198.255
 spice[ 463] = nfet(0.65, "9_I7", "I7/temp2", "I7/C1", "Vgnd")          # Max size: 96.012
+# timing for   I7/temp0:
+# timing for      I7/A1:
+# timing for       I7/X:
+# timing for   I7/temp1:
+# timing for      I7/C1:
+# timing for   I7/temp2:
+# timing for   I7/temp3:
+# timing for      I7/B1:
+# timing for      I7/A2:
 
 
 spice[ 535] = pfet(1.00, "0_I8", "I8/temp2", "I8/C1", "I8/temp3")      # Max size: 178.637
@@ -218,6 +281,17 @@ spice[ 545] = nfet(0.65, "10_I8", "I8/temp2", "I8/C1", "Vgnd")         # Max siz
 spice[ 546] = pfet(1.00, "11_I8", "I8/temp3", "I8/B1", "I8/temp0")     # Max size: 266.571
 spice[ 547] = pfet(1.00, "12_I8", "I8/X", "I8/temp2", "Vdd")
 spice[ 548] = nfet(0.65, "13_I8", "I8/X", "I8/temp2", "Vgnd")
+# timing for   I8/temp2:
+# timing for      I8/A1:
+# timing for      I8/A3:
+# timing for   I8/temp3:
+# timing for       I8/X:
+# timing for      I8/B1:
+# timing for   I8/temp0:
+# timing for   I8/temp1:
+# timing for      I8/A2:
+# timing for      I8/C1:
+# timing for   I8/temp4:
 
 
 spice[ 629] = nfet(0.65, "0_I9", "I9/Y", "I9/B1", "I9/temp3")          # Max size: 292.19
@@ -240,6 +314,16 @@ spice[ 645] = pfet(1.00, "16_I9", "I9/temp0", "I9/C1", "I9/Y")         # Max siz
 spice[ 646] = pfet(1.00, "17_I9", "I9/temp1", "I9/B2", "I9/temp0")     # Max size: 111.568
 spice[ 647] = nfet(0.65, "18_I9", "I9/temp2", "I9/A1", "I9/Y")         # Max size: 71.979
 spice[ 648] = pfet(1.00, "19_I9", "I9/temp0", "I9/B1", "I9/temp1")     # Max size: 292.19
+# timing for   I9/temp0:
+# timing for   I9/temp2:
+# timing for      I9/B1:
+# timing for   I9/temp1:
+# timing for      I9/B2:
+# timing for      I9/C1:
+# timing for       I9/Y:
+# timing for      I9/A1:
+# timing for      I9/A2:
+# timing for   I9/temp3:
 
 
 spice[ 731] = nfet(0.42, "0_I10", "I10/temp0", "I10/B", "Vgnd")        # Max size: 139.517
@@ -252,6 +336,15 @@ spice[ 737] = pfet(1.00, "6_I10", "I10/X", "I10/temp0", "Vdd")
 spice[ 738] = nfet(0.42, "7_I10", "Vgnd", "I10/C", "I10/temp0")        # Max size: 129.362
 spice[ 739] = pfet(0.42, "8_I10", "I10/temp2", "I10/D", "I10/temp0")   # Max size: 98.397
 spice[ 740] = nfet(0.42, "9_I10", "Vgnd", "I10/A", "I10/temp0")
+# timing for  I10/temp3:
+# timing for      I10/X:
+# timing for  I10/temp0:
+# timing for      I10/D:
+# timing for      I10/B:
+# timing for      I10/A:
+# timing for      I10/C:
+# timing for  I10/temp2:
+# timing for  I10/temp1:
 
 
 spice[ 794] = nfet(0.65, "0_I11", "Vgnd", "I11/A2", "I11/temp0")       # Max size: 115.436
@@ -266,6 +359,13 @@ spice[ 802] = pfet(1.00, "8_I11", "I11/temp2", "I11/A2", "Vdd")        # Max siz
 spice[ 803] = pfet(1.00, "9_I11", "Vdd", "I11/A1", "I11/temp2")
 spice[ 804] = nfet(0.65, "10_I11", "I11/temp0", "I11/A1", "I11/Y")
 spice[ 805] = nfet(0.65, "11_I11", "I11/Y", "I11/B1", "Vgnd")          # Max size: 180.253
+# timing for     I11/A2:
+# timing for     I11/B1:
+# timing for      I11/Y:
+# timing for     I11/A1:
+# timing for  I11/temp0:
+# timing for  I11/temp1:
+# timing for  I11/temp2:
 
 
 spice[ 863] = nfet(0.65, "0_I12", "Vgnd", "I12/A1", "I12/temp3")
@@ -278,6 +378,15 @@ spice[ 869] = nfet(0.65, "6_I12", "I12/temp2", "I12/C1", "I12/temp1")  # Max siz
 spice[ 870] = pfet(1.00, "7_I12", "Vdd", "I12/temp2", "I12/X")
 spice[ 871] = nfet(0.65, "8_I12", "Vgnd", "I12/temp2", "I12/X")
 spice[ 872] = nfet(0.65, "9_I12", "I12/temp3", "I12/A2", "Vgnd")       # Max size: 256.186
+# timing for  I12/temp2:
+# timing for     I12/C1:
+# timing for     I12/A2:
+# timing for  I12/temp3:
+# timing for  I12/temp0:
+# timing for  I12/temp1:
+# timing for     I12/A1:
+# timing for      I12/X:
+# timing for     I12/B1:
 
 
 spice[ 947] = nfet(0.65, "0_I13", "I13/temp1", "I13/A2", "I13/temp2")  # Max size: 231.566
@@ -292,6 +401,17 @@ spice[ 955] = pfet(1.00, "8_I13", "Vdd", "I13/temp3", "I13/X")
 spice[ 956] = nfet(0.65, "9_I13", "I13/temp3", "I13/B1", "Vgnd")       # Max size: 454.441
 spice[ 957] = nfet(0.65, "10_I13", "Vgnd", "I13/temp3", "I13/X")
 spice[ 958] = nfet(0.65, "11_I13", "I13/temp4", "I13/A3", "I13/temp1") # Max size: 155.502
+# timing for  I13/temp4:
+# timing for      I13/X:
+# timing for     I13/A2:
+# timing for     I13/B1:
+# timing for     I13/A4:
+# timing for  I13/temp3:
+# timing for     I13/A3:
+# timing for  I13/temp1:
+# timing for     I13/A1:
+# timing for  I13/temp2:
+# timing for  I13/temp0:
 
 
 spice[1024] = nfet(0.65, "0_I14", "Vgnd", "I14/A2", "I14/temp0")       # Max size: 166.609
@@ -306,6 +426,13 @@ spice[1032] = pfet(1.00, "8_I14", "I14/temp2", "I14/A2", "Vdd")        # Max siz
 spice[1033] = pfet(1.00, "9_I14", "Vdd", "I14/A1", "I14/temp2")
 spice[1034] = nfet(0.65, "10_I14", "I14/temp0", "I14/A1", "I14/Y")
 spice[1035] = nfet(0.65, "11_I14", "I14/Y", "I14/B1", "Vgnd")          # Max size: 598.228
+# timing for     I14/A1:
+# timing for  I14/temp1:
+# timing for      I14/Y:
+# timing for  I14/temp0:
+# timing for  I14/temp2:
+# timing for     I14/A2:
+# timing for     I14/B1:
 
 
 spice[1081] = nfet(0.42, "0_I15", "Vgnd", "I15/A_N", "I15/temp1")
@@ -314,12 +441,21 @@ spice[1083] = nfet(0.65, "2_I15", "I15/temp0", "I15/B", "Vgnd")        # Max siz
 spice[1084] = pfet(1.00, "3_I15", "Vdd", "I15/temp1", "I15/Y")
 spice[1085] = pfet(1.00, "4_I15", "I15/Y", "I15/B", "Vdd")             # Max size: 222.145
 spice[1086] = pfet(0.42, "5_I15", "Vdd", "I15/A_N", "I15/temp1")
+# timing for  I15/temp0:
+# timing for    I15/A_N:
+# timing for  I15/temp1:
+# timing for      I15/B:
+# timing for      I15/Y:
 
 
 spice[1123] = pfet(1.00, "0_I16", "Vdd", "I16/A", "I16/temp0")
 spice[1124] = nfet(0.65, "1_I16", "Vgnd", "I16/A", "I16/Y")
 spice[1125] = pfet(1.00, "2_I16", "I16/temp0", "I16/B", "I16/Y")       # Max size: 286.074
 spice[1126] = nfet(0.65, "3_I16", "I16/Y", "I16/B", "Vgnd")            # Max size: 286.074
+# timing for  I16/temp0:
+# timing for      I16/B:
+# timing for      I16/A:
+# timing for      I16/Y:
 
 
 spice[1176] = nfet(0.65, "0_I17", "I17/temp1", "I17/C1", "Vgnd")       # Max size: 726.551
@@ -334,6 +470,17 @@ spice[1184] = pfet(1.00, "8_I17", "I17/temp4", "I17/A3", "Vdd")        # Max siz
 spice[1185] = pfet(1.00, "9_I17", "Vdd", "I17/A2", "I17/temp4")
 spice[1186] = pfet(1.00, "10_I17", "I17/temp4", "I17/A1", "Vdd")       # Max size: 71.979
 spice[1187] = nfet(0.65, "11_I17", "Vgnd", "I17/temp1", "I17/X")
+# timing for  I17/temp0:
+# timing for  I17/temp3:
+# timing for  I17/temp1:
+# timing for     I17/B1:
+# timing for      I17/X:
+# timing for  I17/temp2:
+# timing for     I17/A3:
+# timing for     I17/A1:
+# timing for  I17/temp4:
+# timing for     I17/C1:
+# timing for     I17/A2:
 
 
 spice[1258] = nfet(0.65, "0_I18", "I18/temp2", "I18/B1", "Vgnd")       # Max size: 729.552
@@ -344,6 +491,13 @@ spice[1262] = nfet(0.65, "4_I18", "Vgnd", "I18/temp2", "I18/X")
 spice[1263] = nfet(0.65, "5_I18", "Vgnd", "I18/A2", "I18/temp1")       # Max size: 148.907
 spice[1264] = pfet(1.00, "6_I18", "I18/temp0", "I18/A2", "Vdd")        # Max size: 148.907
 spice[1265] = nfet(0.65, "7_I18", "I18/temp1", "I18/A1", "I18/temp2")
+# timing for  I18/temp2:
+# timing for     I18/A1:
+# timing for  I18/temp0:
+# timing for     I18/B1:
+# timing for     I18/A2:
+# timing for      I18/X:
+# timing for  I18/temp1:
 
 
 spice[1319] = pfet(1.00, "0_I19", "Vdd", "I19/A1", "I19/temp2")        # Max size: 71.979
@@ -354,6 +508,13 @@ spice[1323] = pfet(1.00, "4_I19", "Vdd", "I19/temp1", "I19/X")
 spice[1324] = pfet(1.00, "5_I19", "I19/temp1", "I19/B1", "Vdd")
 spice[1325] = pfet(1.00, "6_I19", "I19/temp2", "I19/A2", "I19/temp1")  # Max size: 323.301
 spice[1326] = nfet(0.65, "7_I19", "Vgnd", "I19/temp1", "I19/X")
+# timing for  I19/temp0:
+# timing for     I19/A2:
+# timing for  I19/temp1:
+# timing for  I19/temp2:
+# timing for      I19/X:
+# timing for     I19/B1:
+# timing for     I19/A1:
 
 
 spice[1380] = nfet(0.65, "0_I20", "I20/temp0", "I20/A1", "I20/Y")      # Max size: 71.979
@@ -362,6 +523,12 @@ spice[1382] = nfet(0.65, "2_I20", "I20/Y", "I20/B1", "Vgnd")
 spice[1383] = pfet(1.00, "3_I20", "Vdd", "I20/A1", "I20/temp1")        # Max size: 71.979
 spice[1384] = pfet(1.00, "4_I20", "I20/temp1", "I20/B1", "I20/Y")
 spice[1385] = nfet(0.65, "5_I20", "Vgnd", "I20/A2", "I20/temp0")       # Max size: 826.949
+# timing for  I20/temp0:
+# timing for     I20/A2:
+# timing for      I20/Y:
+# timing for     I20/B1:
+# timing for  I20/temp1:
+# timing for     I20/A1:
 
 
 spice[1427] = pfet(1.00, "0_I21", "I21/temp3", "I21/A", "Vdd")
@@ -374,6 +541,13 @@ spice[1433] = pfet(1.00, "6_I21", "Vdd", "I21/A", "I21/temp2")
 spice[1434] = pfet(1.00, "7_I21", "Vdd", "I21/temp2", "I21/Y")
 spice[1435] = pfet(1.00, "8_I21", "I21/Y", "I21/B", "I21/temp3")       # Max size: 411.859
 spice[1436] = nfet(0.65, "9_I21", "I21/temp0", "I21/A", "Vgnd")
+# timing for  I21/temp2:
+# timing for  I21/temp3:
+# timing for      I21/A:
+# timing for  I21/temp0:
+# timing for  I21/temp1:
+# timing for      I21/Y:
+# timing for      I21/B:
 
 
 spice[1488] = pfet(1.00, "0_I22", "Vdd", "I22/A2", "I22/temp1")        # Max size: 114.13
@@ -386,6 +560,15 @@ spice[1494] = nfet(0.65, "6_I22", "I22/temp2", "I22/A1", "I22/temp0")  # Max siz
 spice[1495] = nfet(0.65, "7_I22", "I22/X", "I22/temp0", "Vgnd")
 spice[1496] = pfet(1.00, "8_I22", "I22/temp1", "I22/B2", "I22/temp0")  # Max size: 382.407
 spice[1497] = nfet(0.65, "9_I22", "I22/temp3", "I22/B2", "Vgnd")       # Max size: 382.407
+# timing for  I22/temp1:
+# timing for  I22/temp2:
+# timing for     I22/B1:
+# timing for     I22/A1:
+# timing for     I22/A2:
+# timing for  I22/temp3:
+# timing for     I22/B2:
+# timing for      I22/X:
+# timing for  I22/temp0:
 
 
 spice[1556] = nfet(0.65, "0_I23", "I23/temp2", "I23/B1", "Vgnd")       # Max size: 868.031
@@ -396,6 +579,13 @@ spice[1560] = nfet(0.65, "4_I23", "Vgnd", "I23/temp2", "I23/X")
 spice[1561] = nfet(0.65, "5_I23", "Vgnd", "I23/A2", "I23/temp1")
 spice[1562] = pfet(1.00, "6_I23", "I23/temp0", "I23/A2", "Vdd")
 spice[1563] = nfet(0.65, "7_I23", "I23/temp1", "I23/A1", "I23/temp2")  # Max size: 71.979
+# timing for      I23/X:
+# timing for  I23/temp1:
+# timing for  I23/temp0:
+# timing for     I23/B1:
+# timing for     I23/A1:
+# timing for  I23/temp2:
+# timing for     I23/A2:
 
 
 spice[1612] = pfet(0.42, "0_I24", "Vdd", "I24/B", "I24/temp1")
@@ -404,6 +594,11 @@ spice[1614] = nfet(0.42, "2_I24", "Vgnd", "I24/B", "I24/temp0")
 spice[1615] = pfet(0.42, "3_I24", "I24/temp1", "I24/A", "Vdd")         # Max size: 0.0
 spice[1616] = nfet(0.65, "4_I24", "I24/X", "I24/temp1", "Vgnd")
 spice[1617] = nfet(0.42, "5_I24", "I24/temp0", "I24/A", "I24/temp1")   # Max size: 0.0
+# timing for      I24/B:
+# timing for  I24/temp0:
+# timing for  I24/temp1:
+# timing for      I24/A:
+# timing for      I24/X:
 
 
 spice[1649] = nfet(0.65, "0_I25", "I25/Q", "I25/temp1", "Vgnd")
@@ -430,6 +625,20 @@ spice[1669] = nfet(0.36, "20_I25", "I25/temp6", "I25/temp3", "I25/temp10")
 spice[1670] = nfet(0.65, "21_I25", "Vgnd", "I25/temp2", "I25/temp1")
 spice[1671] = nfet(0.42, "22_I25", "I25/temp10", "I25/D", "Vgnd")
 spice[1672] = nfet(0.42, "23_I25", "Vgnd", "clk", "I25/temp3")
+# timing for  I25/temp4:
+# timing for  I25/temp1:
+# timing for  I25/temp6:
+# timing for  I25/temp8:
+# timing for  I25/temp2:
+# timing for  I25/temp3:
+# timing for      I25/D:
+# timing for  I25/temp0:
+# timing for  I25/temp7:
+# timing for      I25/Q:
+# timing for  I25/temp5:
+# timing for I25/temp10:
+# timing for  I25/temp9:
+# timing for        clk:
 
 
 

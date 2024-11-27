@@ -42,10 +42,15 @@ def run(filename):
         lines = content.split("\n")
 
         for i in range(len(lines)):
-            strings = lines[i].split('"')[1::2]
-            for string in strings:
-                if string in measures:
-                    lines[i] += f"# {measures[string]}"
+            if not lines[i].startswith('# timing for'):
+                continue
+            lines[i] = lines[i].split(":")[0]
+            name = lines[i].split(" ")[-1]
+            lines[i] += ':'
+            name = name.lower()
+            if name in measures:
+                value = measures[name]*1e9
+                lines[i] += f" {value:.2f}n"
 
         content = "\n".join(lines)
 
@@ -63,9 +68,10 @@ def watch_and_run(filename):
         try:
             current_mtime = os.path.getmtime(filename)
             if last_mtime is None or current_mtime != last_mtime:
-                last_mtime = current_mtime
                 print(f"{filename} modified. Running script...")
                 run(filename)
+
+                last_mtime = os.path.getmtime(filename)
         except FileNotFoundError:
             if last_mtime is not None:
                 print(f"{filename} was deleted. Waiting for it to be recreated...")

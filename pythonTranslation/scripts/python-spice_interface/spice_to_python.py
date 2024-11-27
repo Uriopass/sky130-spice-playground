@@ -178,7 +178,11 @@ spice = spice.split('\\n')
 """
 
     for cell in cells:
+        all_pins = set()
         for transistor in cell:
+            all_pins.add(transistor["drain"])
+            all_pins.add(transistor["gate"])
+            all_pins.add(transistor["source"])
             function_name = "pfet" if "pfet" in transistor["instance"] else "nfet"
 
             line = f'spice[{transistor["line"]:>4}] = {function_name}({transistor["w"]:.2f}, "{transistor["name"]}", "{transistor["drain"]}", "{transistor["gate"]}", "{transistor["source"]}")'
@@ -188,6 +192,11 @@ spice = spice.split('\\n')
                 python_code += line + nb_spaces * " " + f'# Max size: {transistor["max_size"]}\n'
             else:
                 python_code += line + '\n'
+
+        for pin in all_pins:
+            if pin == "Vdd" or pin == "Vgnd":
+                continue
+            python_code += f"# timing for {pin:>10}:\n"
 
         python_code += "\n\n"
     python_code += f"""
