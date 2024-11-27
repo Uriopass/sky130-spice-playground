@@ -75,6 +75,7 @@ def get_cells(spice_path):
             i += 1
     return cells
 
+
 def spice_to_python(cells):
     python_code = """import bisect
 
@@ -162,23 +163,17 @@ spice = spice.split('\\n')
 
     for cell in cells:
         for transistor in cell:
-            if "pfet" in transistor["instance"]:
-                if "max_size" in transistor.keys():
-                    line = f'spice[{transistor["line"]:>4}] = pfet({transistor["w"]:.2f}, "{transistor["name"]}", "{transistor["drain"]}", "{transistor["gate"]}", "{transistor["source"]}")'
-                    nb_spaces = 80 - len(line)
+            function_name = "pfet" if "pfet" in transistor["instance"] else "nfet"
 
-                    python_code += line + nb_spaces*" " + f'# Max size: {transistor["max_size"]}\n'
-                else:
-                    python_code += f'spice[{transistor["line"]:>4}] = pfet({transistor["w"]:.2f}, "{transistor["name"]}", "{transistor["drain"]}", "{transistor["gate"]}", "{transistor["source"]}")\n'
+            line = f'spice[{transistor["line"]:>4}] = {function_name}({transistor["w"]:.2f}, "{transistor["name"]}", "{transistor["drain"]}", "{transistor["gate"]}", "{transistor["source"]}")'
+            if "max_size" in transistor.keys():
+                nb_spaces = 71 - len(line)
+
+                python_code += line + nb_spaces * " " + f'# Max size: {transistor["max_size"]}\n'
             else:
-                if "max_size" in transistor.keys():
-                    line = f'spice[{transistor["line"]:>4}] = nfet({transistor["w"]:.2f}, "{transistor["name"]}", "{transistor["drain"]}", "{transistor["gate"]}", "{transistor["source"]}")'
-                    nb_spaces = 80 - len(line)
+                python_code += line + '\n'
 
-                    python_code += line + nb_spaces * " " + f'# Max size: {transistor["max_size"]}\n'
-                else:
-                    python_code += f'spice[{transistor["line"]:>4}] = nfet({transistor["w"]:.2f}, "{transistor["name"]}", "{transistor["drain"]}", "{transistor["gate"]}", "{transistor["source"]}")\n'
-        python_code += "\n"
+        python_code += "\n\n"
     python_code += """
 spice = "\\n".join(spice)
 file_name = "../../../simulations/generated_out.spice"
@@ -191,11 +186,13 @@ with open(file_name, "w") as file:
     with open(file_name, "w") as file:
         file.write(python_code)
 
+
 def main():
     spice_path = "../../libs/ngspice/out.spice"
     cells = get_cells(spice_path)
 
     spice_to_python(cells)
+
 
 if __name__ == "__main__":
     main()
