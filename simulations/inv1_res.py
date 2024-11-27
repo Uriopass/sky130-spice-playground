@@ -5,29 +5,29 @@ from spice import parse_measures, run_spice
 
 if __name__ == "__main__":
     """ High density """
-    capa_inv1       = np.array([0.0005000000, 0.0013351700, 0.0035653300, 0.0095206200, 0.0254232000, 0.0678883000, 0.1812840000])
-    cell_fall_inv1  = np.array([0.0143656000, 0.0174314000, 0.0252454000, 0.0454996000, 0.0982781000, 0.2396302000, 0.6168033000]) * 1e-9
-    cell_rise_inv1  = np.array([0.0203433000, 0.0255806000, 0.0388749000, 0.0728467000, 0.1628902000, 0.4016502000, 1.0383745000]) * 1e-9
+    capa_hd_inv1       = np.array([0.0005000000, 0.0013351700, 0.0035653300, 0.0095206200, 0.0254232000, 0.0678883000, 0.1812840000])
+    cell_fall_hd_inv1  = np.array([0.0143656000, 0.0174314000, 0.0252454000, 0.0454996000, 0.0982781000, 0.2396302000, 0.6168033000]) * 1e-9
+    cell_rise_hd_inv1  = np.array([0.0203433000, 0.0255806000, 0.0388749000, 0.0728467000, 0.1628902000, 0.4016502000, 1.0383745000]) * 1e-9
     transition_rise_inv1 = np.array([0.0145424000, 0.0213070000, 0.0395425000, 0.0876798000, 0.2171014000, 0.5586131000, 1.4687663000]) * 1e-9
     transition_fall_inv1 = np.array([0.0078064000, 0.0114862000, 0.0214097000, 0.0477227000, 0.1186008000, 0.3072657000, 0.8034127000]) * 1e-9
 
-    capa_inv2       = np.array([0.0005000000, 0.0014764100, 0.0043595800, 0.0128730000, 0.0380118000, 0.1122420000, 0.3314310000])
-    cell_fall_inv2  = np.array([0.0119446000, 0.0137840000, 0.0188149000, 0.0327326000, 0.0729366000, 0.1922578000, 0.5454940000]) * 1e-9
-    cell_rise_inv2  = np.array([0.0175587000, 0.0211484000, 0.0310262000, 0.0584472000, 0.1371815000, 0.3662591000, 1.0435811000]) * 1e-9
+    capa_hd_inv2       = np.array([0.0005000000, 0.0014764100, 0.0043595800, 0.0128730000, 0.0380118000, 0.1122420000, 0.3314310000])
+    cell_fall_hd_inv2  = np.array([0.0119446000, 0.0137840000, 0.0188149000, 0.0327326000, 0.0729366000, 0.1922578000, 0.5454940000]) * 1e-9
+    cell_rise_hd_inv2  = np.array([0.0175587000, 0.0211484000, 0.0310262000, 0.0584472000, 0.1371815000, 0.3662591000, 1.0435811000]) * 1e-9
 
-    capa_inv4       = np.array([0.0005000000, 0.0016127500, 0.0052019300, 0.0167788000, 0.0541202000, 0.1745650000, 0.5630590000])
-    cell_fall_inv4  = np.array([0.0119441000, 0.0131118000, 0.0165791000, 0.0269376000, 0.0588054000, 0.1629306000, 0.4909586000]) * 1e-9
-    cell_rise_inv4  = np.array([0.0190114000, 0.0215393000, 0.0291288000, 0.0516131000, 0.1202000000, 0.3388957000, 1.0502127000]) * 1e-9
+    capa_hd_inv4       = np.array([0.0005000000, 0.0016127500, 0.0052019300, 0.0167788000, 0.0541202000, 0.1745650000, 0.5630590000])
+    cell_fall_hd_inv4  = np.array([0.0119441000, 0.0131118000, 0.0165791000, 0.0269376000, 0.0588054000, 0.1629306000, 0.4909586000]) * 1e-9
+    cell_rise_hd_inv4  = np.array([0.0190114000, 0.0215393000, 0.0291288000, 0.0516131000, 0.1202000000, 0.3388957000, 1.0502127000]) * 1e-9
 
-    capa_inv8       = np.array([0.0005000000, 0.0017851100, 0.0063732300, 0.0227538000, 0.0812360000, 0.2900300000, 1.0354700000])
-    cell_fall_inv8  = np.array([0.0123297000, 0.0130319000, 0.0154135000, 0.0230701000, 0.0489012000, 0.1402316000, 0.4666703000]) * 1e-9
-    cell_rise_inv8  = np.array([0.0202742000, 0.0219295000, 0.0275017000, 0.0455936000, 0.1049458000, 0.3147736000, 1.0550638000]) * 1e-9
+    capa_hd_inv8       = np.array([0.0005000000, 0.0017851100, 0.0063732300, 0.0227538000, 0.0812360000, 0.2900300000, 1.0354700000])
+    cell_fall_hd_inv8  = np.array([0.0123297000, 0.0130319000, 0.0154135000, 0.0230701000, 0.0489012000, 0.1402316000, 0.4666703000]) * 1e-9
+    cell_rise_hd_inv8  = np.array([0.0202742000, 0.0219295000, 0.0275017000, 0.0455936000, 0.1049458000, 0.3147736000, 1.0550638000]) * 1e-9
     transition_rise_inv8 = np.array([0.0119599000, 0.0138121000, 0.0203450000, 0.0438593000, 0.1268351000, 0.4257829000, 1.4839129000]) * 1e-9
     transition_fall_inv8 = np.array([0.0050158000, 0.0057564000, 0.0084430000, 0.0181318000, 0.0525400000, 0.1754386000, 0.6195076000]) * 1e-9
 
-    capa_inv16      = np.array([0.0005000000, 0.0019354100, 0.0074916000, 0.0289986000, 0.1122480000, 0.4344910000, 1.6818300000])
-    cell_fall_inv16 = np.array([0.0152930000, 0.0158333000, 0.0177892000, 0.0242292000, 0.0463429000, 0.1299108000, 0.4538259000]) * 1e-9
-    cell_rise_inv16 = np.array([0.0244637000, 0.0256173000, 0.0298987000, 0.0444630000, 0.0949800000, 0.2856741000, 1.0256670000]) * 1e-9
+    capa_hd_inv16      = np.array([0.0005000000, 0.0019354100, 0.0074916000, 0.0289986000, 0.1122480000, 0.4344910000, 1.6818300000])
+    cell_fall_hd_inv16 = np.array([0.0152930000, 0.0158333000, 0.0177892000, 0.0242292000, 0.0463429000, 0.1299108000, 0.4538259000]) * 1e-9
+    cell_rise_hd_inv16 = np.array([0.0244637000, 0.0256173000, 0.0298987000, 0.0444630000, 0.0949800000, 0.2856741000, 1.0256670000]) * 1e-9
     transition_rise_inv16 = np.array([0.0138044000, 0.0150460000, 0.0198161000, 0.0386202000, 0.1116631000, 0.3939241000, 1.4836817000]) * 1e-9
     transition_fall_inv16 = np.array([0.0065605000, 0.0070460000, 0.0090156000, 0.0170993000, 0.0492442000, 0.1747627000, 0.6592694000]) * 1e-9
 
@@ -52,29 +52,28 @@ if __name__ == "__main__":
 
     for i, invsize in enumerate(inverter_sizes):
         #t_falls = np.zeros_like(capas)
-        capas = np.array(locals()[f"capa_hs_inv{invsize}"])[::2]
+        capas = np.array(locals()[f"capa_hd_inv{invsize}"])[::2]
         t_rises = np.zeros_like(capas)
 
         for j,capa in enumerate(capas):
             content = open("inv_1_res.spice").read()
             content = content.replace("{{cval}}", f"{capa}p")
-            content = content.replace("{{celltype}}", f"sky130_fd_sc_hs__inv_{invsize}")
+            content = content.replace("{{celltype}}", f"sky130_fd_sc_hd__inv_{invsize}")
             stdout, stderr = run_spice(content)
             measures = parse_measures(stdout)
             if "t_end_rise" not in measures:
                 print(stdout)
                 print(stderr)
                 continue
-            print(measures)
             #t_fall = measures["t_end_fall"] - measures["t_start_fall"]
             t_rise = measures["t_end_rise"] - measures["t_start_rise"]
             #t_falls[j] = t_fall
             t_rises[j] = t_rise
 
-        print(t_rises)
+        print(1e12 * (t_rises[-1] - t_rises[-2]) / (capas[-1] - capas[-2]) * invsize)
 
-        cell_rise_invx = np.array(locals()[f"cell_rise_hs_inv{invsize}"])[::2]
-        cell_fall_invx = np.array(locals()[f"cell_fall_hs_inv{invsize}"])[::2]
+        cell_rise_invx = np.array(locals()[f"cell_rise_hd_inv{invsize}"])[::2]
+        cell_fall_invx = np.array(locals()[f"cell_fall_hd_inv{invsize}"])[::2]
 
         #transition_rise_invx = np.array(locals()[f"transition_rise_inv{invsize}"])
         #transition_fall_invx = np.array(locals()[f"transition_fall_inv{invsize}"])
@@ -85,6 +84,8 @@ if __name__ == "__main__":
 
         plt.plot(capas, (cell_rise_invx - cell_rise_invx[0]) * invsize, label=f"rise_{invsize}_ref", marker="x", linestyle="--")
         #plt.plot(capas, (cell_fall_invx - cell_fall_invx[0]) * invsize, label=f"rise_{invsize}_ref", marker="x", linestyle="--")
+
+        print(invsize, cell_rise_invx[-1] / t_rises[-1])
 
         #slope_rise[i] = (cell_rise_invx[-1] - cell_rise_invx[-2]) / (capas[-1] - capas[-2])
         #slope_fall[i] = (cell_fall_invx[-1] - cell_fall_invx[-2]) / (capas[-1] - capas[-2])

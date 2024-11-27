@@ -1,0 +1,88 @@
+.subckt sky130_fd_sc_hd__inv_1 A VGND VNB VPB VPWR Y
+X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X0 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+.ends
+
+
+* NGSPICE file created from sky130_fd_sc_hd__inv_2.ext - technology: sky130A
+
+.subckt sky130_fd_sc_hd__inv_2 A VGND VNB VPB VPWR Y
+X0 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X1 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X2 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X3 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+.ends
+
+
+* NGSPICE file created from sky130_fd_sc_hd__inv_4.ext - technology: sky130A
+
+.subckt sky130_fd_sc_hd__inv_4 A VGND VNB VPB VPWR Y
+X0 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X2 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X3 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X4 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X5 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X6 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X7 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+.ends
+
+
+* NGSPICE file created from sky130_fd_sc_hd__inv_8.ext - technology: sky130A
+
+.subckt sky130_fd_sc_hd__inv_8 A VGND VNB VPB VPWR Y
+X0  VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X1  Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X2  Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X3  Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X4  VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X5  Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X6  Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X7  VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X8  Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X9  Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X10 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X11 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X12 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X13 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X14 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X15 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+.ends
+
+
+* NGSPICE file created from sky130_fd_sc_hd__inv_16.ext - technology: sky130A
+
+.subckt sky130_fd_sc_hd__inv_16 A VGND VNB VPB VPWR Y
+X0  Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X1  VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X2  VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X3  Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X4  VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X5  VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X6  Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X7  VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X8  VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X9  Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X10 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X11 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X12 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X13 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X14 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X15 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X16 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X17 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X18 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X19 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X20 VGND A Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X21 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X22 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X23 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X24 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X25 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X26 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X27 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X28 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X29 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+X30 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=1 l=0.15
+X31 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+.ends

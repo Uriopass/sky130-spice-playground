@@ -1,10 +1,7 @@
 INV1 cell simulation
 .include "prelude.spice"
 
-*.include "../sky130_fd_sc_hd/cells/inv/sky130_fd_sc_hd__inv_1.spice"
-*.include "../sky130_fd_sc_hd/cells/inv/sky130_fd_sc_hd__inv_2.spice"
-*.include "../sky130_fd_sc_hd/cells/inv/sky130_fd_sc_hd__inv_4.spice"
-
+.include "inv_hd_nopex.spice"
 .include "inv_hs.spice"
 
 .param cval={{cval}}
@@ -15,7 +12,7 @@ xcell  A Vgnd Vgnd Vdd Vdd Y {{celltype}}
 Vgnd Vgnd 0 0
 Vdd Vdd Vgnd 1.8
 
-Va  A  Vgnd pulse(1.8 0 0 {risefall} {risefall} 15n 20n)
+Va  A  Vgnd pulse(0 1.8 0 {risefall} {risefall} 15n 20n)
 
 Ccout Y  Vgnd {cval}
 

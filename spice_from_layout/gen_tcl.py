@@ -14,6 +14,11 @@ def extract_cellnames(gds) -> list[str]:
     return cellnames
 
 for prefix in ["sky130_fd_sc_hd", "sky130_fd_sc_hs"]:
+    print(*extract_cellnames(f"{prefix}.gds"), sep="\n")
+
+exit(0)
+
+for prefix in ["sky130_fd_sc_hd", "sky130_fd_sc_hs"]:
     cellnames = extract_cellnames(f"{prefix}.gds")
 
     cellnames.remove(f"{prefix}__inv_1")
