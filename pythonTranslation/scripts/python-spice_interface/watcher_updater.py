@@ -43,12 +43,20 @@ def run(filename):
         for i in range(len(lines)):
             if not lines[i].startswith('# timing for'):
                 continue
-            timing_name, previous_times = lines[i].split(":")
+            timing_name, previous_times_str = lines[i].split(":")
             lines[i] = timing_name + ":"
             name = timing_name.split(" ")[-1]
             name = name.lower()
 
-            previous_times = previous_times.strip().split()
+            previous_times_str = previous_times_str.strip()
+
+            previous_times = previous_times_str.split("|")[0].split()
+
+
+            for v in previous_times:
+                lines[i] += " " + v
+            if len(previous_times) > 0:
+                lines[i] += " |"
 
             if 'rise_'+name in measures:
                 value = measures['rise_'+name]*1e9
@@ -58,17 +66,31 @@ def run(filename):
                 value = measures['fall_'+name]*1e9
                 lines[i] += f" {value:.3f}"
 
-            if 'rise_'+name in measures and len(previous_times) > 0:
-                value = measures['rise_'+name]*1e9
-                previous_rise = float(previous_times[0])
-                if abs(value-previous_rise) >= 0.001:
-                    lines[i] += f" {value-previous_rise:+.3f}"
+            if len(previous_times_str) == 0:
+                lines[i] += " |"
 
+            drise = None
+            if 'rise_'+name in measures and len(previous_times) > 0:
+                value_rise = measures['rise_'+name]*1e9
+                previous_rise = float(previous_times[0])
+                drise = value_rise-previous_rise
+
+            dfall = None
             if 'fall_'+name in measures and len(previous_times) > 1:
                 value = measures['fall_'+name]*1e9
                 previous_fall = float(previous_times[1])
-                if abs(value-previous_fall) >= 0.001:
-                    lines[i] += f" {value-previous_fall:+.3f}"
+                dfall = value-previous_fall
+
+            if (drise is not None and abs(drise) >= 0.001) or (dfall is not None and abs(dfall) >= 0.001):
+                if drise is not None:
+                    lines[i] += f" {drise:+.3f}"
+                else:
+                    lines[i] += " ??????"
+
+                if dfall is not None:
+                    lines[i] += f" {dfall:+.3f}"
+                else:
+                    lines[i] += " ??????"
 
         content = "\n".join(lines)
 
