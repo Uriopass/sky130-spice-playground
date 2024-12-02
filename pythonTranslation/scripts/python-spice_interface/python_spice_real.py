@@ -155,6 +155,7 @@ nfet(1.68, "1_I1", "Vgnd", "I1/o",     "I1/X")
 # timing for       I1/A: 0.041 0.425
 # timing for       I1/X: 0.179 0.561
 # timing for   I1/temp0:
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  buf ===
@@ -165,6 +166,7 @@ nfet(2.60, "4_I2", "Vgnd", "I2/temp0",     "I2/X")
 # timing for       I2/A: 0.262 0.635
 # timing for       I2/X: 0.452 0.886
 # timing for   I2/temp0: 0.347 0.813
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  mux2, A0=1, A1=0 ===
@@ -190,6 +192,7 @@ nfet(0.65, "11_I3",     "Vgnd", "I3/temp1",     "I3/X")
 # timing for   I3/temp3: 0.724 1.604
 # timing for   I3/temp4:
 # timing for   I3/temp5: 0.694 1.237
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  mux2, S=0, A1=1 ===
@@ -215,6 +218,7 @@ nfet(1.30, "4_I4" ,     "Vgnd", "I4/temp5",     "I4/X")
 # timing for   I4/temp3: 1.239 1.542
 # timing for   I4/temp4:
 # timing for   I4/temp5: 1.216 1.520
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  xor2, A=0 ===
@@ -235,6 +239,7 @@ nfet(0.65, "6_I5",     "Vgnd", "I5/temp3",     "I5/X")
 # timing for   I5/temp1: 2.227
 # timing for   I5/temp2:
 # timing for   I5/temp3: 1.627 1.866
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a21o, A1=1, B1=0 ===
@@ -253,6 +258,7 @@ nfet(0.65, "4_I6",     "Vgnd", "I6/temp2",     "I6/X")
 # timing for   I6/temp0: 1.786 2.814
 # timing for   I6/temp1: 1.915 2.142
 # timing for   I6/temp2: 1.902 2.246
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a211o, C1=0, A1=1, B1=0 ===
@@ -275,6 +281,7 @@ nfet(0.65, "4_I7",     "Vgnd", "I7/temp2",     "I7/X")
 # timing for   I7/temp1: 2.118 3.548
 # timing for   I7/temp2: 2.300 2.546
 # timing for   I7/temp3: 2.080 4.395
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a311o, C1=0, A1=1, A2=1, B1=0 ===
@@ -301,6 +308,7 @@ nfet(1.30, "8_I8" ,     "Vgnd", "I8/temp2",     "I8/X")
 # timing for   I8/temp2: 2.768 2.829
 # timing for   I8/temp3: 2.507 3.946
 # timing for   I8/temp4: 2.817 2.712
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a221oi, B2=1, C1=0, A1=1, B1=0 ===
@@ -324,6 +332,7 @@ nfet(1.30, "10_I9",     "Vgnd", "I9/C1",     "I9/Y")                            
 # timing for   I9/temp1: 2.961 5.968
 # timing for   I9/temp2: 3.230 3.012
 # timing for   I9/temp3:
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  or4, D=0, C=0, B=0 ===
@@ -346,6 +355,7 @@ nfet(0.65, "4_I10",      "Vgnd", "I10/temp0",     "I10/X")
 # timing for  I10/temp1: 5.475 3.171
 # timing for  I10/temp2: 4.580 3.206
 # timing for  I10/temp3: 5.828 3.143
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a21oi, A2=1, B1=0 ===
@@ -364,6 +374,7 @@ nfet(1.30, "1_I11" ,      "Vgnd", "I11/B1",     "I11/Y")                        
 # timing for  I11/temp0:
 # timing for  I11/temp1:
 # timing for  I11/temp2: 4.102 3.777
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  o211a, A2=0, C1=1, B1=1 ===
@@ -386,6 +397,7 @@ nfet(0.65, "8_I12",      "Vgnd", "I12/temp2",     "I12/X")
 # timing for  I12/temp1: 3.838 4.033
 # timing for  I12/temp2: 3.799 4.117
 # timing for  I12/temp3: 3.861 4.013
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a41o, A3=1, A4=1, A2=1, B1=0 ===
@@ -412,6 +424,7 @@ nfet(0.65, "10_I13",      "Vgnd", "I13/temp3",     "I13/X")
 # timing for  I13/temp2:
 # timing for  I13/temp3: 4.104 4.446
 # timing for  I13/temp4:
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a21oi, A2=1, B1=0 ===
@@ -430,6 +443,7 @@ nfet(1.30, "1_I14" ,      "Vgnd", "I14/B1",     "I14/Y")                        
 # timing for  I14/temp0:
 # timing for  I14/temp1:
 # timing for  I14/temp2: 4.260 5.314
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  nand2b, B=1 ===
@@ -444,6 +458,7 @@ nfet(0.65, "1_I15", "I15/temp0", "I15/temp1",     "I15/Y")
 # timing for      I15/Y: 4.580 4.942
 # timing for  I15/temp0:
 # timing for  I15/temp1: 4.462 4.850
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  nor2, B=0 ===
@@ -455,6 +470,7 @@ nfet(0.65, "3_I16",      "Vgnd", "I16/B",     "I16/Y")                          
 # timing for      I16/B:
 # timing for      I16/Y: 4.714 5.250
 # timing for  I16/temp0: 5.040 5.014
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a311o, A3=1, C1=0, A1=1, B1=0 ===
@@ -481,6 +497,7 @@ nfet(0.65, "11_I17",      "Vgnd", "I17/temp1",     "I17/X")
 # timing for  I17/temp2:
 # timing for  I17/temp3: 5.019 5.288
 # timing for  I17/temp4: 4.789 7.621
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a21o, A2=1, B1=0 ===
@@ -499,6 +516,7 @@ nfet(0.65, "4_I18",      "Vgnd", "I18/temp2",     "I18/X")
 # timing for  I18/temp0: 5.154 6.165
 # timing for  I18/temp1:
 # timing for  I18/temp2: 5.246 5.644
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  o21a, A2=1, A1=1 ===
@@ -517,6 +535,7 @@ nfet(0.65, "7_I19",      "Vgnd", "I19/temp1",     "I19/X")
 # timing for  I19/temp0:
 # timing for  I19/temp1: 5.428 5.850
 # timing for  I19/temp2:
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a21oi, A2=0, A1=1 ===
@@ -532,6 +551,7 @@ nfet(0.65, "2_I20",      "Vgnd", "I20/B1",     "I20/Y")
 # timing for      I20/Y: 5.635 5.971
 # timing for  I20/temp0: 5.649 5.985
 # timing for  I20/temp1:
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  xnor2, B=0 ===
@@ -552,6 +572,7 @@ nfet(0.65, "4_I21", "I21/temp0", "I21/temp2",     "I21/Y")
 # timing for  I21/temp1:
 # timing for  I21/temp2:
 # timing for  I21/temp3: 6.079 6.012
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a22o, A2=0, B2=1, A1=1 ===
@@ -574,6 +595,7 @@ nfet(0.65, "7_I22",      "Vgnd", "I22/temp0",     "I22/X")
 # timing for  I22/temp1:
 # timing for  I22/temp2: 5.898 6.248
 # timing for  I22/temp3:
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  a21o, A1=1, B1=0 ===
@@ -592,6 +614,7 @@ nfet(0.65, "4_I23",      "Vgnd", "I23/temp2",     "I23/X")
 # timing for  I23/temp0: 5.972 6.888
 # timing for  I23/temp1: 6.090 6.327
 # timing for  I23/temp2: 6.077 6.375
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  and2, A=1 ===
@@ -606,6 +629,7 @@ nfet(0.65, "4_I24",      "Vgnd", "I24/temp1",     "I24/X")
 # timing for      I24/X: 6.295 6.604
 # timing for  I24/temp0: 6.249 6.450
 # timing for  I24/temp1: 6.229 6.496
+# timing for      I25/D: 6.312 6.622
 
 
 # ===  dfxtp ===
