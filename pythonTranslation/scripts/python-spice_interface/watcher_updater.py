@@ -61,12 +61,14 @@ def run(filename):
             if 'rise_'+name in measures and len(previous_times) > 0:
                 value = measures['rise_'+name]*1e9
                 previous_rise = float(previous_times[0])
-                lines[i] += f" {value-previous_rise:+.3f}"
+                if abs(value-previous_rise) >= 0.001:
+                    lines[i] += f" {value-previous_rise:+.3f}"
 
             if 'fall_'+name in measures and len(previous_times) > 1:
                 value = measures['fall_'+name]*1e9
                 previous_fall = float(previous_times[1])
-                lines[i] += f" {value-previous_fall:+.3f}"
+                if abs(value-previous_fall) >= 0.001:
+                    lines[i] += f" {value-previous_fall:+.3f}"
 
         content = "\n".join(lines)
 
