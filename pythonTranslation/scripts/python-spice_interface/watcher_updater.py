@@ -1,5 +1,6 @@
 import os
 import subprocess
+from gen_svg import generate_svg
 
 def parse_measures(stdout):
     """
@@ -35,14 +36,22 @@ def run(filename):
 
     print(measures)
 
+    timing_diffs = []
+
     with open(filename, 'r') as f:
         content = f.read()
 
         lines = content.split("\n")
 
         for i in range(len(lines)):
-            if not lines[i].startswith('# timing for'):
+            if lines[i].startswith("# ==="):
+                timing_diffs.append(("skip_line", None, None))
+
+            if not lines[i].startswith('# timing'):
                 continue
+
+            with_img = lines[i].startswith('# timing with img')
+
             timing_name, previous_times_str = lines[i].split(":")
             lines[i] = timing_name + ":"
             name = timing_name.split(" ")[-1]
@@ -92,19 +101,21 @@ def run(filename):
                 else:
                     lines[i] += " ??????"
 
+            timing_diffs.append((name, drise, dfall))
+
         content = "\n".join(lines)
 
     with open(filename, 'w') as f:
         f.write(content)
         f.flush()
 
+    content = generate_svg(timing_diffs)
+    with open('timings.svg', 'w') as f:
+        f.write(content)
+
     print("Updated the script with the new timing values")
 def watch_and_run(filename):
-    try:
-        last_mtime = os.path.getmtime(filename)
-    except FileNotFoundError:
-        last_mtime = None
-        print(f"{filename} not found. Waiting for it to be created...")
+    last_mtime = None
 
 
     while True:

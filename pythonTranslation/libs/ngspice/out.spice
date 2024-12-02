@@ -192,13 +192,13 @@ CI2/X_fanout I2/X Vgnd 0.029571p
 * transition _06125_/S -> _06125_/X (↗)
 * celltype mux2, A0=1, A1=0 
 * pins 
-* maxw_p I3/A1 167.513 slack 0.7258 ns
-* maxw_n I3/A1 285.019 slack 0.7258 ns
+* maxw_p I3/A1 406.743 slack 1.7623339 ns
+* maxw_n I3/A1 692.063 slack 1.7623339 ns
 Vinv_in_I3/A1 inv_in_I3/A1 Vgnd 1.8
 XI3/A1 I3/A1 inv_in_I3/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI3/A1 I3/A1 inv_in_I3/A1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I3/A0 68.389 slack 0.6896 ns
-* maxw_n I3/A0 116.362 slack 0.6896 ns
+* maxw_p I3/A0 155.188 slack 1.5648332 ns
+* maxw_n I3/A0 264.048 slack 1.5648332 ns
 CI3/A0_fanout I3/A0 Vgnd 0.001558p
 Vinv_in_I3/A0 inv_in_I3/A0 Vgnd 0
 XI3/A0 I3/A0 inv_in_I3/A0 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -262,14 +262,14 @@ CI3/X_fanout I3/X Vgnd 0.001558p
 * transition _07918_/A0 -> _07918_/X (↘)
 * celltype mux2, S=0, A1=1 
 * pins 
-* maxw_p I4/S 58.459 slack 0.39200017 ns
-* maxw_n I4/S 99.467 slack 0.39200017 ns
+* maxw_p I4/S 195.958 slack 1.3140001 ns
+* maxw_n I4/S 333.418 slack 1.3140001 ns
 CI4/S_fanout I4/S Vgnd 0.014231p
 Vinv_in_I4/S inv_in_I4/S Vgnd 1.8
 XI4/S I4/S inv_in_I4/S Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI4/S I4/S inv_in_I4/S Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.42 l=0.15 ad=0.06 as=0.06 pd=0.72 ps=0.72 m=1.00
-* maxw_p I4/A1 71.979 slack 0.7258 ns
-* maxw_n I4/A1 122.471 slack 0.7258 ns
+* maxw_p I4/A1 185.518 slack 1.870667 ns
+* maxw_n I4/A1 315.654 slack 1.870667 ns
 CI4/A1_fanout I4/A1 Vgnd 0.003525p
 Vinv_in_I4/A1 inv_in_I4/A1 Vgnd 0
 XI4/A1 I4/A1 inv_in_I4/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -336,8 +336,8 @@ CI4/X_fanout I4/X Vgnd 0.013917p
 * transition _07990_/B -> _07990_/X (↘)
 * celltype xor2, A=0 
 * pins 
-* maxw_p I5/A 319.424 slack 1.3839998 ns
-* maxw_n I5/A 543.492 slack 1.3839998 ns
+* maxw_p I5/A 494.061 slack 2.1406667 ns
+* maxw_n I5/A 840.633 slack 2.1406667 ns
 CI5/A_fanout I5/A Vgnd 0.01485p
 Vinv_in_I5/A inv_in_I5/A Vgnd 1.8
 XI5/A I5/A inv_in_I5/A Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -391,14 +391,14 @@ CI5/X_fanout I5/X Vgnd 0.004687p
 * transition _07999_/A2 -> _07999_/X (↘)
 * celltype a21o, A1=1, B1=0 
 * pins 
-* maxw_p I6/A1 71.979 slack 0.7258 ns
-* maxw_n I6/A1 122.471 slack 0.7258 ns
+* maxw_p I6/A1 103.535 slack 1.0439997 ns
+* maxw_n I6/A1 176.163 slack 1.0439997 ns
 CI6/A1_fanout I6/A1 Vgnd 0.004765p
 Vinv_in_I6/A1 inv_in_I6/A1 Vgnd 0
 XI6/A1 I6/A1 inv_in_I6/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI6/A1 I6/A1 inv_in_I6/A1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I6/B1 158.096 slack 0.68499994 ns
-* maxw_n I6/B1 268.997 slack 0.68499994 ns
+* maxw_p I6/B1 359.621 slack 1.5581665 ns
+* maxw_n I6/B1 611.887 slack 1.5581665 ns
 Vinv_in_I6/B1 inv_in_I6/B1 Vgnd 1.8
 XI6/B1 I6/B1 inv_in_I6/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI6/B1 I6/B1 inv_in_I6/B1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
@@ -454,20 +454,20 @@ CI6/X_fanout I6/X Vgnd 0.007073p
 * transition _08020_/A2 -> _08020_/X (↘)
 * celltype a211o, C1=0, A1=1, B1=0 
 * pins 
-* maxw_p I7/B1 198.255 slack 0.8590002 ns
-* maxw_n I7/B1 337.327 slack 0.8590002 ns
+* maxw_p I7/B1 393.087 slack 1.703167 ns
+* maxw_n I7/B1 668.828 slack 1.703167 ns
 CI7/B1_fanout I7/B1 Vgnd 0.004459p
 Vinv_in_I7/B1 inv_in_I7/B1 Vgnd 1.8
 XI7/B1 I7/B1 inv_in_I7/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI7/B1 I7/B1 inv_in_I7/B1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I7/A1 35.989 slack 0.7258 ns
-* maxw_n I7/A1 61.235 slack 0.7258 ns
+* maxw_p I7/A1 61.726 slack 1.2448329 ns
+* maxw_n I7/A1 105.026 slack 1.2448329 ns
 CI7/A1_fanout I7/A1 Vgnd 0.0070680003p
 Vinv_in_I7/A1 inv_in_I7/A1 Vgnd 0
 XI7/A1 I7/A1 inv_in_I7/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.54 l=0.15 ad=0.09 as=0.09 pd=0.91 ps=0.91 m=0.93
 XI7/A1 I7/A1 inv_in_I7/A1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I7/C1 96.012 slack 0.4159994 ns
-* maxw_n I7/C1 163.362 slack 0.4159994 ns
+* maxw_p I7/C1 307.884 slack 1.334 ns
+* maxw_n I7/C1 523.858 slack 1.334 ns
 CI7/C1_fanout I7/C1 Vgnd 0.004793p
 Vinv_in_I7/C1 inv_in_I7/C1 Vgnd 1.8
 XI7/C1 I7/C1 inv_in_I7/C1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -532,25 +532,25 @@ CI7/X_fanout I7/X Vgnd 0.004707p
 * transition _08045_/A3 -> _08045_/X (↘)
 * celltype a311o, C1=0, A1=1, A2=1, B1=0 
 * pins 
-* maxw_p I8/C1 178.637 slack 0.77399963 ns
-* maxw_n I8/C1 303.947 slack 0.77399963 ns
+* maxw_p I8/C1 376.739 slack 1.6323333 ns
+* maxw_n I8/C1 641.012 slack 1.6323333 ns
 CI8/C1_fanout I8/C1 Vgnd 0.0046739997p
 Vinv_in_I8/C1 inv_in_I8/C1 Vgnd 1.8
 XI8/C1 I8/C1 inv_in_I8/C1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI8/C1 I8/C1 inv_in_I8/C1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I8/B1 266.571 slack 1.1549996 ns
-* maxw_n I8/B1 453.565 slack 1.1549996 ns
+* maxw_p I8/B1 450.017 slack 1.9498334 ns
+* maxw_n I8/B1 765.693 slack 1.9498334 ns
 Vinv_in_I8/B1 inv_in_I8/B1 Vgnd 1.8
 XI8/B1 I8/B1 inv_in_I8/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI8/B1 I8/B1 inv_in_I8/B1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I8/A1 71.979 slack 0.7258 ns
-* maxw_n I8/A1 122.471 slack 0.7258 ns
+* maxw_p I8/A1 147.006 slack 1.4823332 ns
+* maxw_n I8/A1 250.127 slack 1.4823332 ns
 CI8/A1_fanout I8/A1 Vgnd 0.0069739996p
 Vinv_in_I8/A1 inv_in_I8/A1 Vgnd 0
 XI8/A1 I8/A1 inv_in_I8/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI8/A1 I8/A1 inv_in_I8/A1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I8/A2 33.669 slack 0.6789994 ns
-* maxw_n I8/A2 57.287 slack 0.6789994 ns
+* maxw_p I8/A2 77.015 slack 1.5531664 ns
+* maxw_n I8/A2 131.040 slack 1.5531664 ns
 CI8/A2_fanout I8/A2 Vgnd 0.00688p
 Vinv_in_I8/A2 inv_in_I8/A2 Vgnd 0
 XI8/A2 I8/A2 inv_in_I8/A2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.54 l=0.15 ad=0.09 as=0.09 pd=0.91 ps=0.91 m=0.93
@@ -627,26 +627,26 @@ CI8/X_fanout I8/X Vgnd 0.0070869997p
 * transition _08065_/A2 -> _08065_/Y (↘)
 * celltype a221oi, B2=1, C1=0, A1=1, B1=0 
 * pins 
-* maxw_p I9/A1 71.979 slack 0.7258 ns
-* maxw_n I9/A1 122.471 slack 0.7258 ns
+* maxw_p I9/A1 174.774 slack 1.7623328 ns
+* maxw_n I9/A1 297.374 slack 1.7623328 ns
 CI9/A1_fanout I9/A1 Vgnd 0.009355p
 Vinv_in_I9/A1 inv_in_I9/A1 Vgnd 0
 XI9/A1 I9/A1 inv_in_I9/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI9/A1 I9/A1 inv_in_I9/A1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I9/B1 292.190 slack 1.2659998 ns
-* maxw_n I9/B1 497.154 slack 1.2659998 ns
+* maxw_p I9/B1 471.366 slack 2.0423336 ns
+* maxw_n I9/B1 802.018 slack 2.0423336 ns
 CI9/B1_fanout I9/B1 Vgnd 0.004395p
 Vinv_in_I9/B1 inv_in_I9/B1 Vgnd 1.8
 XI9/B1 I9/B1 inv_in_I9/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI9/B1 I9/B1 inv_in_I9/B1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I9/B2 111.568 slack 1.1249995 ns
-* maxw_n I9/B2 189.831 slack 1.1249995 ns
+* maxw_p I9/B2 190.889 slack 1.9248329 ns
+* maxw_n I9/B2 324.794 slack 1.9248329 ns
 CI9/B2_fanout I9/B2 Vgnd 0.003879p
 Vinv_in_I9/B2 inv_in_I9/B2 Vgnd 0
 XI9/B2 I9/B2 inv_in_I9/B2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI9/B2 I9/B2 inv_in_I9/B2 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I9/C1 289.421 slack 1.2540001 ns
-* maxw_n I9/C1 492.442 slack 1.2540001 ns
+* maxw_p I9/C1 469.058 slack 2.0323334 ns
+* maxw_n I9/C1 798.091 slack 2.0323334 ns
 CI9/C1_fanout I9/C1 Vgnd 0.003854p
 Vinv_in_I9/C1 inv_in_I9/C1 Vgnd 1.8
 XI9/C1 I9/C1 inv_in_I9/C1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -738,20 +738,20 @@ CI9/Y_fanout I9/Y Vgnd 0.002373p
 * transition _08146_/A -> _08146_/X (↗)
 * celltype or4, D=0, C=0, B=0 
 * pins 
-* maxw_p I10/B 139.517 slack 1.2089995 ns
-* maxw_n I10/B 237.385 slack 1.2089995 ns
+* maxw_p I10/B 230.202 slack 1.994833 ns
+* maxw_n I10/B 391.682 slack 1.994833 ns
 CI10/B_fanout I10/B Vgnd 0.002353p
 Vinv_in_I10/B inv_in_I10/B Vgnd 1.8
 XI10/B I10/B inv_in_I10/B Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.54 l=0.15 ad=0.09 as=0.09 pd=0.91 ps=0.91 m=0.93
 XI10/B I10/B inv_in_I10/B Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.36 l=0.15 ad=0.05 as=0.05 pd=0.69 ps=0.69 m=0.90
-* maxw_p I10/D 98.397 slack 1.2789992 ns
-* maxw_n I10/D 167.420 slack 1.2789992 ns
+* maxw_p I10/D 157.955 slack 2.0531664 ns
+* maxw_n I10/D 268.757 slack 2.0531664 ns
 CI10/D_fanout I10/D Vgnd 0.001481p
 Vinv_in_I10/D inv_in_I10/D Vgnd 1.8
 XI10/D I10/D inv_in_I10/D Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI10/D I10/D inv_in_I10/D Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.36 l=0.15 ad=0.05 as=0.05 pd=0.86 ps=0.86 m=0.60
-* maxw_p I10/C 129.362 slack 1.1209993 ns
-* maxw_n I10/C 220.106 slack 1.1209993 ns
+* maxw_p I10/C 221.739 slack 1.9214996 ns
+* maxw_n I10/C 377.283 slack 1.9214996 ns
 Vinv_in_I10/C inv_in_I10/C Vgnd 1.8
 XI10/C I10/C inv_in_I10/C Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI10/C I10/C inv_in_I10/C Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.36 l=0.15 ad=0.05 as=0.05 pd=0.69 ps=0.69 m=0.90
@@ -808,14 +808,14 @@ CI10/X_fanout I10/X Vgnd 0.00152p
 * transition _08148_/A1 -> _08148_/Y (↗)
 * celltype a21oi, A2=1, B1=0 
 * pins 
-* maxw_p I11/A2 115.436 slack 1.1639996 ns
-* maxw_n I11/A2 196.412 slack 1.1639996 ns
+* maxw_p I11/A2 194.113 slack 1.957333 ns
+* maxw_n I11/A2 330.278 slack 1.957333 ns
 CI11/A2_fanout I11/A2 Vgnd 0.001556p
 Vinv_in_I11/A2 inv_in_I11/A2 Vgnd 0
 XI11/A2 I11/A2 inv_in_I11/A2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI11/A2 I11/A2 inv_in_I11/A2 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I11/B1 180.253 slack 1.5619998 ns
-* maxw_n I11/B1 306.696 slack 1.5619998 ns
+* maxw_p I11/B1 264.148 slack 2.2889996 ns
+* maxw_n I11/B1 449.442 slack 2.2889996 ns
 CI11/B1_fanout I11/B1 Vgnd 0.001476p
 Vinv_in_I11/B1 inv_in_I11/B1 Vgnd 1.8
 XI11/B1 I11/B1 inv_in_I11/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -873,20 +873,20 @@ CI11/Y_fanout I11/Y Vgnd 0.007154p
 * transition _08171_/A1 -> _08171_/X (↘)
 * celltype o211a, A2=0, C1=1, B1=1 
 * pins 
-* maxw_p I12/A2 256.186 slack 2.2199998 ns
-* maxw_n I12/A2 435.893 slack 2.2199998 ns
+* maxw_p I12/A2 327.425 slack 2.837333 ns
+* maxw_n I12/A2 557.106 slack 2.837333 ns
 CI12/A2_fanout I12/A2 Vgnd 0.002415p
 Vinv_in_I12/A2 inv_in_I12/A2 Vgnd 1.8
 XI12/A2 I12/A2 inv_in_I12/A2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI12/A2 I12/A2 inv_in_I12/A2 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.36 l=0.15 ad=0.05 as=0.05 pd=0.69 ps=0.69 m=0.90
-* maxw_p I12/B1 96.296 slack 1.9419994 ns
-* maxw_n I12/B1 163.845 slack 1.9419994 ns
+* maxw_p I12/B1 129.204 slack 2.6056666 ns
+* maxw_n I12/B1 219.838 slack 2.6056666 ns
 CI12/B1_fanout I12/B1 Vgnd 0.002373p
 Vinv_in_I12/B1 inv_in_I12/B1 Vgnd 0
 XI12/B1 I12/B1 inv_in_I12/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.54 l=0.15 ad=0.09 as=0.09 pd=0.91 ps=0.91 m=0.93
 XI12/B1 I12/B1 inv_in_I12/B1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.36 l=0.15 ad=0.05 as=0.05 pd=0.69 ps=0.69 m=0.90
-* maxw_p I12/C1 194.476 slack 1.9609991 ns
-* maxw_n I12/C1 330.896 slack 1.9609991 ns
+* maxw_p I12/C1 259.979 slack 2.6214995 ns
+* maxw_n I12/C1 442.348 slack 2.6214995 ns
 CI12/C1_fanout I12/C1 Vgnd 0.0046840003p
 Vinv_in_I12/C1 inv_in_I12/C1 Vgnd 0
 XI12/C1 I12/C1 inv_in_I12/C1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -954,26 +954,26 @@ CI12/X_fanout I12/X Vgnd 0.0073059998p
 * transition _08217_/A1 -> _08217_/X (↘)
 * celltype a41o, A3=1, A4=1, A2=1, B1=0 
 * pins 
-* maxw_p I13/A3 155.502 slack 1.5679998 ns
-* maxw_n I13/A3 264.582 slack 1.5679998 ns
+* maxw_p I13/A3 227.500 slack 2.2939997 ns
+* maxw_n I13/A3 387.086 slack 2.2939997 ns
 CI13/A3_fanout I13/A3 Vgnd 0.007038p
 Vinv_in_I13/A3 inv_in_I13/A3 Vgnd 0
 XI13/A3 I13/A3 inv_in_I13/A3 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI13/A3 I13/A3 inv_in_I13/A3 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I13/A4 143.006 slack 1.4419994 ns
-* maxw_n I13/A4 243.321 slack 1.4419994 ns
+* maxw_p I13/A4 217.087 slack 2.1889997 ns
+* maxw_n I13/A4 369.369 slack 2.1889997 ns
 CI13/A4_fanout I13/A4 Vgnd 0.002352p
 Vinv_in_I13/A4 inv_in_I13/A4 Vgnd 0
 XI13/A4 I13/A4 inv_in_I13/A4 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI13/A4 I13/A4 inv_in_I13/A4 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I13/A2 231.566 slack 2.3349996 ns
-* maxw_n I13/A2 394.005 slack 2.3349996 ns
+* maxw_p I13/A2 290.888 slack 2.9331663 ns
+* maxw_n I13/A2 494.939 slack 2.9331663 ns
 CI13/A2_fanout I13/A2 Vgnd 0.002315p
 Vinv_in_I13/A2 inv_in_I13/A2 Vgnd 0
 XI13/A2 I13/A2 inv_in_I13/A2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI13/A2 I13/A2 inv_in_I13/A2 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.36 l=0.15 ad=0.05 as=0.05 pd=0.69 ps=0.69 m=0.90
-* maxw_p I13/B1 454.441 slack 1.9689996 ns
-* maxw_n I13/B1 773.220 slack 1.9689996 ns
+* maxw_p I13/B1 606.575 slack 2.6281664 ns
+* maxw_n I13/B1 1032.073 slack 2.6281664 ns
 Vinv_in_I13/B1 inv_in_I13/B1 Vgnd 1.8
 XI13/B1 I13/B1 inv_in_I13/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI13/B1 I13/B1 inv_in_I13/B1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
@@ -1046,13 +1046,13 @@ CI13/X_fanout I13/X Vgnd 0.004739p
 * transition _08263_/A1 -> _08263_/Y (↘)
 * celltype a21oi, A2=1, B1=0 
 * pins 
-* maxw_p I14/A2 166.609 slack 1.6799998 ns
-* maxw_n I14/A2 283.481 slack 1.6799998 ns
+* maxw_p I14/A2 236.756 slack 2.3873332 ns
+* maxw_n I14/A2 402.835 slack 2.3873332 ns
 Vinv_in_I14/A2 inv_in_I14/A2 Vgnd 0
 XI14/A2 I14/A2 inv_in_I14/A2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI14/A2 I14/A2 inv_in_I14/A2 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I14/B1 598.228 slack 2.5919995 ns
-* maxw_n I14/B1 1017.870 slack 2.5919995 ns
+* maxw_p I14/B1 726.398 slack 3.1473331 ns
+* maxw_n I14/B1 1235.948 slack 3.1473331 ns
 Vinv_in_I14/B1 inv_in_I14/B1 Vgnd 1.8
 XI14/B1 I14/B1 inv_in_I14/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI14/B1 I14/B1 inv_in_I14/B1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
@@ -1109,8 +1109,8 @@ CI14/Y_fanout I14/Y Vgnd 0.004508p
 * transition _08267_/A_N -> _08267_/Y (↗)
 * celltype nand2b, B=1 
 * pins 
-* maxw_p I15/B 222.145 slack 2.2399998 ns
-* maxw_n I15/B 377.975 slack 2.2399998 ns
+* maxw_p I15/B 283.037 slack 2.8539996 ns
+* maxw_n I15/B 481.580 slack 2.8539996 ns
 CI15/B_fanout I15/B Vgnd 0.004562p
 Vinv_in_I15/B inv_in_I15/B Vgnd 0
 XI15/B I15/B inv_in_I15/B Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -1153,8 +1153,8 @@ CI15/Y_fanout I15/Y Vgnd 0.0046929996p
 * transition _08291_/A -> _08291_/Y (↗)
 * celltype nor2, B=0 
 * pins 
-* maxw_p I16/B 286.074 slack 2.4789994 ns
-* maxw_n I16/B 486.748 slack 2.4789994 ns
+* maxw_p I16/B 352.332 slack 3.0531664 ns
+* maxw_n I16/B 599.484 slack 3.0531664 ns
 CI16/B_fanout I16/B Vgnd 0.004706p
 Vinv_in_I16/B inv_in_I16/B Vgnd 1.8
 XI16/B I16/B inv_in_I16/B Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.54 l=0.15 ad=0.09 as=0.09 pd=0.91 ps=0.91 m=0.93
@@ -1192,25 +1192,25 @@ CI16/Y_fanout I16/Y Vgnd 0.0038550003p
 * transition _08309_/A2 -> _08309_/X (↘)
 * celltype a311o, A3=1, C1=0, A1=1, B1=0 
 * pins 
-* maxw_p I17/C1 726.551 slack 3.1479995 ns
-* maxw_n I17/C1 1236.210 slack 3.1479995 ns
+* maxw_p I17/C1 833.334 slack 3.6106663 ns
+* maxw_n I17/C1 1417.897 slack 3.6106663 ns
 CI17/C1_fanout I17/C1 Vgnd 0.003971p
 Vinv_in_I17/C1 inv_in_I17/C1 Vgnd 1.8
 XI17/C1 I17/C1 inv_in_I17/C1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI17/C1 I17/C1 inv_in_I17/C1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I17/B1 741.092 slack 3.2109997 ns
-* maxw_n I17/B1 1260.950 slack 3.2109997 ns
+* maxw_p I17/B1 845.451 slack 3.6631665 ns
+* maxw_n I17/B1 1438.514 slack 3.6631665 ns
 Vinv_in_I17/B1 inv_in_I17/B1 Vgnd 1.8
 XI17/B1 I17/B1 inv_in_I17/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI17/B1 I17/B1 inv_in_I17/B1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I17/A1 71.979 slack 0.7258 ns
-* maxw_n I17/A1 122.471 slack 0.7258 ns
+* maxw_p I17/A1 303.532 slack 3.0606663 ns
+* maxw_n I17/A1 516.453 slack 3.0606663 ns
 CI17/A1_fanout I17/A1 Vgnd 0.0035660001p
 Vinv_in_I17/A1 inv_in_I17/A1 Vgnd 0
 XI17/A1 I17/A1 inv_in_I17/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI17/A1 I17/A1 inv_in_I17/A1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I17/A3 242.971 slack 2.4499998 ns
-* maxw_n I17/A3 413.410 slack 2.4499998 ns
+* maxw_p I17/A3 300.392 slack 3.0289998 ns
+* maxw_n I17/A3 511.109 slack 3.0289998 ns
 Vinv_in_I17/A3 inv_in_I17/A3 Vgnd 0
 XI17/A3 I17/A3 inv_in_I17/A3 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI17/A3 I17/A3 inv_in_I17/A3 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
@@ -1286,14 +1286,14 @@ CI17/X_fanout I17/X Vgnd 0.004377p
 * transition _08320_/A1 -> _08320_/X (↘)
 * celltype a21o, A2=1, B1=0 
 * pins 
-* maxw_p I18/A2 148.907 slack 3.0029995 ns
-* maxw_n I18/A2 253.361 slack 3.0029995 ns
+* maxw_p I18/A2 173.047 slack 3.489833 ns
+* maxw_n I18/A2 294.435 slack 3.489833 ns
 CI18/A2_fanout I18/A2 Vgnd 0.004339p
 Vinv_in_I18/A2 inv_in_I18/A2 Vgnd 0
 XI18/A2 I18/A2 inv_in_I18/A2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.54 l=0.15 ad=0.09 as=0.09 pd=0.91 ps=0.91 m=0.93
 XI18/A2 I18/A2 inv_in_I18/A2 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I18/B1 729.552 slack 3.1609998 ns
-* maxw_n I18/B1 1241.315 slack 3.1609998 ns
+* maxw_p I18/B1 835.834 slack 3.6214998 ns
+* maxw_n I18/B1 1422.152 slack 3.6214998 ns
 CI18/B1_fanout I18/B1 Vgnd 0.002373p
 Vinv_in_I18/B1 inv_in_I18/B1 Vgnd 1.8
 XI18/B1 I18/B1 inv_in_I18/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -1350,14 +1350,14 @@ CI18/X_fanout I18/X Vgnd 0.0047270004p
 * transition _08322_/B1 -> _08322_/X (↘)
 * celltype o21a, A2=1, A1=1 
 * pins 
-* maxw_p I19/A1 71.979 slack 0.7258 ns
-* maxw_n I19/A1 122.471 slack 0.7258 ns
+* maxw_p I19/A1 365.845 slack 3.689 ns
+* maxw_n I19/A1 622.477 slack 3.689 ns
 CI19/A1_fanout I19/A1 Vgnd 0.017341001p
 Vinv_in_I19/A1 inv_in_I19/A1 Vgnd 0
 XI19/A1 I19/A1 inv_in_I19/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI19/A1 I19/A1 inv_in_I19/A1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I19/A2 323.301 slack 3.2599995 ns
-* maxw_n I19/A2 550.088 slack 3.2599995 ns
+* maxw_p I19/A2 367.333 slack 3.7039995 ns
+* maxw_n I19/A2 625.008 slack 3.7039995 ns
 CI19/A2_fanout I19/A2 Vgnd 0.015202001p
 Vinv_in_I19/A2 inv_in_I19/A2 Vgnd 0
 XI19/A2 I19/A2 inv_in_I19/A2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -1413,14 +1413,14 @@ C35_I19 I19/temp1 Vgnd 0.158207f
 * transition _08333_/B1 -> _08333_/Y (↘)
 * celltype a21oi, A2=0, A1=1 
 * pins 
-* maxw_p I20/A2 826.949 slack 3.5829997 ns
-* maxw_n I20/A2 1407.033 slack 3.5829997 ns
+* maxw_p I20/A2 916.998 slack 3.9731662 ns
+* maxw_n I20/A2 1560.250 slack 3.9731662 ns
 CI20/A2_fanout I20/A2 Vgnd 0.015296001p
 Vinv_in_I20/A2 inv_in_I20/A2 Vgnd 1.8
 XI20/A2 I20/A2 inv_in_I20/A2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI20/A2 I20/A2 inv_in_I20/A2 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I20/A1 71.979 slack 0.7258 ns
-* maxw_n I20/A1 122.471 slack 0.7258 ns
+* maxw_p I20/A1 365.845 slack 3.689 ns
+* maxw_n I20/A1 622.477 slack 3.689 ns
 CI20/A1_fanout I20/A1 Vgnd 0.01735p
 Vinv_in_I20/A1 inv_in_I20/A1 Vgnd 0
 XI20/A1 I20/A1 inv_in_I20/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -1469,8 +1469,8 @@ C30_I20 I20/temp1 Vgnd 0.034004f
 * transition _08335_/A -> _08335_/Y (↗)
 * celltype xnor2, B=0 
 * pins 
-* maxw_p I21/B 411.859 slack 3.5689998 ns
-* maxw_n I21/B 700.768 slack 3.5689998 ns
+* maxw_p I21/B 457.153 slack 3.9615 ns
+* maxw_n I21/B 777.834 slack 3.9615 ns
 Vinv_in_I21/B inv_in_I21/B Vgnd 1.8
 XI21/B I21/B inv_in_I21/B Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.54 l=0.15 ad=0.09 as=0.09 pd=0.91 ps=0.91 m=0.93
 XI21/B I21/B inv_in_I21/B Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.36 l=0.15 ad=0.05 as=0.05 pd=0.69 ps=0.69 m=0.90
@@ -1521,18 +1521,18 @@ C29_I21 I21/temp2 Vgnd 0.199276f
 * transition _08336_/B1 -> _08336_/X (↘)
 * celltype a22o, A2=0, B2=1, A1=1 
 * pins 
-* maxw_p I22/A1 71.979 slack 0.7258 ns
-* maxw_n I22/A1 122.471 slack 0.7258 ns
+* maxw_p I22/A1 163.039 slack 1.6440005 ns
+* maxw_n I22/A1 277.406 slack 1.6440005 ns
 Vinv_in_I22/A1 inv_in_I22/A1 Vgnd 0
 XI22/A1 I22/A1 inv_in_I22/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI22/A1 I22/A1 inv_in_I22/A1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I22/A2 114.130 slack 0.9890003 ns
-* maxw_n I22/A2 194.189 slack 0.9890003 ns
+* maxw_p I22/A2 209.045 slack 1.8115005 ns
+* maxw_n I22/A2 355.685 slack 1.8115005 ns
 Vinv_in_I22/A2 inv_in_I22/A2 Vgnd 1.8
 XI22/A2 I22/A2 inv_in_I22/A2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=0.54 l=0.15 ad=0.09 as=0.09 pd=0.91 ps=0.91 m=0.93
 XI22/A2 I22/A2 inv_in_I22/A2 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.36 l=0.15 ad=0.05 as=0.05 pd=0.69 ps=0.69 m=0.90
-* maxw_p I22/B2 382.407 slack 3.8559995 ns
-* maxw_n I22/B2 650.656 slack 3.8559995 ns
+* maxw_p I22/B2 416.588 slack 4.2006664 ns
+* maxw_n I22/B2 708.815 slack 4.2006664 ns
 CI22/B2_fanout I22/B2 Vgnd 0.021363p
 Vinv_in_I22/B2 inv_in_I22/B2 Vgnd 0
 XI22/B2 I22/B2 inv_in_I22/B2 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
@@ -1596,14 +1596,14 @@ C41_I22 I22/temp0 Vgnd 0.190287f
 * transition _08338_/A2 -> _08338_/X (↘)
 * celltype a21o, A1=1, B1=0 
 * pins 
-* maxw_p I23/A1 71.979 slack 0.7258 ns
-* maxw_n I23/A1 122.471 slack 0.7258 ns
+* maxw_p I23/A1 431.381 slack 4.3498335 ns
+* maxw_n I23/A1 733.985 slack 4.3498335 ns
 CI23/A1_fanout I23/A1 Vgnd 0.011642p
 Vinv_in_I23/A1 inv_in_I23/A1 Vgnd 0
 XI23/A1 I23/A1 inv_in_I23/A1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI23/A1 I23/A1 inv_in_I23/A1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
-* maxw_p I23/B1 868.031 slack 3.761 ns
-* maxw_n I23/B1 1476.933 slack 3.761 ns
+* maxw_p I23/B1 951.233 slack 4.1215 ns
+* maxw_n I23/B1 1618.500 slack 4.1215 ns
 Vinv_in_I23/B1 inv_in_I23/B1 Vgnd 1.8
 XI23/B1 I23/B1 inv_in_I23/B1 Vdd Vdd sky130_fd_pr__pfet_01v8_hvt w=1.00 l=0.15 ad=0.15 as=0.15 pd=1.30 ps=1.30 m=1.00
 XI23/B1 I23/B1 inv_in_I23/B1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 w=0.65 l=0.15 ad=0.10 as=0.10 pd=0.95 ps=0.95 m=1.00
