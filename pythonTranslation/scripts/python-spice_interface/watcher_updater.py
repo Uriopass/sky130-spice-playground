@@ -1,4 +1,3 @@
-import time
 import os
 import subprocess
 
@@ -44,22 +43,38 @@ def run(filename):
         for i in range(len(lines)):
             if not lines[i].startswith('# timing for'):
                 continue
-            lines[i] = lines[i].split(":")[0]
-            name = lines[i].split(" ")[-1]
-            lines[i] += ':'
+            timing_name, previous_times = lines[i].split(":")
+            lines[i] = timing_name + ":"
+            name = timing_name.split(" ")[-1]
             name = name.lower()
+
+            previous_times = previous_times.strip().split()
+
             if 'rise_'+name in measures:
                 value = measures['rise_'+name]*1e9
-                lines[i] += f" {value:.2f}n"
+                lines[i] += f" {value:.3f}"
 
             if 'fall_'+name in measures:
                 value = measures['fall_'+name]*1e9
-                lines[i] += f" {value:.2f}n"
+                lines[i] += f" {value:.3f}"
+
+            if 'rise_'+name in measures and len(previous_times) > 0:
+                value = measures['rise_'+name]*1e9
+                previous_rise = float(previous_times[0])
+                lines[i] += f" {value-previous_rise:+.3f}"
+
+            if 'fall_'+name in measures and len(previous_times) > 1:
+                value = measures['fall_'+name]*1e9
+                previous_fall = float(previous_times[1])
+                lines[i] += f" {value-previous_fall:+.3f}"
+
         content = "\n".join(lines)
 
     with open(filename, 'w') as f:
         f.write(content)
         f.flush()
+
+    print("Updated the script with the new timing values")
 def watch_and_run(filename):
     try:
         last_mtime = os.path.getmtime(filename)
@@ -82,7 +97,7 @@ def watch_and_run(filename):
             last_mtime = None
 
 if __name__ == "__main__":
-    filename_to_watch = "python_spice.py"  # Replace with your script's filename
+    filename_to_watch = "python_spice_real.py"  # Replace with your script's filename
     filename_spice_output = "../../../simulations/generated_out.spice"
     print(f"Watching {filename_to_watch} for changes. Press Ctrl+C to stop.")
     watch_and_run(filename_to_watch)

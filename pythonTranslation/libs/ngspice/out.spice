@@ -9,14 +9,18 @@ Vgnd Vgnd 0 0
 Vdd Vdd Vgnd 1.8
 Vclk clk Vgnd PULSE(0 1.8 0n 0.2n 0 0 0)
 
-.ic V(I0/Q) = 0
+.param v_iq_c = 0
+.param v_start = 1.8
+
+.ic V(I0/Q) = {v_iq_c}
+
+VI0/D I0/D Vgnd {v_start}
 
 
 
 * transition 814_dfxtp_1/Q -> 814_dfxtp_1/Q (↗)
 * celltype dfxtp 
 * pins 
-VI0/D I0/D Vgnd 1.8
 
 * cell 
 X0_I0 I0/Q I0/temp1 Vgnd Vgnd sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.08775 ps=0.92 w=0.65 l=0.15 

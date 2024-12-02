@@ -9,17 +9,11 @@ def parse_spice(spice_path):
     cells = []
     pin_p_max_sizes = {}
     pin_n_max_sizes = {}
-    plotline = None
 
     i = 0
     celltype = ""
     while i < len(spice_content):
         line = spice_content[i]
-
-        if line.startswith("plot "):
-            plotline = i
-            i += 1
-            continue
 
         if line == "* pins":
             pin_p_max_sizes = {}
@@ -83,7 +77,7 @@ def parse_spice(spice_path):
                 i += 1
                 line = spice_content[i]
 
-            lines_to_clear = []
+            fets_to_clear = []
 
             # merge transistors
             new_transistors = []
@@ -91,7 +85,7 @@ def parse_spice(spice_path):
                 for new_transistor in new_transistors:
                     if new_transistor["gate"] == transistor["gate"] and new_transistor["source"] == transistor["source"] and new_transistor["drain"] == transistor["drain"] and new_transistor["instance"] == transistor["instance"]:
                         new_transistor["w"] += transistor["w"]
-                        lines_to_clear.append(transistor["line"])
+                        fets_to_clear.append(transistor["name"])
                         break
                 else:
                     new_transistors.append(transistor)
@@ -101,17 +95,16 @@ def parse_spice(spice_path):
             cells.append({
                 "celltype": celltype,
                 "transistors": new_transistors,
-                "lines_to_clear": lines_to_clear,
+                "fets_to_clear": fets_to_clear,
             })
             celltype = ""
         else:
             i += 1
-    return cells, plotline
+    return cells
 
 
-def spice_to_python(cells, plotline):
-    python_code = """import bisect
-
+def spice_to_python(cells):
+    python_code = """
 bins_nfet = [
     0.36,
     0.39,
@@ -170,6 +163,20 @@ def area(W):
 def perim(W):
     return 2*(W + 0.15)
 
+fets = {}
+
+def find_bin(bins, W):
+    bestbin = bins[0]
+    binscore = 1
+    for bin in bins:
+        mult = W / bin
+        score = abs(mult - round(mult))
+        if score <= binscore:
+            bestbin = bin
+            binscore = score
+
+    return bestbin, W / bestbin
+
 def pfet(W, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: pfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
@@ -177,12 +184,12 @@ def pfet(W, name, D, G, S):
     timings_to_track.add(D)
     timings_to_track.add(G)
     timings_to_track.add(S)
+    
+    closest_bin, mult = find_bin(bins_pfet, W)
 
-    closest_bin = bins_pfet[min(bisect.bisect_left(bins_pfet, W), len(bins_pfet) - 1)]
-    mult = W / closest_bin
     ar = area(W) / mult
     pe = perim(W) / mult
-    return f"X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={closest_bin} l=0.15"
+    fets[name] = f"X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={closest_bin} l=0.15"
 
 def nfet(W, name, D, G, S):
     if W < MINSIZE:
@@ -191,12 +198,11 @@ def nfet(W, name, D, G, S):
     timings_to_track.add(D)
     timings_to_track.add(G)
     timings_to_track.add(S)
-
-    closest_bin = bins_nfet[min(bisect.bisect_left(bins_nfet, W), len(bins_nfet) - 1)]
-    mult = W / closest_bin
+    
+    closest_bin, mult = find_bin(bins_nfet, W)
     ar = area(W) / mult
     pe = perim(W) / mult
-    return f"X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8 ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={closest_bin} l=0.15"
+    fets[name] = f"X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8 ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={closest_bin} l=0.15"
 
 with open("../../libs/ngspice/out.spice", 'r') as f:
     spice = f.read()
@@ -206,10 +212,10 @@ spice = spice.split('\\n')
 
     to_clear = []
     for cell in cells:
-        to_clear.extend(cell["lines_to_clear"])
+        to_clear.extend(cell["fets_to_clear"])
     python_code += f"""
 to_clear = {to_clear}
-for line in to_clear: spice[line] = ''
+for name in to_clear: fets[name] = ''
 
 """
 
@@ -234,7 +240,7 @@ for line in to_clear: spice[line] = ''
             align_gate = (size_gate - len(transistor["gate"])) * " "
             align_source = (size_source - len(transistor["source"])) * " "
 
-            line = f'spice[{transistor["line"]:>4}] = {function_name}({transistor["w"]:.2f}, "{transistor["name"]}"{align_name}, {align_drain}"{transistor["drain"]}", {align_gate}"{transistor["gate"]}", {align_source}"{transistor["source"]}")'
+            line = f'{function_name}({transistor["w"]:.2f}, "{transistor["name"]}"{align_name}, {align_drain}"{transistor["drain"]}", {align_gate}"{transistor["gate"]}", {align_source}"{transistor["source"]}")'
             if "max_size" in transistor:
                 nb_spaces = 80 - len(line)
 
@@ -252,20 +258,35 @@ for line in to_clear: spice[line] = ''
         python_code += "\n\n"
     python_code += f"""
 
-spice[{plotline}] = ""
+plotline = None
+
+for i,line in enumerate(spice):
+    if len(line) == 0:
+        continue
+    if line.startswith("plot "):
+        plotline = i
+    if line[0] != 'X':
+        continue
+    name = line.split()[0][1:]
+    if name in fets:
+        spice[i] = fets[name]
+
+spice[plotline] = ""
 
 for name in timings_to_track:
-    spice.insert({plotline}+1, f"meas tran fall_{{name}} when V({{name}}) = 0.9")
-spice.insert({plotline}+1,"run")
-spice.insert({plotline}+1,"reset")
-spice.insert({plotline}+1, "alterparam v_start=0")
-spice.insert({plotline}+1, "alterparam v_q_ic=1.8")
+    spice.insert(plotline+1, f"meas tran fall_{{name}} when V({{name}}) = 0.9")
+spice.insert(plotline+1,"run")
+spice.insert(plotline+1,"reset")
+spice.insert(plotline+1, "alterparam v_start=0")
+spice.insert(plotline+1, "alterparam v_q_ic=1.8")
 
 for name in timings_to_track:
-    spice.insert({plotline}+1, f"meas tran rise_{{name}} when V({{name}}) = 0.9")
-spice.insert({plotline}+1, "run")
-spice.insert({plotline}+1, "alterparam v_start=1.8")
-spice.insert({plotline}+1, "alterparam v_q_ic=0")
+    spice.insert(plotline+1, f"meas tran rise_{{name}} when V({{name}}) = 0.9")
+spice.insert(plotline+1, "run")
+spice.insert(plotline+1, "alterparam v_start=1.8")
+spice.insert(plotline+1, "alterparam v_q_ic=0")
+
+spice.insert(0, "* Generated by python_spice")
 
 spice = "\\n".join(spice)
 file_name = "../../../simulations/generated_out.spice"
@@ -281,9 +302,9 @@ with open(file_name, "w") as file:
 
 def main():
     spice_path = "../../libs/ngspice/out.spice"
-    cells, plotline = parse_spice(spice_path)
+    cells = parse_spice(spice_path)
 
-    spice_to_python(cells, plotline)
+    spice_to_python(cells)
 
 
 if __name__ == "__main__":
