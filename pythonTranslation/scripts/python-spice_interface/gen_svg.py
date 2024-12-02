@@ -45,7 +45,7 @@ def generate_svg(data):
 
         def get_color(value):
             if value is None:
-                return "rgb(128, 128, 128)"  # Gray for None
+                return "rgb(32, 32, 32)"  # Gray for None
             zero_color = [0, 0, 0]
             green = [0, 255, 0]
             red = [255, 0, 0]
