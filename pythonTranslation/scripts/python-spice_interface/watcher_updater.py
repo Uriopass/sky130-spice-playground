@@ -52,19 +52,24 @@ def run(filename):
 
             with_img = lines[i].startswith('# timing with img')
 
-            timing_name, previous_times_str = lines[i].split(":")
+            timing_name, timings_str = lines[i].split(":")
             lines[i] = timing_name + ":"
             name = timing_name.split(" ")[-1]
             name = name.lower()
 
-            previous_times_str = previous_times_str.strip()
+            timings_str = timings_str.strip()
 
-            previous_times = previous_times_str.split("|")[0].split()
+            splitted = timings_str.split("|")
 
+            ref_times = splitted[0].split()
 
-            for v in previous_times:
+            previous_times = None
+            if len(splitted) > 1:
+                previous_times = splitted[1].split()
+
+            for v in ref_times:
                 lines[i] += " " + v
-            if len(previous_times) > 0:
+            if len(ref_times) > 0:
                 lines[i] += " |"
 
             if 'rise_'+name in measures:
@@ -75,19 +80,19 @@ def run(filename):
                 value = measures['fall_'+name]*1e9
                 lines[i] += f" {value:.3f}"
 
-            if len(previous_times_str) == 0:
+            if len(timings_str) == 0:
                 lines[i] += " |"
 
             drise = None
-            if 'rise_'+name in measures and len(previous_times) > 0:
+            if 'rise_'+name in measures and len(ref_times) > 0:
                 value_rise = measures['rise_'+name]*1e9
-                previous_rise = float(previous_times[0])
+                previous_rise = float(ref_times[0])
                 drise = value_rise-previous_rise
 
             dfall = None
-            if 'fall_'+name in measures and len(previous_times) > 1:
+            if 'fall_'+name in measures and len(ref_times) > 1:
                 value = measures['fall_'+name]*1e9
-                previous_fall = float(previous_times[1])
+                previous_fall = float(ref_times[1])
                 dfall = value-previous_fall
 
             if (drise is not None and abs(drise) >= 0.001) or (dfall is not None and abs(dfall) >= 0.001):
@@ -100,6 +105,32 @@ def run(filename):
                     lines[i] += f" {dfall:+.3f}"
                 else:
                     lines[i] += " ??????"
+
+
+            if previous_times is not None:
+                drise = None
+                if 'rise_'+name in measures and len(previous_times) > 0:
+                    value_rise = measures['rise_'+name]*1e9
+                    previous_rise = float(previous_times[0])
+                    drise = value_rise-previous_rise
+
+                dfall = None
+                if 'fall_'+name in measures and len(previous_times) > 1:
+                    value = measures['fall_'+name]*1e9
+                    previous_fall = float(previous_times[1])
+                    dfall = value-previous_fall
+
+                if (drise is not None and abs(drise) >= 0.001) or (dfall is not None and abs(dfall) >= 0.001):
+                    if drise is not None:
+                        lines[i] += f" {drise:+.3f}"
+                    else:
+                        lines[i] += " ??????"
+
+                    if dfall is not None:
+                        lines[i] += f" {dfall:+.3f}"
+                    else:
+                        lines[i] += " ??????"
+
 
             timing_diffs.append((name, drise, dfall))
 
