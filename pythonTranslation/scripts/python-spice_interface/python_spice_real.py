@@ -71,28 +71,28 @@ def find_bin(bins, W):
 
     return bestbin, W / bestbin
 
-def pfet(_, W, name, D, G, S):
+def pfet(W, _, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: pfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
 
     timings_to_track.add(D)
     timings_to_track.add(G)
     timings_to_track.add(S)
-    
+
     closest_bin, mult = find_bin(bins_pfet, W)
 
     ar = area(W) / mult
     pe = perim(W) / mult
     fets[name] = f"X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={closest_bin} l=0.15"
 
-def nfet(_, W, name, D, G, S):
+def nfet(W, _, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: nfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
 
     timings_to_track.add(D)
     timings_to_track.add(G)
     timings_to_track.add(S)
-    
+
     closest_bin, mult = find_bin(bins_nfet, W)
     ar = area(W) / mult
     pe = perim(W) / mult
@@ -132,7 +132,7 @@ nfet(0.36, 0.36, "1_I0" , "I0/temp8", "I0/temp9",  "I0/temp2")
 nfet(0.36, 0.36, "16_I0", "I0/temp7", "I0/temp9",  "I0/temp6")
 nfet(0.42, 0.42, "23_I0",     "Vgnd",      "clk",  "I0/temp3")
 # timing for       I0/D:
-# timing for       I0/Q: 0.074 0.438 | 0.074 0.438
+# timing for       I0/Q: 0.074 0.438 | 0.038 0.423 -0.036 -0.015
 # timing for        clk: 0.100 0.100 | 0.100 0.100
 
 
@@ -141,10 +141,10 @@ pfet(1.00, 4 * 1.00, "0_I1",  "Vdd",     "I1/A", "I1/temp0")
 nfet(0.42, 4 * 0.42, "5_I1", "Vgnd",     "I1/A", "I1/temp0")
 pfet(4.00, 4 * 4.00, "3_I1",  "Vdd", "I1/temp0",     "I1/X")
 nfet(1.68, 4 * 1.68, "1_I1", "Vgnd", "I1/temp0",     "I1/X")
-# timing for       I1/A: 0.074 0.438 | 0.074 0.438
-# timing for       I1/X: 0.204 0.567 | 0.204 0.567
-# timing for       I1/temp0: 0.149 0.525 | 0.149 0.525
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for       I1/A: 0.074 0.438 | 0.038 0.423 -0.036 -0.015
+# timing for       I1/X: 0.204 0.567 | 0.211 0.590 +0.007 +0.023
+# timing for       I1/temp0: 0.149 0.525 | 0.110 0.510 -0.039 -0.015
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  buf ===
@@ -152,38 +152,40 @@ pfet(1.00, 4 * 1.00, "8_I2",  "Vdd",     "I2/A", "I2/temp0")
 nfet(0.65, 4 * 0.65, "9_I2", "Vgnd",     "I2/A", "I2/temp0")
 pfet(4.00, 4 * 4.00, "0_I2",  "Vdd", "I2/temp0",     "I2/X")
 nfet(2.60, 4 * 2.60, "4_I2", "Vgnd", "I2/temp0",     "I2/X")
-# timing for       I2/A: 0.206 0.568 | 0.206 0.568
-# timing for   I2/temp0: 0.249 0.652 | 0.249 0.652
-# timing for       I2/X: 0.303 0.694 | 0.303 0.694
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for       I2/A: 0.206 0.568 | 0.212 0.591 +0.006 +0.023
+# timing for   I2/temp0: 0.249 0.652 | 0.276 0.701 +0.027 +0.049
+# timing for       I2/X: 0.303 0.694 | 0.406 0.787 +0.103 +0.093
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  mux2, A0=1, A1=0 ===
 
-pfet(0.42, 0.42, "1_I3" ,      "Vdd",     "I3/S", "I3/temp1")
-nfet(0.42, 0.42, "5_I3" ,     "Vgnd",     "I3/S", "I3/temp1")
-pfet(0.42, 0.42, "0_I3" ,      "Vdd", "I3/temp1", "I3/temp3")
-nfet(0.42, 0.42, "3_I3" ,     "Vgnd", "I3/temp1", "I3/temp0")
+pfet(0.42, 16 * 0.42, "1_I3" ,      "Vdd",     "I3/S", "I3/temp1")
+nfet(0.42, 16 * 0.42, "5_I3" ,     "Vgnd",     "I3/S", "I3/temp1")
 
-pfet(0.42, 0.42, "7_I3" , "I3/temp3",    "I3/A1", "I3/temp5")                         # Max size: 406.743
-nfet(0.42, 0.42, "9_I3" ,     "Vgnd",     "I3/S", "I3/temp2")
-nfet(0.42, 0.42, "8_I3" , "I3/temp2",    "I3/A1", "I3/temp5")                         # Max size: 692.063
+pfet(0.42, 8 * 0.42, "0_I3" ,      "Vdd", "I3/temp1", "I3/temp3")
+nfet(0.42, 8 * 0.42, "3_I3" ,     "Vgnd", "I3/temp1", "I3/temp0")
 
-pfet(0.42, 0.42, "2_I3" ,      "Vdd",     "I3/S", "I3/temp4")
-pfet(0.42, 0.42, "4_I3" , "I3/temp4",    "I3/A0", "I3/temp5")                         # Max size: 155.188
-nfet(0.42, 0.42, "6_I3" , "I3/temp0",    "I3/A0", "I3/temp5")                         # Max size: 264.04
+pfet(0.42, 8 * 0.42, "7_I3" , "I3/temp3",    "I3/A1", "I3/temp5")                         # Max size: 406.743
 
-pfet(1.00, 1.00, "10_I3",      "Vdd", "I3/temp5",     "I3/X")
-nfet(0.65, 0.65, "11_I3",     "Vgnd", "I3/temp5",     "I3/X")
-# timing for       I3/S: 0.305 0.696 | 0.305 0.696
-# timing for       I3/X: 0.621 0.924 | 0.621 0.924
-# timing for   I3/temp0: 0.560 0.775 | 0.560 0.775
-# timing for   I3/temp5: 0.537 0.828 | 0.537 0.828
+nfet(0.42, 8 * 0.42, "8_I3" , "I3/temp2",    "I3/A1", "I3/temp5")                         # Max size: 692.063
+nfet(0.42, 8 * 0.42, "9_I3" ,     "Vgnd",     "I3/S", "I3/temp2")
+
+pfet(0.42, 8 * 0.42, "2_I3" ,      "Vdd",     "I3/S", "I3/temp4")
+pfet(0.42, 8 * 0.42, "4_I3" , "I3/temp4",    "I3/A0", "I3/temp5")                         # Max size: 155.188
+nfet(0.42, 8 * 0.42, "6_I3" , "I3/temp0",    "I3/A0", "I3/temp5")                         # Max size: 264.04
+
+pfet(1.00, 4 * 1.00, "10_I3",      "Vdd", "I3/temp5",     "I3/X")
+nfet(0.65, 4 * 0.65, "11_I3",     "Vgnd", "I3/temp5",     "I3/X")
+# timing for       I3/S: 0.305 0.696 | 0.408 0.789 +0.103 +0.093
+# timing for       I3/X: 0.621 0.924 | 0.746 1.038 +0.125 +0.114
+# timing for   I3/temp0: 0.560 0.775 | 0.685 0.889 +0.125 +0.114
+# timing for   I3/temp5: 0.537 0.828 | 0.662 0.941 +0.125 +0.113
 # timing for   I3/temp2:
-# timing for   I3/temp3: 0.358 1.112 | 0.358 1.112
+# timing for   I3/temp3: 0.358 1.112 | 0.482 1.225 +0.124 +0.113
 # timing for   I3/temp4:
-# timing for   I3/temp1: 0.340 0.764 | 0.340 0.764
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for   I3/temp1: 0.340 0.764 | 0.459 0.877 +0.119 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  mux2, S=0, A1=1 ===
@@ -200,15 +202,15 @@ nfet(0.42, 0.42, "8_I4" ,     "Vgnd", "I4/temp4", "I4/temp1")
 
 pfet(2.00, 2.00, "2_I4" ,      "Vdd", "I4/temp5",     "I4/X")
 nfet(1.30, 1.30, "4_I4" ,     "Vgnd", "I4/temp5",     "I4/X")
-# timing for      I4/A0: 0.621 0.925 | 0.621 0.925
-# timing for       I4/X: 0.957 1.206 | 0.957 1.206
+# timing for      I4/A0: 0.621 0.925 | 0.746 1.038 +0.125 +0.113
+# timing for       I4/X: 0.957 1.206 | 1.082 1.319 +0.125 +0.113
 # timing for   I4/temp0:
 # timing for   I4/temp1:
 # timing for   I4/temp2:
-# timing for   I4/temp3: 0.848 1.039 | 0.848 1.039
+# timing for   I4/temp3: 0.848 1.039 | 0.973 1.152 +0.125 +0.113
 # timing for   I4/temp4:
-# timing for   I4/temp5: 0.825 1.018 | 0.825 1.018
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for   I4/temp5: 0.825 1.018 | 0.950 1.131 +0.125 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  xor2, A=0 ===
@@ -222,13 +224,13 @@ nfet(0.65, 0.65, "9_I5",     "Vgnd",     "I5/A", "I5/temp1")                    
 nfet(0.65, 0.65, "1_I5", "I5/temp1",     "I5/B",     "I5/X")
 nfet(0.65, 0.65, "2_I5",     "Vgnd",     "I5/B", "I5/temp3")
 nfet(0.65, 0.65, "6_I5",     "Vgnd", "I5/temp3",     "I5/X")
-# timing for       I5/B: 0.959 1.208 | 0.959 1.208
-# timing for       I5/X: 1.165 1.517 | 1.165 1.517
+# timing for       I5/B: 0.959 1.208 | 1.084 1.321 +0.125 +0.113
+# timing for       I5/X: 1.165 1.517 | 1.290 1.630 +0.125 +0.113
 # timing for   I5/temp0:
-# timing for   I5/temp1: 1.536 | 1.536
+# timing for   I5/temp1: 1.536 | 1.650
 # timing for   I5/temp2:
-# timing for   I5/temp3: 1.078 1.260 | 1.078 1.260
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for   I5/temp3: 1.078 1.260 | 1.203 1.373 +0.125 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a21o, A1=1, B1=0 ===
@@ -243,12 +245,12 @@ nfet(0.65, 0.65, "0_I6",     "Vgnd",    "I6/B1", "I6/temp2")                    
 
 pfet(1.00, 1.00, "2_I6",      "Vdd", "I6/temp2",     "I6/X")
 nfet(0.65, 0.65, "4_I6",     "Vgnd", "I6/temp2",     "I6/X")
-# timing for      I6/A2: 1.166 1.517 | 1.166 1.517
-# timing for       I6/X: 1.393 1.784 | 1.393 1.784
-# timing for   I6/temp0: 1.205 2.174 | 1.205 2.174
+# timing for      I6/A2: 1.166 1.517 | 1.290 1.630 +0.124 +0.113
+# timing for       I6/X: 1.393 1.784 | 1.518 1.897 +0.125 +0.113
+# timing for   I6/temp0: 1.205 2.174 | 1.330 2.288 +0.125 +0.114
 # timing for   I6/temp1:
-# timing for   I6/temp2: 1.293 1.613 | 1.293 1.613
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for   I6/temp2: 1.293 1.613 | 1.418 1.726 +0.125 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a211o, C1=0, A1=1, B1=0 ===
@@ -265,13 +267,13 @@ nfet(0.65, 0.65, "7_I7", "I7/temp0",    "I7/A2", "I7/temp2")
 
 pfet(1.00, 1.00, "0_I7",      "Vdd", "I7/temp2",     "I7/X")
 nfet(0.65, 0.65, "4_I7",     "Vgnd", "I7/temp2",     "I7/X")
-# timing for      I7/A2: 1.394 1.785 | 1.394 1.785
-# timing for       I7/X: 1.713 2.021 | 1.713 2.021
+# timing for      I7/A2: 1.394 1.785 | 1.518 1.898 +0.124 +0.113
+# timing for       I7/X: 1.713 2.021 | 1.838 2.134 +0.125 +0.113
 # timing for   I7/temp0:
-# timing for   I7/temp1: 1.467 2.871 | 1.467 2.871
-# timing for   I7/temp2: 1.608 1.880 | 1.608 1.880
-# timing for   I7/temp3: 1.435 3.718 | 1.435 3.718
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for   I7/temp1: 1.467 2.871 | 1.591 2.984 +0.124 +0.113
+# timing for   I7/temp2: 1.608 1.880 | 1.733 1.993 +0.125 +0.113
+# timing for   I7/temp3: 1.435 3.718 | 1.559 3.831 +0.124 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a311o, C1=0, A1=1, A2=1, B1=0 ===
@@ -290,14 +292,14 @@ nfet(0.65, 0.65, "10_I8",     "Vgnd",    "I8/C1", "I8/temp2")                   
 
 pfet(2.00, 2.00, "6_I8" ,      "Vdd", "I8/temp2",     "I8/X")
 nfet(1.30, 1.30, "8_I8" ,     "Vgnd", "I8/temp2",     "I8/X")
-# timing for      I8/A3: 1.714 2.021 | 1.714 2.021
-# timing for       I8/X: 2.088 2.277 | 2.088 2.277
-# timing for   I8/temp0: 1.757 4.301 | 1.757 4.301
+# timing for      I8/A3: 1.714 2.021 | 1.839 2.134 +0.125 +0.113
+# timing for       I8/X: 2.088 2.277 | 2.213 2.390 +0.125 +0.113
+# timing for   I8/temp0: 1.757 4.301 | 1.882 4.414 +0.125 +0.113
 # timing for   I8/temp1:
-# timing for   I8/temp2: 1.985 2.142 | 1.985 2.142
-# timing for   I8/temp3: 1.790 3.251 | 1.790 3.251
+# timing for   I8/temp2: 1.985 2.142 | 2.110 2.255 +0.125 +0.113
+# timing for   I8/temp3: 1.790 3.251 | 1.915 3.364 +0.125 +0.113
 # timing for   I8/temp4:
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a221oi, B2=1, C1=0, A1=1, B1=0 ===
@@ -315,13 +317,13 @@ nfet(1.30, 1.30, "4_I9" , "I9/temp2", "I9/A2",     "I9/Y")
 
 pfet(2.00, 2.00, "9_I9" , "I9/temp0", "I9/C1",     "I9/Y")                            # Max size: 469.058
 nfet(1.30, 1.30, "10_I9",     "Vgnd", "I9/C1",     "I9/Y")                            # Max size: 798.091
-# timing for      I9/A2: 2.089 2.277 | 2.089 2.277
-# timing for       I9/Y: 2.339 2.367 | 2.339 2.367
-# timing for   I9/temp0: 2.170 3.791 | 2.170 3.791
-# timing for   I9/temp1: 2.133 5.223 | 2.133 5.223
+# timing for      I9/A2: 2.089 2.277 | 2.214 2.391 +0.125 +0.114
+# timing for       I9/Y: 2.339 2.367 | 2.464 2.480 +0.125 +0.113
+# timing for   I9/temp0: 2.170 3.791 | 2.295 3.905 +0.125 +0.114
+# timing for   I9/temp1: 2.133 5.223 | 2.258 5.336 +0.125 +0.113
 # timing for   I9/temp2:
 # timing for   I9/temp3:
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 # ===  or4, D=0, C=0, B=0 ===
 pfet(0.42, 0.42, "3_I10",       "Vdd",     "I10/D", "I10/temp1")                      # Max size: 157.955
@@ -336,13 +338,13 @@ nfet(0.42, 0.42, "1_I10",      "Vgnd",     "I10/D", "I10/temp0")                
 
 pfet(1.00, 1.0,  "6_I10",       "Vdd", "I10/temp0", "I10/X")
 nfet(0.65, 0.65, "4_I10",      "Vgnd", "I10/temp0", "I10/X")
-# timing for      I10/A: 2.340 2.367 | 2.340 2.367
-# timing for      I10/X: 2.532 2.850 | 2.532 2.850
-# timing for    I10/temp0: 2.416 2.720 | 2.416 2.720
+# timing for      I10/A: 2.340 2.367 | 2.464 2.480 +0.124 +0.113
+# timing for      I10/X: 2.532 2.850 | 2.657 2.963 +0.125 +0.113
+# timing for    I10/temp0: 2.416 2.720 | 2.541 2.833 +0.125 +0.113
 # timing for  I10/temp2:
 # timing for  I10/temp3:
 # timing for  I10/temp1:
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a21oi, A2=1, B1=0 ===
@@ -359,12 +361,12 @@ nfet(0.65, 0.65, "2_I11" , "I11/temp1", "I11/A1",     "I11/Y")
 pfet(4.00, 4.00, "4_I11" , "I11/temp2", "I11/B1",     "I11/Y")                        # Max size: 264.148
 nfet(0.36, 0.36, "1_I11" ,      "Vgnd", "I11/B1",     "I11/Y")                        # Max size: 449.442
 #                        ref           measure      delta = measure - ref
-# timing for     I11/A1: 2.532 2.850 | 2.532 2.850
-# timing for      I11/Y: 2.649 3.062 | 2.649 3.062
+# timing for     I11/A1: 2.532 2.850 | 2.657 2.963 +0.125 +0.113
+# timing for      I11/Y: 2.649 3.062 | 2.773 3.175 +0.124 +0.113
 # timing for  I11/temp0:
 # timing for  I11/temp1:
-# timing for  I11/temp2: 3.016 2.905 | 3.016 2.905
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for  I11/temp2: 3.016 2.905 | 3.141 3.018 +0.125 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  o211a, A2=0, C1=1, B1=1 ===
@@ -381,13 +383,13 @@ nfet(0.65, 0.65, "6_I12", "I12/temp2",    "I12/C1", "I12/temp1")                
 
 pfet(1.00, 1.00, "7_I12",       "Vdd", "I12/temp2",     "I12/X")
 nfet(0.65, 0.65, "8_I12",      "Vgnd", "I12/temp2",     "I12/X")
-# timing for     I12/A1: 2.649 3.062 | 2.649 3.062
-# timing for      I12/X: 2.926 3.330 | 2.926 3.330
+# timing for     I12/A1: 2.649 3.062 | 2.774 3.175 +0.125 +0.113
+# timing for      I12/X: 2.926 3.330 | 3.050 3.443 +0.124 +0.113
 # timing for  I12/temp0:
-# timing for  I12/temp1: 2.853 3.095 | 2.853 3.095
-# timing for  I12/temp2: 2.814 3.155 | 2.814 3.155
-# timing for  I12/temp3: 2.875 3.077 | 2.875 3.077
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for  I12/temp1: 2.853 3.095 | 2.978 3.208 +0.125 +0.113
+# timing for  I12/temp2: 2.814 3.155 | 2.939 3.269 +0.125 +0.114
+# timing for  I12/temp3: 2.875 3.077 | 3.000 3.190 +0.125 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a41o, A3=1, A4=1, A2=1, B1=0 ===
@@ -406,14 +408,14 @@ nfet(0.65, 0.65, "9_I13" ,      "Vgnd",    "I13/B1", "I13/temp3")               
 
 pfet(1.00, 1.00, "8_I13" ,       "Vdd", "I13/temp3",     "I13/X")
 nfet(0.65, 0.65, "10_I13",      "Vgnd", "I13/temp3",     "I13/X")
-# timing for     I13/A1: 2.926 3.330 | 2.926 3.330
-# timing for      I13/X: 3.163 3.614 | 3.163 3.614
-# timing for  I13/temp0: 2.977 4.192 | 2.977 4.192
+# timing for     I13/A1: 2.926 3.330 | 3.051 3.443 +0.125 +0.113
+# timing for      I13/X: 3.163 3.614 | 3.288 3.727 +0.125 +0.113
+# timing for  I13/temp0: 2.977 4.192 | 3.102 4.305 +0.125 +0.113
 # timing for  I13/temp1:
 # timing for  I13/temp2:
-# timing for  I13/temp3: 3.072 3.445 | 3.072 3.445
+# timing for  I13/temp3: 3.072 3.445 | 3.196 3.558 +0.124 +0.113
 # timing for  I13/temp4:
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a21oi, A2=1, B1=0 ===
@@ -428,12 +430,12 @@ nfet(0.65, 0.65, "2_I14" , "I14/temp1", "I14/A1",     "I14/Y")
 
 pfet(2.00, 2.00, "4_I14" , "I14/temp2", "I14/B1",     "I14/Y")                        # Max size: 726.398
 nfet(1.30, 1.30, "1_I14" ,      "Vgnd", "I14/B1",     "I14/Y")                        # Max size: 1235.948
-# timing for     I14/A1: 3.164 3.615 | 3.164 3.615
-# timing for      I14/Y: 3.328 3.713 | 3.328 3.713
+# timing for     I14/A1: 3.164 3.615 | 3.288 3.728 +0.124 +0.113
+# timing for      I14/Y: 3.328 3.713 | 3.453 3.827 +0.125 +0.114
 # timing for  I14/temp0:
 # timing for  I14/temp1:
-# timing for  I14/temp2: 3.203 4.281 | 3.203 4.281
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for  I14/temp2: 3.203 4.281 | 3.328 4.394 +0.125 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  nand2b, B=1 ===
@@ -446,23 +448,23 @@ nfet(0.65, 0.65, "2_I15",      "Vgnd",     "I15/B", "I15/temp0")                
 pfet(1.00, 1.00, "3_I15",       "Vdd", "I15/temp1",     "I15/Y")
 nfet(0.65, 0.65, "1_I15", "I15/temp0", "I15/temp1",     "I15/Y")
 
-# timing for    I15/A_N: 3.328 3.714 | 3.328 3.714
-# timing for      I15/Y: 3.517 3.916 | 3.517 3.916
+# timing for    I15/A_N: 3.328 3.714 | 3.453 3.827 +0.125 +0.113
+# timing for      I15/Y: 3.517 3.916 | 3.642 4.029 +0.125 +0.113
 # timing for  I15/temp0:
-# timing for  I15/temp1: 3.382 3.808 | 3.382 3.808
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for  I15/temp1: 3.382 3.808 | 3.507 3.921 +0.125 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  nor2, B=0 ===
-pfet(1.00, 1.00, "0_I16",       "Vdd", "I16/B", "I16/temp0")                          # Max size: 352.332
+pfet(1.00, 10.00, "0_I16",      "Vdd", "I16/B", "I16/temp0")                          # Max size: 352.332
 pfet(1.00, 1.00, "2_I16", "I16/temp0", "I16/A",     "I16/Y")
 
 nfet(0.65, 0.65, "1_I16",      "Vgnd", "I16/A",     "I16/Y")
-nfet(0.65, 0.65, "3_I16",      "Vgnd", "I16/B",     "I16/Y")                          # Max size: 599.484
-# timing for      I16/A: 3.517 3.916 | 3.517 3.916
-# timing for      I16/Y: 3.619 4.182 | 3.619 4.182
+nfet(0.65, 0.36, "3_I16",      "Vgnd", "I16/B",     "I16/Y")                          # Max size: 599.484
+# timing for      I16/A: 3.517 3.916 | 3.642 4.029 +0.125 +0.113
+# timing for      I16/Y: 3.619 4.182 | 3.744 4.295 +0.125 +0.113
 # timing for  I16/temp0:
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a311o, A3=1, C1=0, A1=1, B1=0 ===
@@ -481,14 +483,14 @@ nfet(0.65, 0.65, "0_I17" ,      "Vgnd",    "I17/C1", "I17/temp1")               
 
 pfet(1.00, 1.00, "7_I17" ,       "Vdd", "I17/temp1",     "I17/X")
 nfet(0.65, 0.65, "11_I17",      "Vgnd", "I17/temp1",     "I17/X")
-# timing for     I17/A2: 3.619 4.182 | 3.619 4.182
-# timing for      I17/X: 3.931 4.453 | 3.931 4.453
-# timing for  I17/temp0: 3.693 5.445 | 3.693 5.445
-# timing for  I17/temp1: 3.836 4.314 | 3.836 4.314
+# timing for     I17/A2: 3.619 4.182 | 3.744 4.295 +0.125 +0.113
+# timing for      I17/X: 3.931 4.453 | 4.056 4.566 +0.125 +0.113
+# timing for  I17/temp0: 3.693 5.445 | 3.818 5.558 +0.125 +0.113
+# timing for  I17/temp1: 3.836 4.314 | 3.961 4.428 +0.125 +0.114
 # timing for  I17/temp2:
 # timing for  I17/temp3:
-# timing for  I17/temp4: 3.661 6.505 | 3.661 6.505
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for  I17/temp4: 3.661 6.505 | 3.786 6.618 +0.125 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a21o, A2=1, B1=0 ===
@@ -503,12 +505,12 @@ pfet(1.00, 1.00, "1_I18", "I18/temp2",    "I18/B1", "I18/temp0")                
 
 pfet(1.00, 1.00, "2_I18",       "Vdd", "I18/temp2",     "I18/X")
 nfet(0.65, 0.65, "4_I18",      "Vgnd", "I18/temp2",     "I18/X")
-# timing for     I18/A1: 3.931 4.453 | 3.931 4.453
-# timing for      I18/X: 4.145 4.657 | 4.145 4.657
-# timing for  I18/temp0: 3.972 5.041 | 3.972 5.041
+# timing for     I18/A1: 3.931 4.453 | 4.056 4.566 +0.125 +0.113
+# timing for      I18/X: 4.145 4.657 | 4.270 4.770 +0.125 +0.113
+# timing for  I18/temp0: 3.972 5.041 | 4.097 5.154 +0.125 +0.113
 # timing for  I18/temp1:
-# timing for  I18/temp2: 4.061 4.524 | 4.061 4.524
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for  I18/temp2: 4.061 4.524 | 4.185 4.637 +0.124 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  o21a, A2=1, A1=1 ===
@@ -523,12 +525,12 @@ nfet(0.65, 0.65, "1_I19", "I19/temp1",    "I19/B1", "I19/temp0")
 
 pfet(1.00, 1.00, "4_I19",       "Vdd", "I19/temp1",     "I19/X")
 nfet(0.65, 0.65, "7_I19",      "Vgnd", "I19/temp1",     "I19/X")
-# timing for     I19/B1: 4.145 4.657 | 4.145 4.657
-# timing for      I19/X: 4.254 4.779 | 4.254 4.779
+# timing for     I19/B1: 4.145 4.657 | 4.270 4.770 +0.125 +0.113
+# timing for      I19/X: 4.254 4.779 | 4.379 4.892 +0.125 +0.113
 # timing for  I19/temp0:
-# timing for  I19/temp1: 4.215 4.711 | 4.215 4.711
+# timing for  I19/temp1: 4.215 4.711 | 4.340 4.824 +0.125 +0.113
 # timing for  I19/temp2:
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a21oi, A2=0, A1=1 ===
@@ -538,11 +540,11 @@ pfet(1.00, 1.00, "4_I20", "I20/temp1", "I20/B1",     "I20/Y")
 nfet(0.65, 0.65, "0_I20", "I20/temp0", "I20/A1",     "I20/Y")                         # Max size: 622.477
 nfet(0.65, 0.65, "5_I20",      "Vgnd", "I20/A2", "I20/temp0")                         # Max size: 1560.25
 nfet(0.65, 0.65, "2_I20",      "Vgnd", "I20/B1",     "I20/Y")
-# timing for     I20/B1: 4.254 4.779 | 4.254 4.779
-# timing for      I20/Y: 4.421 4.831 | 4.421 4.831
-# timing for  I20/temp0: 4.435 4.844 | 4.435 4.844
+# timing for     I20/B1: 4.254 4.779 | 4.379 4.892 +0.125 +0.113
+# timing for      I20/Y: 4.421 4.831 | 4.546 4.944 +0.125 +0.113
+# timing for  I20/temp0: 4.435 4.844 | 4.560 4.958 +0.125 +0.114
 # timing for  I20/temp1:
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  xnor2, B=0 ===
@@ -559,12 +561,12 @@ pfet(1.00, 1.00, "8_I21", "I21/temp3",     "I21/A",     "I21/Y")
 
 pfet(1.00, 1.00, "7_I21",       "Vdd", "I21/temp2",     "I21/Y")
 nfet(0.65, 0.65, "4_I21", "I21/temp0", "I21/temp2",     "I21/Y")
-# timing for      I21/A: 4.421 4.831 | 4.421 4.831
-# timing for      I21/Y: 4.510 4.982 | 4.510 4.982
-# timing for  I21/temp0: 4.436 5.006 | 4.436 5.006
+# timing for      I21/A: 4.421 4.831 | 4.546 4.944 +0.125 +0.113
+# timing for      I21/Y: 4.510 4.982 | 4.635 5.095 +0.125 +0.113
+# timing for  I21/temp0: 4.436 5.006 | 4.561 5.119 +0.125 +0.113
 # timing for  I21/temp2:
 # timing for  I21/temp3:
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a22o, A2=0, B2=1, A1=1 ===
@@ -582,13 +584,13 @@ nfet(0.65, 0.65, "2_I22",      "Vgnd",    "I22/A2", "I22/temp2")                
 
 pfet(1.00, 1.00, "3_I22",       "Vdd", "I22/temp0",     "I22/X")
 nfet(0.65, 0.65, "7_I22",      "Vgnd", "I22/temp0",     "I22/X")
-# timing for     I22/B1: 4.510 4.982 | 4.510 4.982
-# timing for      I22/X: 4.689 5.131 | 4.689 5.131
-# timing for  I22/temp0: 4.636 5.049 | 4.636 5.049
+# timing for     I22/B1: 4.510 4.982 | 4.635 5.095 +0.125 +0.113
+# timing for      I22/X: 4.689 5.131 | 4.814 5.244 +0.125 +0.113
+# timing for  I22/temp0: 4.636 5.049 | 4.761 5.162 +0.125 +0.113
 # timing for  I22/temp1:
-# timing for  I22/temp2: 4.649 5.066 | 4.649 5.066
+# timing for  I22/temp2: 4.649 5.066 | 4.774 5.179 +0.125 +0.113
 # timing for  I22/temp3:
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  a21o, A1=1, B1=0 ===
@@ -603,12 +605,12 @@ nfet(0.65, 0.65, "0_I23",      "Vgnd",    "I23/B1", "I23/temp2")                
 
 pfet(1.00, 1.00, "2_I23",       "Vdd", "I23/temp2",     "I23/X")
 nfet(0.65, 0.65, "4_I23",      "Vgnd", "I23/temp2",     "I23/X")
-# timing for     I23/A2: 4.689 5.131 | 4.689 5.131
-# timing for      I23/X: 4.847 5.246 | 4.847 5.246
-# timing for  I23/temp0: 4.719 5.694 | 4.719 5.694
+# timing for     I23/A2: 4.689 5.131 | 4.814 5.244 +0.125 +0.113
+# timing for      I23/X: 4.847 5.246 | 4.972 5.359 +0.125 +0.113
+# timing for  I23/temp0: 4.719 5.694 | 4.844 5.808 +0.125 +0.114
 # timing for  I23/temp1:
-# timing for  I23/temp2: 4.802 5.185 | 4.802 5.185
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for  I23/temp2: 4.802 5.185 | 4.927 5.298 +0.125 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  and2, A=1 ===
@@ -620,11 +622,11 @@ nfet(0.42, 0.42, "5_I24", "I24/temp1",     "I24/B", "I24/temp0")
 
 pfet(1.00, 1.00, "1_I24",       "Vdd", "I24/temp1",     "I24/X")
 nfet(0.65, 0.65, "4_I24",      "Vgnd", "I24/temp1",     "I24/X")
-# timing for      I24/B: 4.848 5.246 | 4.848 5.246
-# timing for      I24/X: 5.007 5.419 | 5.007 5.419
+# timing for      I24/B: 4.848 5.246 | 4.972 5.359 +0.124 +0.113
+# timing for      I24/X: 5.007 5.419 | 5.132 5.532 +0.125 +0.113
 # timing for  I24/temp0:
-# timing for  I24/temp1: 4.932 5.299 | 4.932 5.299
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for  I24/temp1: 4.932 5.299 | 5.057 5.412 +0.125 +0.113
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 # ===  dfxtp ===
@@ -652,7 +654,7 @@ nfet(0.42, 0.42, "6_I25" ,      "Vgnd", "I25/temp8",  "I25/temp7")
 nfet(0.36, 0.36, "1_I25" , "I25/temp8", "I25/temp9",  "I25/temp2")
 nfet(0.36, 0.36, "16_I25", "I25/temp7", "I25/temp9",  "I25/temp6")
 nfet(0.42, 0.42, "23_I25",      "Vgnd",       "clk",  "I25/temp3")
-# timing for      I25/D: 5.008 5.419 | 5.008 5.419
+# timing for      I25/D: 5.008 5.419 | 5.132 5.533 +0.124 +0.114
 
 
 plotline = None
@@ -689,4 +691,3 @@ spice = "\n".join(spice)
 file_name = "../../../simulations/generated_out.spice"
 with open(file_name, "w") as file:
     file.write(spice)
-    
