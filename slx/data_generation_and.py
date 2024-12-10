@@ -108,28 +108,14 @@ def value_to_voltage(value, transition):
     raise ValueError(f"Unknown value for voltage conv {value}")
 
 def get_timing(P):
-    nfet(P["w_0"], "0"    ,       "t1",        "C",        "t0")
-    nfet(P["w_1"], "1"    ,       "t2",        "t5",        "Vgnd")
-    nfet(P["w_2"], "2"    ,       "t3",        "B",        "t2")
-    pfet(P["w_3"], "3"    ,       "t1",       "t4",        "t0")
-    pfet(P["w_4"], "4"    ,       "t5",       "t6",        "t1")
-    pfet(P["w_5"], "5"    ,        "X",       "t0",      "Vdd")
-    nfet(P["w_6"], "6"    ,       "t6",        "B",      "Vgnd")
-    nfet(P["w_7"], "7"    ,       "t2",       "t6",        "t1")
-    nfet(P["w_8"], "8"    ,       "t5",        "A",      "Vgnd")
-    pfet(P["w_9"], "9"    ,       "t3",        "C",        "t0")
-    pfet(P["w_10"], "10"   ,       "t3",       "t6",        "t2")
-    pfet(P["w_11"], "11"   ,       "t4",        "C",      "Vdd")
-    pfet(P["w_12"], "12"   ,       "t2",       "t5",      "Vdd")
-    nfet(P["w_13"], "13"   ,       "t5",       "t6",        "t3")
-    pfet(P["w_14"], "14"   ,       "t5",        "A",        "Vdd")
-    pfet(P["w_15"], "15"   ,       "t6",        "B",        "Vdd")
-    nfet(P["w_16"], "16"   ,        "X",       "t0",      "Vgnd")
-    pfet(P["w_17"], "17"   ,       "t5",        "B",        "t3")
-    nfet(P["w_18"], "18"   ,       "t4",        "C",      "Vgnd")
-    nfet(P["w_19"], "19"   ,       "t5",        "B",        "t1")
-    nfet(P["w_20"], "20"   ,       "t3",       "t4",        "t0")
-    pfet(P["w_21"], "21"   ,       "t2",        "B",        "t1")
+    pfet(P["w_0"], "0", "Vdd", "A", "temp_inv")
+    pfet(P["w_1"], "1", "Vdd", "B", "temp_inv")
+    pfet(P["w_2"], "2", "Vdd", "C", "temp_inv")
+    nfet(P["w_3"], "3",  "Vgnd", "A", "temp0")
+    nfet(P["w_4"], "4", "temp0", "B", "temp1")
+    nfet(P["w_5"], "5", "temp1", "C", "temp_inv")
+    nfet(P["w_6"], "6", "Vgnd", "temp_inv", "X")
+    pfet(P["w_7"], "7", "Vdd", "temp_inv", "X")
 
 
     spice = f"""
@@ -177,7 +163,7 @@ def get_timing(P):
 
 randfet = lambda: min(100.0, 1.0 / math.sqrt(np.random.uniform(0, 1)) - 1 + 0.36)
 
-sim_time = 30
+sim_time = 3
 
 def simulate(i):
     critical_which = np.random.randint(0, 3)
@@ -186,20 +172,12 @@ def simulate(i):
     value_b = np.random.randint(0, 2)
     value_c = np.random.randint(0, 2)
 
-    #critical_which = 0
-    #value_a = 0
-    #value_b = 0
-    #value_c = 1
-
     def mk_val(value, critical, index):
         if index == critical:
             if value == 1:
                 return "rise"
             return "fall"
-
-        if value == 1:
-            return "1.8"
-        return "0"
+        return "1.8"
 
     P = {
         "w_0": randfet(),
@@ -210,20 +188,6 @@ def simulate(i):
         "w_5": randfet(),
         "w_6": randfet(),
         "w_7": randfet(),
-        "w_8": randfet(),
-        "w_9": randfet(),
-        "w_10": randfet(),
-        "w_11": randfet(),
-        "w_12": randfet(),
-        "w_13": randfet(),
-        "w_14": randfet(),
-        "w_15": randfet(),
-        "w_16": randfet(),
-        "w_17": randfet(),
-        "w_18": randfet(),
-        "w_19": randfet(),
-        "w_20": randfet(),
-        "w_21": randfet(),
 
         "val_a": mk_val(value_a, critical_which, 0),
         "val_b": mk_val(value_b, critical_which, 1),
@@ -261,7 +225,7 @@ def worker(input_queue, output_queue):
 if __name__ == "__main__":
     input_queue = mp.Queue()
     output_queue = mp.Queue()
-    num_workers = 2
+    num_workers = 15
 
     processes = [mp.Process(target=worker, args=(input_queue, output_queue)) for _ in range(num_workers)]
     for p in processes:
@@ -269,7 +233,7 @@ if __name__ == "__main__":
 
 
     def write_results(output_queue):
-        with open("out.njson", "a") as f:
+        with open("out_and3.njson", "a") as f:
             f.write("\n")
             t = time.time()
             i = 0
