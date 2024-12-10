@@ -1,4 +1,7 @@
 import json
+import math
+from ast import parse
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -10,7 +13,7 @@ class ConfigurableMLP(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, num_hidden_layers):
         super(ConfigurableMLP, self).__init__()
         layers = []
-        layers.append(nn.BatchNorm1d(input_size))
+        #layers.append(nn.Linear(input_size, output_size))
         layers.append(nn.Linear(input_size, hidden_size))
         layers.append(nn.BatchNorm1d(hidden_size))
         layers.append(nn.Tanh())
@@ -26,9 +29,7 @@ class ConfigurableMLP(nn.Module):
     def forward(self, x):
         return self.model(x)
 
-def read_data():
-    content = open("out.njson").readlines()
-
+def one_hot_map_xor():
     one_hot_map = {}
     ii = 0
     for critical in range(3):
@@ -41,7 +42,23 @@ def read_data():
     if ii != 24:
         raise ValueError("Invalid one-hot map")
 
-    input_tensor = np.zeros((len(content), 22 + 22 + 24 + 1 + 1), dtype=np.float32)
+    return one_hot_map
+
+def one_hot_map_and():
+    one_hot_map = {}
+    ii = 0
+    for critical in range(3):
+        for value in range(2):
+            one_hot_map[(critical, value)] = ii
+            ii += 1
+    return one_hot_map
+
+def read_data(numb_fets):
+    content = open("out_and3.njson").readlines()
+
+    one_hot_map = one_hot_map_and()
+
+    input_tensor = np.zeros((len(content), numb_fets * 4 + len(one_hot_map) + 1 + 1), dtype=np.float32)
     output_tensor = np.zeros((len(content), 2), dtype=np.float32)
 
     i = 0
@@ -57,36 +74,38 @@ def read_data():
         input_tensor[i, 0] = parsed["transition"]
         input_tensor[i, 1] = parsed["capa_out_fF"]
 
-        for w in range(22):
+        for w in range(8):
             input_tensor[i, 2+w] = parsed["w_" + str(w)]
 
-        for w in range(22):
-            input_tensor[i, 2+22+w] = 1.0 / parsed["w_" + str(w)]
+        for w in range(8):
+            input_tensor[i, 2+numb_fets+w] = 1.0 / parsed["w_" + str(w)]
+
+        for w in range(8):
+            input_tensor[i, 2+numb_fets*2+w] = parsed["capa_out_fF"] / parsed["w_" + str(w)]
+
+        for w in range(8):
+            input_tensor[i, 2 + numb_fets * 3 + w] = parsed["transition"] * parsed["w_" + str(w)]
 
         val_a = parsed["val_a"]
         val_b = parsed["val_b"]
         val_c = parsed["val_c"]
 
+        value = 0
+
         if val_a == "rise" or val_a == "fall":
             critical = 0
-            val_a = 1 if val_a == "rise" else 0
+            value = 1 if val_a == "rise" else 0
         elif val_b == "rise" or val_b == "fall":
             critical = 1
-            val_b = 1 if val_b == "rise" else 0
-        else:
+            value = 1 if val_b == "rise" else 0
+        elif val_c == "rise" or val_c == "fall":
             critical = 2
-            val_c = 1 if val_c == "rise" else 0
+            value = 1 if val_c == "rise" else 0
+        else:
+            raise ValueError("Invalid critical")
 
-        # Convert strings "0" or "1.8" to numeric 0/1 if needed
-        if val_a == "0": val_a = 0
-        if val_b == "0": val_b = 0
-        if val_c == "0": val_c = 0
-        if val_a == "1.8": val_a = 1
-        if val_b == "1.8": val_b = 1
-        if val_c == "1.8": val_c = 1
-
-        encoded_inputs = one_hot_map[(critical, val_a, val_b, val_c)]
-        input_tensor[i, 2 + 22 + 22 + encoded_inputs] = 1
+        encoded_inputs = one_hot_map[(critical, value)]
+        input_tensor[i, 2 + numb_fets * 4 + encoded_inputs] = 1
 
         output_tensor[i, 0] = parsed["out_delta_time"] * 1e9
         output_tensor[i, 1] = parsed["out_transition"] * 1e9
@@ -110,7 +129,9 @@ if __name__ == "__main__":
     #print(f"Tensorflow listening on {url}")
 
     print("reading data...")
-    X, y = read_data()
+    numb_fets = 8
+
+    X, y = read_data(numb_fets=numb_fets)
 
     validation_size = int(0.1 * len(X))
     X_train = X[:-validation_size]
@@ -121,17 +142,18 @@ if __name__ == "__main__":
 
     print(len(X_train), len(X_val))
 
-    input_size = 22 + 22 + 24 + 1 + 1
-    hidden_size = 1024
+    input_size = numb_fets * 4 + len(one_hot_map_and()) + 1 + 1
+    hidden_size = 512
     output_size = 2
     learning_rate = 0.003
     num_epochs = 10000000000
     num_hidden_layers = 4
     minibatch_size = 4096
+    decay = 0
 
     model = ConfigurableMLP(input_size, hidden_size, output_size, num_hidden_layers)
     criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-7)
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=decay)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     if torch.cuda.is_available():
@@ -165,7 +187,7 @@ if __name__ == "__main__":
 
     train_batches = []
 
-    cuts = len(X_train) // minibatch_size
+    cuts = math.ceil(len(X_train) // minibatch_size)
     print(cuts)
 
     for i in range(cuts):
@@ -185,11 +207,18 @@ if __name__ == "__main__":
 
         if epoch == 250:
             learning_rate = 0.001
-            optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=1e-7)
+            optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=decay)
+
+        if epoch == 1000:
+            learning_rate = 0.0005
+            optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=decay)
 
         if epoch % 5 == 0:
             outputs = model(X_train)
             loss = criterion(outputs, y_train)
+            if not np.isfinite(outputs.cpu().detach().numpy()).all():
+                print("not finite detected")
+                exit(1)
 
             relative_error_train = (outputs / y_train - 1).abs().mean().item()
 
