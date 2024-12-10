@@ -1,5 +1,8 @@
 import matplotlib.pyplot as plt
+
 from spice import pfet, nfet
+
+and4_counter = 0
 
 def sw_and4_N(A, B, C, D, X, N):
     global and4_counter
@@ -220,7 +223,7 @@ def run_sim(config):
     Vdd Vdd Vgnd 1.8
     Vclk clk Vgnd PULSE(0 1.8 0n 0.2n 0.2n 4.6n 10.0n)
     
-    .include ./sky130_fd_sc_hd/cells/dfxtp/sky130_fd_sc_hd__dfxtp_2.spice
+    .include ../sky130_fd_sc_hd/cells/dfxtp/sky130_fd_sc_hd__dfxtp_2.spice
     
     {cells_spice}
     
@@ -234,14 +237,14 @@ def run_sim(config):
     .end
     """
 
-    with open("simulations/and4_test.spice", "w") as f:
+    with open("and4_test.spice", "w") as f:
         f.write(spice)
 
     # run spice
 
     import subprocess
 
-    s = subprocess.run(["ngspice", "-b", "simulations/and4_test.spice"], capture_output=True, text=True)
+    s = subprocess.run(["ngspice", "-b", "and4_test.spice"], capture_output=True, text=True)
     output = s.stdout
     output_err = s.stderr
 
@@ -384,4 +387,4 @@ for bar in horiz_bars:
 ax.set_ylim(bottom=0)
 ax.set_xlabel("W")
 ax.set_ylabel("Delay (ns)")
-f.savefig("simulations/and4_test.png")
+f.savefig("and4_test.png")

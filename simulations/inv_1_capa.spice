@@ -49,8 +49,8 @@ C13 VPB VNB 0.338976f
 .ends
 
 .subckt ee_sky130_fd_sc_hd__inv_1 A VGND VNB VPB VPWR Y
-*X0 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.169 ps=1.82 w=1 l=0.15
-X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.26 ps=2.52 w=1 l=0.15
+X0 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.169 ps=1.82 w=1 l=0.15
+*X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.26 ps=2.52 w=1 l=0.15
 .ends
 
 Vgnd Vgnd 0 0
@@ -66,7 +66,7 @@ Cout Y Vgnd 100000f
 R1ohm A R1 10k
 *R2ohm A2 R2 10k
 
-Vr1 R1 Vgnd pulse(0 1.8 0n 0n 0n 20n 20n)
+Vr1 R1 Vgnd pulse(1.8 0 0n 0n 0n 20n 20n)
 *Vr2 R2 Vgnd pulse(0 1.8 0n 0n 0n 20n 20n)
 
 .tran 0.1p 0.1n 0
