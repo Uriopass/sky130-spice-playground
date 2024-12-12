@@ -6,54 +6,6 @@ import multiprocessing as mp
 from spice import parse_measures, run_spice, run_spice_plot
 import numpy as np
 
-bins_nfet = [
-    0.36,
-    0.39,
-    0.42,
-    0.52,
-    0.54,
-    0.55,
-    0.58,
-    0.6,
-    0.61,
-    0.64,
-    0.65,
-    0.74,
-    0.84,
-    1.0,
-    1.26,
-    1.68,
-    2.0,
-    3.0,
-    5.0,
-    7.0
-]
-
-bins_pfet = [
-    0.36,
-    0.42,
-    0.54,
-    0.55,
-    0.63,
-    0.64,
-    0.70,
-    0.75,
-    0.79,
-    0.82,
-    0.84,
-    0.86,
-    0.94,
-    1.00,
-    1.12,
-    1.26,
-    1.65,
-    1.68,
-    2.00,
-    3.00,
-    5.00,
-    7.00
-]
-
 MINSIZE = 0.36
 
 def area(W):
@@ -64,37 +16,24 @@ def perim(W):
 
 fets = {}
 
-def find_bin(bins, W):
-    bestbin = bins[0]
-    binscore = 1
-    for bin in bins:
-        mult = W / bin
-        score = abs(mult - round(mult))
-        if score <= binscore:
-            bestbin = bin
-            binscore = score
-
-    return bestbin, W / bestbin
-
 def pfet(W, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: pfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
 
-    closest_bin, mult = find_bin(bins_pfet, W)
-
+    mult = W
     ar = area(W) / mult
     pe = perim(W) / mult
-    fets[name] = f"X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={closest_bin} l=0.15"
+    fets[name] = f"X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={1} l=0.15"
 
 
 def nfet(W, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: nfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
 
-    closest_bin, mult = find_bin(bins_nfet, W)
+    mult = W
     ar = area(W) / mult
     pe = perim(W) / mult
-    fets[name] = f"X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8 ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={closest_bin} l=0.15"
+    fets[name] = f"X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8 ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={1} l=0.15"
 
 def value_to_voltage(value, transition):
     if value == "0" or value == 0:
@@ -177,7 +116,7 @@ def get_timing(P):
 
 randfet = lambda: min(100.0, 1.0 / math.sqrt(np.random.uniform(0, 1)) - 1 + 0.36)
 
-sim_time = 30
+sim_time = 3
 
 def simulate(i):
     critical_which = np.random.randint(0, 3)
@@ -261,7 +200,7 @@ def worker(input_queue, output_queue):
 if __name__ == "__main__":
     input_queue = mp.Queue()
     output_queue = mp.Queue()
-    num_workers = 2
+    num_workers = 12
 
     processes = [mp.Process(target=worker, args=(input_queue, output_queue)) for _ in range(num_workers)]
     for p in processes:

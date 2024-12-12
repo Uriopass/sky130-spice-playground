@@ -1,6 +1,5 @@
 import json
 import math
-from ast import parse
 
 import numpy as np
 import torch
@@ -8,20 +7,34 @@ import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
 import time
+import data_generation_xor as gen_xor
+
+
+
+class PolyLayer(nn.Module):
+    def __init__(self, input_size, output_size):
+        super(PolyLayer, self).__init__()
+        self.input_size = input_size
+        self.output_size = output_size
+        self.weights = nn.Parameter(torch.randn(output_size, input_size * input_size))
+
+    def forward(self, x):
+        outer = torch.bmm(x.unsqueeze(2), x.unsqueeze(1)).view(self.input_size * self.input_size, -1)
+        return torch.matmul(self.weights, outer).transpose(0, 1)
 
 class ConfigurableMLP(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, num_hidden_layers):
         super(ConfigurableMLP, self).__init__()
         layers = []
         #layers.append(nn.Linear(input_size, output_size))
+        #layers.append(nn.BatchNorm1d(input_size))
         layers.append(nn.Linear(input_size, hidden_size))
-        layers.append(nn.BatchNorm1d(hidden_size))
-        layers.append(nn.Tanh())
-
+        #layers.append(nn.BatchNorm1d(hidden_size))
+        layers.append(nn.LeakyReLU())
         for _ in range(num_hidden_layers - 1):
             layers.append(nn.Linear(hidden_size, hidden_size))
-            layers.append(nn.BatchNorm1d(hidden_size))
-            layers.append(nn.Tanh())
+            #layers.append(nn.BatchNorm1d(hidden_size))
+            layers.append(nn.LeakyReLU())
 
         layers.append(nn.Linear(hidden_size, output_size))
         self.model = nn.Sequential(*layers)
@@ -55,10 +68,9 @@ def one_hot_map_and():
 
 def read_data(numb_fets):
     content = open("out_and3.njson").readlines()
-
     one_hot_map = one_hot_map_and()
 
-    input_tensor = np.zeros((len(content), numb_fets * 4 + len(one_hot_map) + 1 + 1), dtype=np.float32)
+    input_tensor = np.zeros((len(content), numb_fets * 6 + len(one_hot_map) + 1 + 1), dtype=np.float32)
     output_tensor = np.zeros((len(content), 2), dtype=np.float32)
 
     i = 0
@@ -74,21 +86,25 @@ def read_data(numb_fets):
         input_tensor[i, 0] = parsed["transition"]
         input_tensor[i, 1] = parsed["capa_out_fF"]
 
-        for w in range(8):
-            input_tensor[i, 2+w] = parsed["w_" + str(w)]
-
-        for w in range(8):
-            input_tensor[i, 2+numb_fets+w] = 1.0 / parsed["w_" + str(w)]
-
-        for w in range(8):
-            input_tensor[i, 2+numb_fets*2+w] = parsed["capa_out_fF"] / parsed["w_" + str(w)]
-
-        for w in range(8):
-            input_tensor[i, 2 + numb_fets * 3 + w] = parsed["transition"] * parsed["w_" + str(w)]
+        for j in range(numb_fets):
+            W_temp = parsed["w_" + str(j)]
+            ar = gen_xor.area(W_temp) / W_temp
+            pe = gen_xor.perim(W_temp) / W_temp
+            input_tensor[i, 2 + 5 * j] = W_temp
+            #input_tensor[i, 2 + 5 * j + 1] = ar
+            input_tensor[i, 2 + 5 * j + 1] = pe
+            #input_tensor[i, 2 + 5 * j + 7] = 1.0 / ar
+            #input_tensor[i, 2 + 5 * j + 8] = 1.0 / pe
+            input_tensor[i, 2 + 5 * j + 2] = 1.0 / W_temp
+            input_tensor[i, 2 + 5 + j + 3] = parsed["capa_out_fF"] / W_temp
+            input_tensor[i, 2 + 5 + j + 4] = parsed["transition"] * W_temp
 
         val_a = parsed["val_a"]
         val_b = parsed["val_b"]
         val_c = parsed["val_c"]
+
+        #if val_a != "1.8" or val_b != "1.8" or val_c != "rise":
+        #    continue
 
         value = 0
 
@@ -105,7 +121,31 @@ def read_data(numb_fets):
             raise ValueError("Invalid critical")
 
         encoded_inputs = one_hot_map[(critical, value)]
-        input_tensor[i, 2 + numb_fets * 4 + encoded_inputs] = 1
+
+        """
+        if val_a == "rise" or val_a == "fall":
+            critical = 0
+            val_a = 1 if val_a == "rise" else 0
+        elif val_b == "rise" or val_b == "fall":
+            critical = 1
+            val_b = 1 if val_b == "rise" else 0
+        elif val_c == "rise" or val_c == "fall":
+            critical = 2
+            val_c = 1 if val_c == "rise" else 0
+        else:
+            raise ValueError("Invalid critical")
+
+        # Convert strings "0" or "1.8" to numeric 0/1 if needed
+        if val_a == "0": val_a = 0
+        if val_b == "0": val_b = 0
+        if val_c == "0": val_c = 0
+        if val_a == "1.8": val_a = 1
+        if val_b == "1.8": val_b = 1
+        if val_c == "1.8": val_c = 1
+
+        encoded_inputs = one_hot_map[(critical, val_a, val_b, val_c)]
+"""
+        input_tensor[i, 2 + numb_fets * 6 + encoded_inputs] = 1
 
         output_tensor[i, 0] = parsed["out_delta_time"] * 1e9
         output_tensor[i, 1] = parsed["out_transition"] * 1e9
@@ -142,14 +182,14 @@ if __name__ == "__main__":
 
     print(len(X_train), len(X_val))
 
-    input_size = numb_fets * 4 + len(one_hot_map_and()) + 1 + 1
-    hidden_size = 512
+    input_size = X_train.shape[1]
+    hidden_size = 64
     output_size = 2
-    learning_rate = 0.003
+    learning_rate = 0.001
     num_epochs = 10000000000
-    num_hidden_layers = 4
-    minibatch_size = 4096
-    decay = 0
+    num_hidden_layers = 3
+    minibatch_size = min(4096, len(X_train))
+    decay = 1e-5
 
     model = ConfigurableMLP(input_size, hidden_size, output_size, num_hidden_layers)
     criterion = nn.MSELoss()
@@ -206,11 +246,34 @@ if __name__ == "__main__":
             optimizer.step()
 
         if epoch == 250:
-            learning_rate = 0.001
+            learning_rate /= 2
+            #decay*=10
             optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=decay)
 
         if epoch == 1000:
-            learning_rate = 0.0005
+            #decay*=10
+            learning_rate /= 2
+            optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=decay)
+
+        if epoch == 2000:
+            #decay*=10
+            learning_rate /= 5
+            optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=decay)
+
+
+        if epoch == 3000:
+            #decay*=10
+            learning_rate /= 2
+            optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=decay)
+
+        if epoch == 5000:
+            #decay*=10
+            learning_rate /= 2
+            optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=decay)
+
+        if epoch == 8000:
+            #decay*=10
+            learning_rate /= 2
             optimizer = optim.Adam(model.parameters(), lr=learning_rate, weight_decay=decay)
 
         if epoch % 5 == 0:
@@ -252,7 +315,7 @@ if __name__ == "__main__":
             # Redraw the figure
             fig.canvas.draw()
             fig.canvas.flush_events()
-            plt.pause(0.001)  # Brief pause to allow the UI to update
+            #plt.pause(0.001)  # Brief pause to allow the UI to update
 
     end_time = time.time()
     print(f"Training completed in {end_time - start_time:.2f} seconds")
