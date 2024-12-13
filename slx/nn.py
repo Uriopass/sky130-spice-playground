@@ -2,15 +2,19 @@ import json
 import math
 
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.optim as optim
+#import torch
+#import torch.nn as nn
+#import torch.optim as optim
 import matplotlib.pyplot as plt
 import time
+from scipy.linalg import solve
+
+
 import data_generation_xor as gen_xor
 
+from mpmath import mp
 
-
+"""
 class PolyLayer(nn.Module):
     def __init__(self, input_size, output_size):
         super(PolyLayer, self).__init__()
@@ -26,23 +30,24 @@ class ConfigurableMLP(nn.Module):
     def __init__(self, input_size, hidden_size, output_size, num_hidden_layers):
         super(ConfigurableMLP, self).__init__()
         layers = []
-        #layers.append(nn.Linear(input_size, output_size))
-        #layers.append(nn.BatchNorm1d(input_size))
-        layers.append(nn.Linear(input_size, hidden_size))
-        #layers.append(nn.BatchNorm1d(hidden_size))
-        layers.append(nn.LeakyReLU())
-        for _ in range(num_hidden_layers - 1):
-            layers.append(nn.Linear(hidden_size, hidden_size))
-            #layers.append(nn.BatchNorm1d(hidden_size))
-            layers.append(nn.LeakyReLU())
+        linear = True
 
-        layers.append(nn.Linear(hidden_size, output_size))
+        if linear:
+            layers.append(nn.Linear(input_size, output_size))
+        else:
+            layers.append(nn.Linear(input_size, hidden_size))
+            layers.append(nn.LeakyReLU())
+            for _ in range(num_hidden_layers - 1):
+                layers.append(nn.Linear(hidden_size, hidden_size))
+                layers.append(nn.BatchNorm1d(hidden_size))
+                layers.append(nn.LeakyReLU())
+            layers.append(nn.Linear(hidden_size, output_size))
         self.model = nn.Sequential(*layers)
 
     def forward(self, x):
         return self.model(x)
-
-def one_hot_map_xor():
+"""
+def one_hot_map_xor_gen():
     one_hot_map = {}
     ii = 0
     for critical in range(3):
@@ -57,7 +62,7 @@ def one_hot_map_xor():
 
     return one_hot_map
 
-def one_hot_map_and():
+def one_hot_map_and_gen():
     one_hot_map = {}
     ii = 0
     for critical in range(3):
@@ -66,98 +71,145 @@ def one_hot_map_and():
             ii += 1
     return one_hot_map
 
-def read_data(numb_fets):
-    content = open("out_and3.njson").readlines()
-    one_hot_map = one_hot_map_and()
+def read_data(data_path="out_and3.njson"):
+    is_xor = data_path == "out_xor3.njson" or data_path == "out_xor3_test.njson"
 
-    input_tensor = np.zeros((len(content), numb_fets * 6 + len(one_hot_map) + 1 + 1), dtype=np.float32)
-    output_tensor = np.zeros((len(content), 2), dtype=np.float32)
+    content = open(data_path).readlines()
+    one_hot_map_xor = one_hot_map_xor_gen()
+    one_hot_map_and = one_hot_map_and_gen()
 
-    i = 0
+    one_hot_length = len(one_hot_map_xor)
+    if not is_xor:
+        one_hot_length = len(one_hot_map_and)
+
+    #input_tensor = np.zeros((len(content), 2 + numb_fets * 5 + numb_fets * (numb_fets - 1) + (numb_fets * (numb_fets - 1)) // 2), dtype=np.float64)
+    input_tensor = []
+    output_tensor = []
 
     for line in content[:-2]:
+        cell_carac = []
         if line.strip() == "":
             continue
         parsed = json.loads(line)
 
-        if parsed["out_delta_time"] > 2e-9:
-            continue
-
-        input_tensor[i, 0] = parsed["transition"]
-        input_tensor[i, 1] = parsed["capa_out_fF"]
-
-        for j in range(numb_fets):
-            W_temp = parsed["w_" + str(j)]
-            ar = gen_xor.area(W_temp) / W_temp
-            pe = gen_xor.perim(W_temp) / W_temp
-            input_tensor[i, 2 + 5 * j] = W_temp
-            #input_tensor[i, 2 + 5 * j + 1] = ar
-            input_tensor[i, 2 + 5 * j + 1] = pe
-            #input_tensor[i, 2 + 5 * j + 7] = 1.0 / ar
-            #input_tensor[i, 2 + 5 * j + 8] = 1.0 / pe
-            input_tensor[i, 2 + 5 * j + 2] = 1.0 / W_temp
-            input_tensor[i, 2 + 5 + j + 3] = parsed["capa_out_fF"] / W_temp
-            input_tensor[i, 2 + 5 + j + 4] = parsed["transition"] * W_temp
+        #if parsed["out_delta_time"] > 2e-9:
+        #    continue
 
         val_a = parsed["val_a"]
         val_b = parsed["val_b"]
         val_c = parsed["val_c"]
 
-        #if val_a != "1.8" or val_b != "1.8" or val_c != "rise":
-        #    continue
-
-        value = 0
-
-        if val_a == "rise" or val_a == "fall":
-            critical = 0
-            value = 1 if val_a == "rise" else 0
-        elif val_b == "rise" or val_b == "fall":
-            critical = 1
-            value = 1 if val_b == "rise" else 0
-        elif val_c == "rise" or val_c == "fall":
-            critical = 2
-            value = 1 if val_c == "rise" else 0
+        if is_xor:
+            numb_fets = 22
+            if val_a != "fall" or val_b != "0" or val_c != "1.8":
+                continue
         else:
-            raise ValueError("Invalid critical")
+            numb_fets = 8
+            if val_a != "1.8" or val_b != "1.8" or val_c != "fall":
+                continue
+#        tensor_i = 0
+#        def add_input(x):
+#            nonlocal tensor_i, i
+#            input_tensor[i, tensor_i] = x
+#            tensor_i += 1
 
-        encoded_inputs = one_hot_map[(critical, value)]
+        capa = parsed["capa_out_fF"]
+        transition = parsed["transition"]
 
-        """
-        if val_a == "rise" or val_a == "fall":
-            critical = 0
-            val_a = 1 if val_a == "rise" else 0
-        elif val_b == "rise" or val_b == "fall":
-            critical = 1
-            val_b = 1 if val_b == "rise" else 0
-        elif val_c == "rise" or val_c == "fall":
-            critical = 2
-            val_c = 1 if val_c == "rise" else 0
-        else:
-            raise ValueError("Invalid critical")
+        cell_carac.append(transition)
+        cell_carac.append(capa)
 
-        # Convert strings "0" or "1.8" to numeric 0/1 if needed
-        if val_a == "0": val_a = 0
-        if val_b == "0": val_b = 0
-        if val_c == "0": val_c = 0
-        if val_a == "1.8": val_a = 1
-        if val_b == "1.8": val_b = 1
-        if val_c == "1.8": val_c = 1
+        for j in range(numb_fets):
 
-        encoded_inputs = one_hot_map[(critical, val_a, val_b, val_c)]
-"""
-        input_tensor[i, 2 + numb_fets * 6 + encoded_inputs] = 1
+            w_j = parsed["w_" + str(j)]
+            cell_carac.append(w_j)
+            cell_carac.append(1.0 / w_j)
+            cell_carac.append(capa / w_j)
+            #cell_carac.append(transition * w_j)
 
-        output_tensor[i, 0] = parsed["out_delta_time"] * 1e9
-        output_tensor[i, 1] = parsed["out_transition"] * 1e9
+            #ordre 2
+            cell_carac.append(np.cbrt(capa / w_j))
+            cell_carac.append(np.sqrt(transition / w_j))
+            #cell_carac.append(np.cbrt(transition * w_j))
+            #cell_carac.append(np.sqrt(capa / w_j))
 
-        i += 1
+            #tests viables
 
-    print(f"Total: {i}")
+            #cell_carac.append(np.sqrt(transition * w_j))
 
-    input_tensor = input_tensor[:i]
-    output_tensor = output_tensor[:i]
+            #cell_carac.append(np.sqrt(capa / transition))
+            #cell_carac.append(np.sqrt(capa / (transition * w_j)))
 
-    return torch.from_numpy(input_tensor), torch.from_numpy(output_tensor)
+        for j in range(numb_fets):
+            for k in range(numb_fets):
+                if j == k:
+                    continue
+                w_j = parsed["w_" + str(j)]
+                w_k = parsed["w_" + str(k)]
+                cell_carac.append(w_j / w_k)
+
+                #tests viables
+                cell_carac.append(w_j / w_k * capa)
+                cell_carac.append(w_j / w_k * transition)
+                cell_carac.append(np.cbrt(w_j / w_k * capa))
+                cell_carac.append(np.cbrt(w_j / w_k * transition))
+
+                #cell_carac.append(np.sqrt(w_j / (w_k*transition)))
+
+
+#        if data_path == "out_xor3.njson" or data_path == "out_xor3_test.njson":
+#            if val_a == "rise" or val_a == "fall":
+#                critical = 0
+#                val_a = 1 if val_a == "rise" else 0
+#            elif val_b == "rise" or val_b == "fall":
+#                critical = 1
+#                val_b = 1 if val_b == "rise" else 0
+#            elif val_c == "rise" or val_c == "fall":
+#                critical = 2
+#                val_c = 1 if val_c == "rise" else 0
+#            else:
+#                raise ValueError("Invalid critical")
+#
+#            # Convert strings "0" or "1.8" to numeric 0/1 if needed
+#            if val_a == "0": val_a = 0
+#            if val_b == "0": val_b = 0
+#            if val_c == "0": val_c = 0
+#            if val_a == "1.8": val_a = 1
+#            if val_b == "1.8": val_b = 1
+#            if val_c == "1.8": val_c = 1
+#
+#            encoded_inputs = one_hot_map_xor[(critical, val_a, val_b, val_c)]
+#        elif data_path == "out_and3.njson":
+#            if val_a == "rise" or val_a == "fall":
+#                critical = 0
+#                value = 1 if val_a == "rise" else 0
+#            elif val_b == "rise" or val_b == "fall":
+#                critical = 1
+#                value = 1 if val_b == "rise" else 0
+#            elif val_c == "rise" or val_c == "fall":
+#                critical = 2
+#                value = 1 if val_c == "rise" else 0
+#            else:
+#                raise ValueError("Invalid critical")
+#
+#            encoded_inputs = one_hot_map_and[(critical, value)]
+#        else:
+#            raise ValueError("Invalid data path")
+
+        #for _ in range(encoded_inputs):
+        #    add_input(0)
+        #add_input(1)
+        output_tensor.append([parsed["out_delta_time"] * 1e9, parsed["out_transition"] * 1e9])
+
+        input_tensor.append(cell_carac)
+
+    print(f"Total: {len(input_tensor)}")
+
+    input_tensor = np.array(input_tensor, dtype = "float64")
+    output_tensor = np.array(output_tensor, dtype = "float64")
+
+    return input_tensor, output_tensor
+    #return torch.from_numpy(input_tensor), torch.from_numpy(output_tensor)
 
 if __name__ == "__main__":
     #from tensorboard import program
@@ -169,9 +221,75 @@ if __name__ == "__main__":
     #print(f"Tensorflow listening on {url}")
 
     print("reading data...")
-    numb_fets = 8
+    X, y = read_data()
 
-    X, y = read_data(numb_fets=numb_fets)
+
+    size = np.linspace(1000, 9000, 10)
+
+    lol = []
+
+    for s in size:
+        X_validation = X[int(s):]
+        y_validation = y[int(s):]
+
+        X_train = X[:int(s)]
+        y_train = y[:int(s)]
+
+        # add one to X vectors
+        X_train = np.concatenate([X_train, np.ones((X_train.shape[0], 1))], axis=1)
+        X_validation = np.concatenate([X_validation, np.ones((X_validation.shape[0], 1))], axis=1)
+
+        xtx = np.matmul(X_train.T, X_train)
+#        xtx_inv = np.linalg.inv(xtx)
+        xtx_pinv = np.linalg.pinv(xtx)
+#
+#        linear_estimator = (xtx_inv @ X_train.transpose()) @ y_train
+#        y_hat_val = X_validation @ linear_estimator
+#
+#        rel_err = np.mean(np.abs(y_validation - y_hat_val) / y_validation)
+
+
+#        #mpmath
+#
+#        mp.prec = 64
+#        X_train = mp.matrix(np.concatenate([X_train, np.ones((X_train.shape[0], 1))], axis=1, dtype=np.float64))
+#        X_validation = mp.matrix(np.concatenate([X_validation, np.ones((X_validation.shape[0], 1))], axis=1))
+#        y_validation = mp.matrix(y_validation)
+#        y_train = mp.matrix(y_train)
+#        xtx = X_train.T * X_train
+#        xtx_inv = xtx**-1
+#        linear_estimator = (xtx_inv * X_train.transpose()) * y_train
+#        y_hat_val = X_validation * linear_estimator
+#        rel_err = np.mean(
+#            [abs(yv - yh) / yv for yv, yh in zip(y_validation, y_hat_val) if yv != 0]
+#        )
+
+        #xty = np.matmul(X_train.T, y_train)  # X^T * y
+        #print(xtx.shape)
+        #print(xty.shape)
+        #linear_estimator = solve(xtx, xty)
+
+        # Predict validation set
+        y_hat_val = X_validation @ np.matmul(xtx_pinv, X_train.T @ y_train)
+
+        # Compute relative error
+        rel_err = np.mean(np.abs(y_validation - y_hat_val) / y_validation)
+        print(rel_err)
+
+        lol.append(rel_err)
+
+    plt.plot(size, lol)
+    plt.show()
+    exit(0)
+
+    X = torch.from_numpy(X).float()
+    y = torch.from_numpy(y).float()
+
+    X_test, y_test = read_data(data_path="out_xor3_test.njson")
+    X_test = np.concatenate([X_test, np.ones((X_test.shape[0], 1))], axis=1)
+
+    X_test = torch.from_numpy(X_test).float()
+    y_test = torch.from_numpy(y_test).float()
 
     validation_size = int(0.1 * len(X))
     X_train = X[:-validation_size]
@@ -204,10 +322,13 @@ if __name__ == "__main__":
     y_train = y_train.to(device)
     X_val = X_val.to(device)
     y_val = y_val.to(device)
+    X_test = X_test.to(device)
+    y_test = y_test.to(device)
 
     epochs_list = []
     train_losses = []
     val_losses = []
+    test_losses = []
 
     print("Starting training...")
 
@@ -221,6 +342,7 @@ if __name__ == "__main__":
 
     (train_line,) = ax.plot([], [], 'r-', label="Relative Error Train")
     (val_line,) = ax.plot([], [], 'b-', label="Relative Error")
+    (test_line,) = ax.plot([], [], 'g-', label="Test Error")
     ax.legend()
 
     start_time = time.time()
@@ -237,13 +359,14 @@ if __name__ == "__main__":
         train_batches.append((X_train[i_start:i_end], y_train[i_start:i_end]))
 
     for epoch in range(num_epochs):
-        for X_batch, y_batch in train_batches:
-            outputs = model(X_batch)
-            loss = criterion(outputs, y_batch)
+        for _ in range(5):
+            for X_batch, y_batch in train_batches:
+                outputs = model(X_batch)
+                loss = criterion(outputs, y_batch)
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
 
         if epoch == 250:
             learning_rate /= 2
@@ -291,12 +414,17 @@ if __name__ == "__main__":
 
             relative_error  = (validation_outputs / y_val - 1).abs().mean().item()
 
+
+            test_outputs = model(X_test)
+            test_relative_error = (test_outputs / y_test - 1).abs().mean().item()
+
             train_rmse = loss.item()**0.5
             val_rmse = validation_loss**0.5
 
             epochs_list.append(epoch)
             train_losses.append(relative_error_train)
             val_losses.append(relative_error)
+            test_losses.append(test_relative_error)
 
             print(f"Epoch [{epoch}/{num_epochs}], Train RMSE: {train_rmse:.10f}, Validation RMSE: {val_rmse:.10f}, Train relative: {relative_error_train:.10f}, Validation relerr: {relative_error:.10f}")
 
@@ -305,11 +433,13 @@ if __name__ == "__main__":
             train_line.set_ydata(train_losses)
             val_line.set_xdata(epochs_list)
             val_line.set_ydata(val_losses)
+            test_line.set_xdata(epochs_list)
+            test_line.set_ydata(test_losses)
 
             # Adjust plot limits if necessary
             ax.set_xlim(0, max(epochs_list) if epochs_list else 1)
             current_max_loss = max(train_losses + val_losses) if train_losses and val_losses else 1
-            current_min_loss = min(train_losses + val_losses) if train_losses and val_losses else 0.00001
+            current_min_loss = min(train_losses + val_losses + test_losses) if train_losses and val_losses else 0.00001
             ax.set_ylim(current_min_loss, current_max_loss)
 
             # Redraw the figure
