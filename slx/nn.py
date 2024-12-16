@@ -71,10 +71,11 @@ def one_hot_map_and_gen():
             ii += 1
     return one_hot_map
 
-def read_data(data_path="out_and3.njson"):
-    is_xor = data_path == "out_xor3.njson" or data_path == "out_xor3_test.njson"
+def read_data(data_path="out_and3_test.njson"):
+    is_xor = "xor3" in data_path
 
     content = open(data_path).readlines()
+
     one_hot_map_xor = one_hot_map_xor_gen()
     one_hot_map_and = one_hot_map_and_gen()
 
@@ -95,9 +96,9 @@ def read_data(data_path="out_and3.njson"):
         #if parsed["out_delta_time"] > 2e-9:
         #    continue
 
-        val_a = parsed["val_a"]
-        val_b = parsed["val_b"]
-        val_c = parsed["val_c"]
+        val_a = parsed["val_A"] if "val_A" in parsed else parsed["val_a"]
+        val_b = parsed["val_B"] if "val_B" in parsed else parsed["val_b"]
+        val_c = parsed["val_C"] if "val_C" in parsed else parsed["val_c"]
 
         if is_xor:
             numb_fets = 22
@@ -116,6 +117,7 @@ def read_data(data_path="out_and3.njson"):
         capa = parsed["capa_out_fF"]
         transition = parsed["transition"]
 
+        cell_carac.append(1.0)
         cell_carac.append(transition)
         cell_carac.append(capa)
 
@@ -221,23 +223,27 @@ if __name__ == "__main__":
     #print(f"Tensorflow listening on {url}")
 
     print("reading data...")
-    X, y = read_data()
+    X, y = read_data(data_path="data/sky130_fd_sc_hd__xnor3_1.njson")
 
+    X_validation, y_validation = read_data(data_path="data/sky130_fd_sc_hd__xor3_1.njson")
+
+    X_validation = X[:100]
+    y_validation = y[:100]
+
+    X = X[100:]
+    y = y[100:]
 
     size = np.linspace(1000, 9000, 10)
 
     lol = []
 
     for s in size:
-        X_validation = X[int(s):]
-        y_validation = y[int(s):]
+        #X_validation = X[int(s):]
+        #y_validation = y[int(s):]
 
         X_train = X[:int(s)]
         y_train = y[:int(s)]
 
-        # add one to X vectors
-        X_train = np.concatenate([X_train, np.ones((X_train.shape[0], 1))], axis=1)
-        X_validation = np.concatenate([X_validation, np.ones((X_validation.shape[0], 1))], axis=1)
 
         xtx = np.matmul(X_train.T, X_train)
 #        xtx_inv = np.linalg.inv(xtx)
@@ -270,7 +276,9 @@ if __name__ == "__main__":
         #linear_estimator = solve(xtx, xty)
 
         # Predict validation set
-        y_hat_val = X_validation @ np.matmul(xtx_pinv, X_train.T @ y_train)
+        linear_estimator = np.matmul(xtx_pinv, X_train.T @ y_train)
+        #np.save("linear_estimator.npy", linear_estimator)
+        y_hat_val = X_validation @ linear_estimator
 
         # Compute relative error
         rel_err = np.mean(np.abs(y_validation - y_hat_val) / y_validation)

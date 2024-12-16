@@ -19,6 +19,7 @@ set hcopydevtype=postscript
 set hcopypscolor=1
 set hcopywidth=1280
 set hcopyheight=720
+set num_threads=1
 .endc
 
 .end

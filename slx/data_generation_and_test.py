@@ -97,11 +97,11 @@ def get_timing(P):
     return delta_time, transition
 
 
-randfet = lambda: min(100.0, 1.0 / np.sqrt(np.random.uniform(0, 1)) - 1 + 0.36)
+randfet = lambda: min(100.0, 1.0 / math.sqrt(np.random.uniform(0, 1)) - 1 + 0.18)
 
 sim_time = 3
 
-def simulate(i):
+def get_P():
     critical_which = 2
 
     value_a = np.random.randint(0, 2)
@@ -136,65 +136,46 @@ def simulate(i):
         "capa_out_fF": 10 ** (3 * np.random.random()),
     }
 
-    delta_time, transition = get_timing(P)
+    return P
 
-
-
-    if delta_time is None:
-        return None
-
-    P["out_delta_time"] = delta_time
-    P["out_transition"] = transition
-
-    p_json = json.dumps(P)
-    return p_json
-
-
-def worker(input_queue, output_queue):
-    while True:
-        i = input_queue.get()
-        if i is None:
-            break
-        result = simulate(i)
-        if result is None:
-            continue
-        output_queue.put(result)
 
 if __name__ == "__main__":
-    input_queue = mp.Queue()
-    output_queue = mp.Queue()
-    num_workers = 15
-
-    processes = [mp.Process(target=worker, args=(input_queue, output_queue)) for _ in range(num_workers)]
-    for p in processes:
-        p.start()
-
-
-    def write_results(output_queue):
-        with open("out_and3_test.njson", "a") as f:
-            f.write("\n")
-            t = time.time()
-            i = 0
-            while True:
-                i += 1
-                if i % 100 == 0:
-                    print(i, time.time() - t)
-                    t = time.time()
-                result = output_queue.get()
-                if result is None:
-                    break
-                f.write(result + "\n")
-
-    write_process = mp.Process(target=write_results, args=(output_queue,))
-    write_process.start()
-
-    for i in range(100000):
-        input_queue.put(i)
-
-    for _ in range(num_workers):
-        input_queue.put(None)
-
-
-    for p in processes:
-        p.join()
-    write_process.join()
+    with open("out_and3_test.njson", "a") as f:
+        f.write("\n")
+        t = time.time()
+        i = 0
+        while i<120:
+            i += 1
+            print(i)
+            P = get_P()
+            for j in range(10):
+                Papp = {
+                    "w_0": P["w_0"] + np.random.normal(0, 1)*5*1e-3,
+                    "w_1": P["w_1"] + np.random.normal(0, 1)*5*1e-3,
+                    "w_2": P["w_2"] + np.random.normal(0, 1)*5*1e-3,
+                    "w_3": P["w_3"] + np.random.normal(0, 1)*5*1e-3,
+                    "w_4": P["w_4"] + np.random.normal(0, 1)*5*1e-3,
+                    "w_5": P["w_5"] + np.random.normal(0, 1)*5*1e-3,
+                    "w_6": P["w_6"] + np.random.normal(0, 1)*5*1e-3,
+                    "w_7": P["w_7"] + np.random.normal(0, 1)*5*1e-3,
+                    "val_a": P["val_a"],
+                    "val_b": P["val_b"],
+                    "val_c": P["val_c"],
+                    "sim_time": P["sim_time"] + np.random.normal(0, 1)*5*1e-3,
+                    "transition": P["transition"] + np.random.normal(0, 1)*5*1e-3,
+                    "capa_out_fF": P["capa_out_fF"] + np.random.normal(0, 1)*5*1e-3,
+                }
+                delta_time, transition = get_timing(Papp)
+                if delta_time is None:
+                    continue
+                Papp["out_delta_time"] = delta_time
+                Papp["out_transition"] = transition
+                p_json = json.dumps(Papp)
+                f.write(p_json + "\n")
+            delta_time, transition = get_timing(P)
+            if delta_time is None:
+                continue
+            P["out_delta_time"] = delta_time
+            P["out_transition"] = transition
+            p_json = json.dumps(P)
+            f.write(p_json + "\n")

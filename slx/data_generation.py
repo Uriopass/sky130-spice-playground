@@ -52,7 +52,7 @@ def parse_netlist(netlist):
     subckt_pattern = re.compile(r"^\.subckt (\S+)(.*?)$")
     ends_pattern = re.compile(r"^\.ends$")
     transistor_pattern = re.compile(
-        r"^X\d+ (\S+) (\S+) (\S+) (\S+) sky130_fd_pr__(nfet|pfet)_\S+"
+        r"^X(\d+) (\S+) (\S+) (\S+) (\S+) sky130_fd_pr__(nfet|pfet)_\S+"
     )
 
     subcircuits = {}
@@ -109,7 +109,7 @@ def parse_netlist(netlist):
             name_split = current_subckt.split("_")
             subckt_sizes["_".join(name_split[:-1])].append(int(name_split[-1]))
 
-            subcircuits[current_subckt] = {"input_pins": input_pins, "output_pin": output_pin, "transistors": []}
+            subcircuits[current_subckt] = {"name": current_subckt, "input_pins": input_pins, "output_pin": output_pin, "transistors": []}
             continue
 
         if ends_pattern.match(line):
@@ -119,10 +119,11 @@ def parse_netlist(netlist):
         if current_subckt:
             transistor_match = transistor_pattern.match(line)
             if transistor_match:
-                source, gate, drain, bulk, type_ = transistor_match.groups()
+                name, source, gate, drain, bulk, type_ = transistor_match.groups()
                 subcircuits[current_subckt]["transistors"].append(
                     {
                         "type": type_,
+                        "name": name,
                         "source": source,
                         "gate": gate,
                         "drain": drain,
@@ -142,31 +143,40 @@ def parse_netlist(netlist):
         if size != smallest_sizes["_".join(name_split[:-1])]:
             del subcircuits[key]
 
-    print(*subcircuits.keys(), sep='\n')
-
     return subcircuits
 
-def get_timing(P, subckt, pin_values):
+def get_timing(P, subckt):
     fets = []
 
-    for transistor in subckt:
+    for transistor in subckt["transistors"]:
         fetfun = pfet if transistor["type"] == "pfet" else nfet
-        fets.append(fetfun(P["w_" + transistor["name"]], transistor["name"], pin_values[transistor["source"]], pin_values[transistor["gate"]], pin_values[transistor["drain"]]))
+        fets.append(fetfun(P["w_" + transistor["name"]], transistor["name"], transistor["source"], transistor["gate"], transistor["drain"]))
 
     fets = "\n".join(fets)
+
+    pin_values = []
+
+    for p in P:
+        if p.startswith("val_"):
+            pin = p[4:]
+            pin_values.append(f"V{pin} {pin} 0 {value_to_voltage(P[p], P['transition'])}")
+
+    pin_values = "\n".join(pin_values)
 
     spice = f"""
     .title slx
     .include "./prelude.spice"
     
-    VVDD Vdd 0 1.8
-    VVGND Vgnd 0 0
+    VVdd Vdd 0 1.8
     
-    VA A 0 {value_to_voltage(P["val_a"], P["transition"])}
-    VB B 0 {value_to_voltage(P["val_b"], P["transition"])}
-    VC C 0 {value_to_voltage(P["val_c"], P["transition"])}
+    VVPWR VPWR 0 1.8
+    VVPB VPB 0 1.8
+    VVNB VNB 0 0
+    VVGND VGND 0 0
     
-    CX X 0 {P["capa_out_fF"]}f
+    {pin_values}
+    
+    Cout {subckt["output_pin"]} 0 {P["capa_out_fF"]}f
     
     {fets}
     
@@ -174,10 +184,9 @@ def get_timing(P, subckt, pin_values):
     
     .control
     run
-    plot V(C) V(X)
-    meas tran x_cross when V(X) = 0.9
-    meas tran x_start WHEN V(X) = {1.8 * 0.8}
-    meas tran x_end   WHEN V(X) = {1.8 * 0.2}
+    meas tran x_cross when V({subckt["output_pin"]}) = 0.9
+    meas tran x_start WHEN V({subckt["output_pin"]}) = {1.8 * 0.8}
+    meas tran x_end   WHEN V({subckt["output_pin"]}) = {1.8 * 0.2}
     .endc
     """
 
@@ -185,6 +194,7 @@ def get_timing(P, subckt, pin_values):
     measures = parse_measures(output)
 
     if "x_cross" not in measures or "x_start" not in measures or "x_end" not in measures:
+        #print(output, stderr)
         return None, None
 
     transition = abs(measures["x_end"] - measures["x_start"])
@@ -197,106 +207,92 @@ randfet = lambda: min(100.0, 1.0 / math.sqrt(np.random.uniform(0, 1)) - 1 + 0.36
 sim_time = 10
 
 def simulate(subckt):
-    combination_by_pin = pin_combinations[subckt]
-
-    critical_which = np.random.randint(0, 3)
-
-    value_a = np.random.randint(0, 2)
-    value_b = np.random.randint(0, 2)
-    value_c = np.random.randint(0, 2)
-
-    def mk_val(value, critical, index):
-        if index == critical:
-            if value == 1:
-                return "rise"
-            return "fall"
-        return "1.8"
-
-    P = {
-        "w_0": randfet(),
-        "w_1": randfet(),
-        "w_2": randfet(),
-        "w_3": randfet(),
-        "w_4": randfet(),
-        "w_5": randfet(),
-        "w_6": randfet(),
-        "w_7": randfet(),
-
-        "val_a": mk_val(value_a, critical_which, 0),
-        "val_b": mk_val(value_b, critical_which, 1),
-        "val_c": mk_val(value_c, critical_which, 2),
-
-        "sim_time": sim_time,
-
-        "transition": np.random.random() + 0.01,
-
-        "capa_out_fF": 10 ** (3 * np.random.random()),
-    }
-
-    delta_time, transition = get_timing(P)
-
-    if delta_time is None:
-        return None
-
-    P["out_delta_time"] = delta_time
-    P["out_transition"] = transition
-
-    p_json = json.dumps(P)
-    return p_json
+    combination_by_pin = pin_combinations[subckt["name"]]
 
 
-def worker(input_queue, output_queue):
+    for pin, pin_combs in combination_by_pin.items():
+        for risefall in range(2):
+            for pin_comb in pin_combs:
+                while True:
+                    P = {
+                        "sim_time": sim_time,
+
+                        "transition": np.random.random() + 0.01,
+
+                        "capa_out_fF": 10 ** (2.7 * np.random.random()),
+
+                        f"val_{pin}": "rise" if risefall == 0 else "fall"
+                    }
+
+                    for other_pin, value in pin_comb["pins"].items():
+                        P["val_" + other_pin] = "1.8" if value else "0"
+
+                    for transistor in subckt["transistors"]:
+                        P["w_" + transistor["name"]] = randfet()
+
+                    delta_time, transition = get_timing(P, subckt)
+
+                    if delta_time is None:
+                        continue
+
+                    P["out_delta_time"] = delta_time
+                    P["out_transition"] = transition
+
+                    p_json = json.dumps(P)
+                    yield p_json
+                    break
+
+def worker(subckt, input_queue, output_queue):
     while True:
         i = input_queue.get()
         if i is None:
             break
-        result = simulate(i)
-        if result is None:
-            continue
-        output_queue.put(result)
+        for result in simulate(subckt):
+            if result is None:
+                continue
+            output_queue.put(result)
 
 if __name__ == "__main__":
     circuits = parse_netlist(open("hd_nopex.spice").read())
-    print(len(circuits))
 
-    print(sum(sum(len(combination) for combination in pin_combinations[subckt].values()) for subckt in circuits))
+    for circuit_name, circuit in circuits.items():
+        t_start = time.time()
+        input_queue = mp.Queue()
+        output_queue = mp.Queue()
+        num_workers = 24
 
-    exit(0)
+        processes = [mp.Process(target=worker, args=(circuit, input_queue, output_queue)) for _ in range(num_workers)]
+        for p in processes:
+            p.start()
 
-    input_queue = mp.Queue()
-    output_queue = mp.Queue()
-    num_workers = 15
+        def write_results(out_name, output_queue):
+            with open(out_name, "a") as f:
+                f.write("\n")
+                t = time.time()
+                i = 0
+                while True:
+                    i += 1
+                    if i % 100 == 0:
+                        print(i, time.time() - t)
+                        t = time.time()
+                    result = output_queue.get()
+                    if result is None:
+                        break
+                    f.write(result + "\n")
 
-    processes = [mp.Process(target=worker, args=(input_queue, output_queue)) for _ in range(num_workers)]
-    for p in processes:
-        p.start()
+        write_process = mp.Process(target=write_results, args=(f"data/{circuit_name}.njson", output_queue))
+        write_process.start()
 
+        for i in range(1000):
+            input_queue.put(i)
 
-    def write_results(output_queue):
-        with open("out_and3.njson", "a") as f:
-            f.write("\n")
-            t = time.time()
-            i = 0
-            while True:
-                i += 1
-                if i % 100 == 0:
-                    print(i, time.time() - t)
-                    t = time.time()
-                result = output_queue.get()
-                if result is None:
-                    break
-                f.write(result + "\n")
+        for _ in range(num_workers):
+            input_queue.put(None)
 
-    write_process = mp.Process(target=write_results, args=(output_queue,))
-    write_process.start()
+        for p in processes:
+            p.join()
 
-    for i in range(100000):
-        input_queue.put(i)
+        output_queue.put(None)
+        write_process.join()
 
-    for _ in range(num_workers):
-        input_queue.put(None)
-
-
-    for p in processes:
-        p.join()
-    write_process.join()
+        print(circuit_name, "in", time.time() - t_start)
