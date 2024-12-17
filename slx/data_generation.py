@@ -283,7 +283,7 @@ if __name__ == "__main__":
         write_process = mp.Process(target=write_results, args=(f"data/{circuit_name}.njson", output_queue))
         write_process.start()
 
-        for i in range(1000):
+        for i in range(2000):
             input_queue.put(i)
 
         for _ in range(num_workers):

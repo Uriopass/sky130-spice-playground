@@ -22,9 +22,9 @@ def read_data_numba(data_path, content_json):
 
     cases = set()
 
-    check_cases_until = 1000
-    if len(content_json) > 40000:
-        check_cases_until = 4000
+    check_cases_until = 2000
+    if len(content_json) > 80000:
+        check_cases_until = 8000
 
     for parsed in content_json[:check_cases_until]:
         case = tuple([parsed[pin] for pin in pin_list])
@@ -95,8 +95,6 @@ def read_data_numba(data_path, content_json):
 if __name__ == "__main__":
     #iterate of all files in data folder
     for file in os.listdir("data"):
-        if "inv" not in file:
-            continue
         if file.endswith(".njson"):
             input_tensors, output_tensors, pin_list = read_data(data_path="data/" + file)
             for key in sorted(input_tensors.keys()):
@@ -134,14 +132,14 @@ if __name__ == "__main__":
                 #print()
                 avg_error /= 10
 
-                print(file, key, avg_error)
+                print(file, key, avg_error, len(y))
 
                 # save configuration if avg_error is too high
                 if avg_error > 0.05:
                     pin_config = ""
                     for i, pin in enumerate(pin_list):
                         pin_config += f"{pin}: {key[i]} "
-                    with open("bad_configs_inv.txt", "a") as f:
+                    with open("bad_configs_4000.txt", "a") as f:
                         f.write(f"{file} {pin_config}{avg_error}\n")
 
                 xtx = np.matmul(X.T, X)
