@@ -2301,8 +2301,8 @@ X9 a_27_47# A VGND VNB sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
 
 .subckt sky130_fd_sc_hd__clkinv_1 A VGND VNB VPB VPWR Y
 X0 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=0.84 l=0.15
+X2 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=0.84 l=0.15
 X1 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
-X2 VPWR A Y VPB sky130_fd_pr__pfet_01v8_hvt w=0.84 l=0.15
 .ends
 
 .subckt sky130_fd_sc_hd__clkinv_2 A VGND VNB VPB VPWR Y

@@ -1,5 +1,7 @@
 import json
 import os
+
+import matplotlib.pyplot as plt
 import numpy as np
 
 def read_data(data_path):
@@ -30,11 +32,14 @@ def read_data_numba(data_path, content_json):
         case = tuple([parsed[pin] for pin in pin_list])
         cases.add(case)
 
-    input_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(case)), 3 + 7 * numb_fets + 1 * numb_fets * (numb_fets - 1)), dtype = "float64") for case in cases}
+    input_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(case)), 3 + 6 * numb_fets + 10 * numb_fets * (numb_fets - 1) + numb_fets * (numb_fets - 1) * (numb_fets - 2)), dtype = "float64") for case in cases}
     output_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(case)), 2), dtype = "float64") for case in cases}
     iis = {case: 0 for case in cases}
 
     for parsed in content_json:
+        if not(parsed["val_A1"] == "0" and parsed["val_B2"] == "0" and parsed["val_C2"] == "1.8" and parsed["val_B1"] == "0" and parsed["val_A2"] == "0" and parsed["val_C1"] == "fall"):
+            continue
+
         case = tuple([parsed[pin] for pin in pin_list])
 
         ii = iis[case]
@@ -74,10 +79,14 @@ def read_data_numba(data_path, content_json):
                 w_k = parsed["w_" + str(k)]
                 addval(w_j / w_k)
 
-                #cell_carac.append(w_j / w_k * capa)
-                #cell_carac.append(w_j / w_k * transition)
-                #cell_carac.append(np.cbrt(w_j / w_k * capa))
-                #cell_carac.append(np.cbrt(w_j / w_k * transition))
+                #addval(np.cbrt((1.0 / w_j + 1.0 / w_k) * capa))
+                #addval(np.sqrt((1.0 / w_j + 1.0 / w_k) * capa * transition))
+                #addval(np.cbrt(w_j / w_k * capa * transition))
+
+                addval(w_j / w_k * capa)
+                #addval(w_j / w_k * transition)
+                #addval(np.cbrt(w_j / w_k * capa))
+                #addval(np.cbrt(w_j / w_k * transition))
 
         output_tensor[ii, 0] = parsed["out_delta_time"] * 1e9
         output_tensor[ii, 1] = parsed["out_transition"] * 1e9
@@ -95,15 +104,28 @@ def read_data_numba(data_path, content_json):
 if __name__ == "__main__":
     #iterate of all files in data folder
     for file in os.listdir("data"):
+        if "a222" not in file:
+            continue
+
         if file.endswith(".njson"):
             input_tensors, output_tensors, pin_list = read_data(data_path="data/" + file)
             for key in sorted(input_tensors.keys()):
                 X, y = input_tensors[key], output_tensors[key]
+                if len(X) == 0:
+                    continue
                 #print(len(y))
 
                 #print(X.shape, y.shape)
 
-                avg_error = 0
+                avg_rele = 0
+                avg_rmse = 0
+                avg_abse = 0
+                avg_proj = 0
+
+                axis0 = X[:, 3+3]
+                axis1 = X[:, 3+7]
+                axis_z = None
+                axis_z2 = None
 
                 # cross validation
                 for i in range(10):
@@ -124,32 +146,66 @@ if __name__ == "__main__":
                     #print(linear_estimator.shape)
                     y_hat_val = X_validation @ linear_estimator
 
-                    rel_err = np.mean(np.abs((y_validation - y_hat_val) / y_validation))
-                    avg_error += rel_err
+                    avg_rmse += np.sqrt(np.mean((y_validation - y_hat_val) ** 2))
+                    abse = np.mean(np.abs(y_validation - y_hat_val))
+                    avg_abse += abse
+
+                    dt = y_validation[:,0]
+                    dt_hat = y_hat_val[:,0]
+
+                    trans = y_validation[:,1]
+                    trans_hat = y_hat_val[:,1]
+
+                    in_transition = X_validation[:,1]
+
+                    rel_err = np.abs(y_validation - y_hat_val) / (0.1 + np.abs(y_validation))
+                    rel_err = 0 if abse < 0.02 else rel_err
+                    avg_rele += np.mean(rel_err)
+
+                    alpha = 0.5 / 0.6
+                    proj_error = np.abs(dt - trans * alpha - (dt_hat - trans_hat * alpha)) / (dt - trans * alpha + in_transition / 2)
+
+                    avg_proj += np.mean(proj_error)
+
+                    axis_z = np.concatenate([axis_z, rel_err[:,0]]) if i > 0 else rel_err[:,0]
+                    axis_z2 = np.concatenate([axis_z2, rel_err[:,1]]) if i > 0 else rel_err[:,1]
+
+
+                    #worst_i = np.argmax(np.abs((y_validation[:, 0] - y_hat_val[:, 0]) / (0.1 + np.abs(y_validation[:, 0]))))
+                    #wors_rel_err = X_validation[worst_i][:5]
+                    #wors_val = y_validation[worst_i]
+
 
                     #print(rel_err, end= " ")
 
-                #print()
-                avg_error /= 10
+                # 3d scatter
+                fig = plt.figure()
+                ax = fig.add_subplot(111, projection='3d')
+                ax.scatter(np.log10(axis0), np.log10(axis1), axis_z, c='r', marker='o')
+#                ax.scatter(axis0, np.log10(axis1), axis_z2, c='b', marker='o')
+                ax.set_xlabel('W9')
+                ax.set_ylabel('W10')
+                ax.set_zlabel('diff of Relative Error')
+                ax.set_zlim(0, 0.2)
+                plt.show()
 
-                print(file, key, avg_error, len(y))
+                #print()
+                avg_proj /= 10
+                avg_rele /= 10
+                avg_rmse /= 10
+                avg_abse /= 10
+
+                print(file, key, avg_proj, avg_rele, avg_rmse, avg_abse, len(y))
 
                 # save configuration if avg_error is too high
-                if avg_error > 0.05:
+                if avg_rele > 0.05:
                     pin_config = ""
                     for i, pin in enumerate(pin_list):
                         pin_config += f"{pin}: {key[i]} "
-                    with open("bad_configs_4000.txt", "a") as f:
-                        f.write(f"{file} {pin_config}{avg_error}\n")
+                    with open("bad_configs_4000_max001.txt", "a") as f:
+                        f.write(f"{file} {pin_config}{avg_abse:.6}\n")
 
                 xtx = np.matmul(X.T, X)
                 xtx_pinv = np.linalg.pinv(xtx)
-
                 linear_estimator = np.matmul(xtx_pinv, X.T @ y)
-
-
-
-
-
-
 

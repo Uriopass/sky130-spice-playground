@@ -58,28 +58,8 @@ def value_to_voltage(value, transition):
 
 
 def get_timing(P):
-    nfet(P["w_0"], "0", "t1", "C", "t0")
-    nfet(P["w_1"], "1", "t2", "t5", "Vgnd")
-    nfet(P["w_2"], "2", "t3", "B", "t2")
-    pfet(P["w_3"], "3", "t1", "t4", "t0")
-    pfet(P["w_4"], "4", "t5", "t6", "t1")
-    pfet(P["w_5"], "5", "X", "t0", "Vdd")
-    nfet(P["w_6"], "6", "t6", "B", "Vgnd")
-    nfet(P["w_7"], "7", "t2", "t6", "t1")
-    nfet(P["w_8"], "8", "t5", "A", "Vgnd")
-    pfet(P["w_9"], "9", "t3", "C", "t0")
-    pfet(P["w_10"], "10", "t3", "t6", "t2")
-    pfet(P["w_11"], "11", "t4", "C", "Vdd")
-    pfet(P["w_12"], "12", "t2", "t5", "Vdd")
-    nfet(P["w_13"], "13", "t5", "t6", "t3")
-    pfet(P["w_14"], "14", "t5", "A", "Vdd")
-    pfet(P["w_15"], "15", "t6", "B", "Vdd")
-    nfet(P["w_16"], "16", "X", "t0", "Vgnd")
-    pfet(P["w_17"], "17", "t5", "B", "t3")
-    nfet(P["w_18"], "18", "t4", "C", "Vgnd")
-    nfet(P["w_19"], "19", "t5", "B", "t1")
-    nfet(P["w_20"], "20", "t3", "t4", "t0")
-    pfet(P["w_21"], "21", "t2", "B", "t1")
+    pfet(P["w_0"], "0", "Vdd",  "A", "X")
+    nfet(P["w_1"], "1", "Vgnd", "A", "X")
 
     spice = f"""
     .title slx
@@ -89,8 +69,6 @@ def get_timing(P):
     VVGND Vgnd 0 0
 
     VA A 0 {value_to_voltage(P["val_a"], P["transition"])}
-    VB B 0 {value_to_voltage(P["val_b"], P["transition"])}
-    VC C 0 {value_to_voltage(P["val_c"], P["transition"])}
 
     CX X 0 {P["capa_out_fF"]}f
 
@@ -127,54 +105,46 @@ randfet = lambda: min(100.0, 1.0 / math.sqrt(np.random.uniform(0, 1)) - 1 + 0.36
 if __name__ == "__main__":
     np.random.seed(0)
 
-    fet_base = [randfet() for _ in range(22)]
+    w0_values = np.linspace(0.36, 10.0, 8)  # for example
+    w1_values = np.linspace(0.36, 10.0, 8)  # for example
 
-    for w_idx in range(22):
-        # Define the widths we want to sweep for w_0 and w_1:
-        w0_values = np.linspace(0.36, 2.0, 10)  # for example
+    # Keep other widths fixed to some nominal value:
+    fixed_width = 0.5
 
-        # Keep other widths fixed to some nominal value:
-        fixed_width = 0.5
+    # 0 is tradeoff, 5 a bit
 
-        # 0 is tradeoff, 5 a bit
+    # Fixed parameters for simulation:
+    value_a = "rise"
+    sim_time = 3
+    transition_time = 0.01  # for simplicity
+    capa_out_fF = 10.0  # for simplicity
 
-        # Fixed parameters for simulation:
-        value_a = "1.8"
-        value_b = "1.8"
-        value_c = "rise"
-        sim_time = 3
-        transition_time = 0.5  # for simplicity
-        capa_out_fF = 10.0  # for simplicity
+    delta_times = np.zeros((len(w0_values), len(w1_values)))
 
-        # Create a 2D array to store delta_time results
-        delta_times = np.zeros(len(w0_values))
-
-
-
-        # Sweep over w_0 and w_1
-        for i, w0 in enumerate(w0_values):
-            # Construct parameters P:
+    for i, w0 in enumerate(w0_values):
+        for j, w1 in enumerate(w1_values):
             P = {
+                "w_0": w0,
+                "w_1": w1,
+
                 "val_a": value_a,
-                "val_b": value_b,
-                "val_c": value_c,
 
                 "sim_time": sim_time,
                 "transition": transition_time,
                 "capa_out_fF": capa_out_fF,
             }
 
-            for j, w in enumerate(fet_base):
-                P[f"w_{j}"] = w
-
-            P[f"w_{w_idx}"] = w0
-
             dt, tr = get_timing(P)
-            delta_times[i] = dt if dt is not None else np.nan
-        # Now plot the results in 3D
-        print(delta_times)
+            delta_times[i, j] = dt if dt is not None else np.nan
 
-        plt.plot(w0_values, delta_times, label=f"W_{w_idx}")
+    W0, W1 = np.meshgrid(w1_values, w0_values)
+    fig = plt.figure(figsize=(10, 7))
+    ax = fig.add_subplot(111, projection='3d')
+    surf = ax.plot_surface(W0, W1, delta_times, cmap='viridis')
+    ax.set_xlabel(f"W_1")
+    ax.set_ylabel(f"W_0")
+    ax.set_zlabel("Delta Time")
+    ax.set_title("Delta Time as a function of W_0 and W_1")
 
     plt.ylabel("Delta Time")
     plt.legend()
