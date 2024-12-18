@@ -198,11 +198,14 @@ def get_timing(P, subckt):
     
     .tran 0.01n {P["sim_time"]}n
     
+    .options AUTOSTOP
+    
+    .meas tran x_cross when V({subckt["output_pin"]}) = 0.9
+    .meas tran x_start WHEN V({subckt["output_pin"]}) = {1.8 * 0.8}
+    .meas tran x_end   WHEN V({subckt["output_pin"]}) = {1.8 * 0.2}
+    
     .control
     run
-    meas tran x_cross when V({subckt["output_pin"]}) = 0.9
-    meas tran x_start WHEN V({subckt["output_pin"]}) = {1.8 * 0.8}
-    meas tran x_end   WHEN V({subckt["output_pin"]}) = {1.8 * 0.2}
     .endc
     """
 
@@ -272,7 +275,7 @@ if __name__ == "__main__":
     circuits = parse_netlist(open("hd_nopex.spice").read())
 
     for circuit_name, circuit in circuits.items():
-        if not ("bufbuf" in circuit_name or "bufinv" in circuit_name or  "clkinv" in circuit_name):
+        if not ("bufbuf" in circuit_name):
             continue
         t_start = time.time()
         input_queue = mp.Queue()
