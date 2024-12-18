@@ -1,0 +1,21 @@
+INV1 cell simulation
+.include "prelude.spice"
+
+.param risefall=0.01666n
+
+Vgnd Vgnd 0 0
+Vdd Vdd Vgnd 1.8
+
+Va  A  Vgnd pulse(0 1.8 0 {risefall} {risefall} 15n 20n)
+
+
+
+Ccout Y  Vgnd 1f
+
+.tran 3p 5n 0
+
+.control
+
+plot V(A) V(Y)
+
+.endc

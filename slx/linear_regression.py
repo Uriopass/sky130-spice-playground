@@ -25,20 +25,28 @@ def read_data_numba(data_path, content_json):
     cases = set()
 
     check_cases_until = 2000
-    if len(content_json) > 80000:
+    if len(content_json) > 120000:
         check_cases_until = 8000
 
     for parsed in content_json[:check_cases_until]:
         case = tuple([parsed[pin] for pin in pin_list])
         cases.add(case)
 
-    input_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), 3 + 6 * numb_fets + 10 * numb_fets * (numb_fets - 1) + numb_fets * (numb_fets - 1) * (numb_fets - 2)), dtype = "float64") for case in cases}
+    input_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), 3 + 5 * numb_fets + 2 * numb_fets * (numb_fets - 1)), dtype = "float64") for case in cases}
     output_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), 2), dtype = "float64") for case in cases}
     iis = {case: 0 for case in cases}
 
     for parsed in content_json:
         #if not(parsed["val_A1"] == "0" and parsed["val_B2"] == "0" and parsed["val_C2"] == "1.8" and parsed["val_B1"] == "0" and parsed["val_A2"] == "0" and parsed["val_C1"] == "fall"):
         #    continue
+
+        skip = False
+        for j in range(numb_fets):
+            if parsed[f"w_{j}"] > 5:
+                skip = True
+                break
+        if skip:
+            continue
 
         case = tuple([parsed[pin] for pin in pin_list])
 
@@ -61,7 +69,7 @@ def read_data_numba(data_path, content_json):
 
         for j in range(numb_fets):
             w_j = parsed[f"w_{j}"]
-            addval(w_j)
+            #addval(w_j)
 
         for j in range(numb_fets):
             w_j = parsed[f"w_{j}"]
@@ -78,6 +86,9 @@ def read_data_numba(data_path, content_json):
                     continue
                 w_k = parsed["w_" + str(k)]
                 addval(w_j / w_k)
+                addval(capa / (w_j + w_k))
+                #addval(np.sqrt(w_j / w_k))
+                #addval(np.cbrt(w_j / w_k))
 
                 #addval(np.cbrt((1.0 / w_j + 1.0 / w_k) * capa))
                 #addval(np.sqrt((1.0 / w_j + 1.0 / w_k) * capa * transition))
@@ -104,10 +115,8 @@ def read_data_numba(data_path, content_json):
 if __name__ == "__main__":
     #iterate of all files in data folder
     for file in os.listdir("data"):
-        #if "and3_1" not in file:
-        #    continue
-
         if file.endswith(".njson"):
+            print("gonna do", file)
             input_tensors, output_tensors, pin_list = read_data(data_path="data/" + file)
             for key in sorted(input_tensors.keys()):
                 X, y = input_tensors[key], output_tensors[key]
@@ -118,11 +127,12 @@ if __name__ == "__main__":
                 #print(X.shape, y.shape)
 
                 avg_rele = 0
-                avg_rmse = 0
+                avg_rele_max = 0
                 avg_abse = 0
 
-                #axis0 = X[:, 3+3]
-                #axis1 = X[:, 3+7]
+                #axis0 = X[:, 1]
+                #axis1 = X[:, 2]
+                #axis_dt = y[:, 0]
                 #axis_z = None
                 #axis_z2 = None
 
@@ -141,20 +151,19 @@ if __name__ == "__main__":
                     xtx_pinv = np.linalg.pinv(xtx)
 
                     linear_estimator = np.matmul(xtx_pinv, X_train.T @ y_train)
-
                     #print(linear_estimator.shape)
+
                     y_hat_val = X_validation @ linear_estimator
 
-                    avg_rmse += np.sqrt(np.mean((y_validation - y_hat_val) ** 2))
-                    abse = np.mean(np.abs(y_validation - y_hat_val))
-                    avg_abse += abse
+                    abse = np.abs(y_validation - y_hat_val)
+                    avg_abse += np.mean(abse)
 
-                    in_transition = X_validation[:,1]
-
-                    rel_err = np.abs(y_validation - y_hat_val) / (np.maximum(0.1, np.abs(y_validation)))
+                    rel_err = np.abs(y_validation - y_hat_val) / (np.abs(y_validation))
                     #rel_err = 0 if abse < 0.02 else rel_err
                     avg_rele += np.mean(rel_err)
 
+                    rel_err_max = np.abs(y_validation - y_hat_val) / (np.maximum(0.1, np.abs(y_validation)))
+                    avg_rele_max += np.mean(rel_err_max)
                     #dt = y_validation[:,0]
                     #dt_hat = y_hat_val[:,0]
                     #trans = y_validation[:,1]
@@ -165,44 +174,72 @@ if __name__ == "__main__":
 
                     #avg_proj += np.mean(proj_error)
 
-                    #axis_z = np.concatenate([axis_z, rel_err[:,0]]) if i > 0 else rel_err[:,0]
-                    #axis_z2 = np.concatenate([axis_z2, rel_err[:,1]]) if i > 0 else rel_err[:,1]
+                    #axis_z = np.concatenate([axis_z, abse[:,0]]) if i > 0 else abse[:,0]
+                    #axis_z2 = np.concatenate([axis_z2, rel_err[:,0]]) if i > 0 else rel_err[:,0]
 
 
-                    #worst_i = np.argmax(np.abs((y_validation[:, 0] - y_hat_val[:, 0]) / (0.1 + np.abs(y_validation[:, 0]))))
-                    #wors_rel_err = X_validation[worst_i][:5]
-                    #wors_val = y_validation[worst_i]
+                    # worst_i = np.argmax(np.abs((y_validation[:, 0] - y_hat_val[:, 0]) / (0.1 + np.abs(y_validation[:, 0]))))
+                    # wors_rel_err = X_validation[worst_i][:3+12]
+                    # wors_val = y_validation[worst_i]
+
+                    #print(wors_rel_err, wors_val, y_hat_val[worst_i])
 
 
-                    #print(rel_err, end= " ")
 
-                # 3d scatter
+                # make histogram instead of scatter
+                #hist_dt = np.linspace(0.0, np.max(axis_dt), 50)
+                #hist_abse = np.zeros(len(hist_dt) - 1)
+                #hist_rele = np.zeros(len(hist_dt) - 1)
+#
+                #for i in range(len(hist_dt) - 1):
+                #    hist_abse[i] = np.mean(axis_z[(axis_dt >= hist_dt[i]) & (axis_dt < hist_dt[i + 1])])
+                #    hist_rele[i] = np.mean(axis_z2[(axis_dt >= hist_dt[i]) & (axis_dt < hist_dt[i + 1])])
+#
+                #plt.plot(hist_dt[:-1], hist_abse, label="abs_err")
+                #plt.plot(hist_dt[:-1], hist_rele, label="rel_err")
+                #plt.xlabel("Delta Time")
+                #plt.ylabel("mean", rotation=0, ha="right")
+                #plt.show()
+#
+                #plt.scatter(axis_dt, axis_z, c='r', marker='o')
+                #linear_regression = np.polyfit(axis_dt, axis_z, 1)
+                #plt.plot(axis_dt, linear_regression[0] * axis_dt + linear_regression[1], c='b', label="Linear Regression")
+                #plt.xlabel("Delta Time")
+                #plt.ylabel("Abs Error")
+                #plt.legend()
+                #plt.show()
+                ## 3d scatter
                 #fig = plt.figure()
                 #ax = fig.add_subplot(111, projection='3d')
-                #ax.scatter(np.log10(axis0), np.log10(axis1), axis_z, c='r', marker='o')
-                # ax.scatter(axis0, np.log10(axis1), axis_z2, c='b', marker='o')
-                #ax.set_xlabel('W9')
-                #ax.set_ylabel('W10')
-                #ax.set_zlabel('diff of Relative Error')
-                #ax.set_zlim(0, 0.2)
+                #ax.scatter(axis0, np.log10(axis1), axis_z, c='r', marker='o')
+                ##ax.scatter(axis0, np.log10(axis1), axis_z, c='b', marker='o')
+                #ax.set_xlabel('Transition')
+                #ax.set_ylabel('Capacitance')
+                #ax.set_zlabel('abs Error')
+                #ax.set_zlim(0, 0.04)
                 #plt.show()
 
                 #print()
                 avg_rele /= 10
-                avg_rmse /= 10
                 avg_abse /= 10
+                avg_rele_max /= 10
 
-                print(file, key, avg_rele, avg_rmse, avg_abse, len(y))
+                xtx = np.matmul(X.T, X)
+                xtx_pinv = np.linalg.pinv(xtx)
+                linear_estimator = np.matmul(xtx_pinv, X.T @ y)
+
+                y_hat_val = X @ linear_estimator
+
+                rel_e_all = np.mean(np.abs(y - y_hat_val) / np.abs(y))
+                #abs_e_all = np.mean(np.abs(y - y_hat_val))
+
+                print(file, key, avg_rele, avg_abse, rel_e_all,  avg_rele_max, len(y))
 
                 # save configuration if avg_error is too high
                 if avg_rele > 0.05:
                     pin_config = ""
                     for i, pin in enumerate(pin_list):
                         pin_config += f"{pin}: {key[i]} "
-                    with open("bad_configs_6000_max001.txt", "a") as f:
-                        f.write(f"{file} {pin_config}{avg_abse:.6}\n")
-
-                xtx = np.matmul(X.T, X)
-                xtx_pinv = np.linalg.pinv(xtx)
-                linear_estimator = np.matmul(xtx_pinv, X.T @ y)
+                    with open("bad_configs_6000_fetlt5.txt", "a") as f:
+                        f.write(f"{file} {pin_config} rel:{avg_rele:.6} abs:{avg_abse:.6} rel_train:{rel_e_all:.6} rel_max01:{avg_rele_max:.6}\n")
 

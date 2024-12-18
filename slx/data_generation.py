@@ -159,6 +159,7 @@ def parse_netlist(netlist):
                     print("duplicate in", current_subckt)
                     break
 
+
     return subcircuits
 
 def get_timing(P, subckt):
@@ -275,7 +276,7 @@ if __name__ == "__main__":
     circuits = parse_netlist(open("hd_nopex.spice").read())
 
     for circuit_name, circuit in circuits.items():
-        if not ("bufbuf" in circuit_name):
+        if not ("clkinvlp" in circuit_name):
             continue
         t_start = time.time()
         input_queue = mp.Queue()
