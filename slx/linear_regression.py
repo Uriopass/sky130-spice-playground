@@ -32,13 +32,13 @@ def read_data_numba(data_path, content_json):
         case = tuple([parsed[pin] for pin in pin_list])
         cases.add(case)
 
-    input_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(case)), 3 + 6 * numb_fets + 10 * numb_fets * (numb_fets - 1) + numb_fets * (numb_fets - 1) * (numb_fets - 2)), dtype = "float64") for case in cases}
-    output_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(case)), 2), dtype = "float64") for case in cases}
+    input_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), 3 + 6 * numb_fets + 10 * numb_fets * (numb_fets - 1) + numb_fets * (numb_fets - 1) * (numb_fets - 2)), dtype = "float64") for case in cases}
+    output_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), 2), dtype = "float64") for case in cases}
     iis = {case: 0 for case in cases}
 
     for parsed in content_json:
-        if not(parsed["val_A1"] == "0" and parsed["val_B2"] == "0" and parsed["val_C2"] == "1.8" and parsed["val_B1"] == "0" and parsed["val_A2"] == "0" and parsed["val_C1"] == "fall"):
-            continue
+        #if not(parsed["val_A1"] == "0" and parsed["val_B2"] == "0" and parsed["val_C2"] == "1.8" and parsed["val_B1"] == "0" and parsed["val_A2"] == "0" and parsed["val_C1"] == "fall"):
+        #    continue
 
         case = tuple([parsed[pin] for pin in pin_list])
 
@@ -83,7 +83,7 @@ def read_data_numba(data_path, content_json):
                 #addval(np.sqrt((1.0 / w_j + 1.0 / w_k) * capa * transition))
                 #addval(np.cbrt(w_j / w_k * capa * transition))
 
-                addval(w_j / w_k * capa)
+                #addval(w_j / w_k * capa)
                 #addval(w_j / w_k * transition)
                 #addval(np.cbrt(w_j / w_k * capa))
                 #addval(np.cbrt(w_j / w_k * transition))
@@ -104,8 +104,8 @@ def read_data_numba(data_path, content_json):
 if __name__ == "__main__":
     #iterate of all files in data folder
     for file in os.listdir("data"):
-        if "a222" not in file:
-            continue
+        #if "and3_1" not in file:
+        #    continue
 
         if file.endswith(".njson"):
             input_tensors, output_tensors, pin_list = read_data(data_path="data/" + file)
@@ -120,12 +120,11 @@ if __name__ == "__main__":
                 avg_rele = 0
                 avg_rmse = 0
                 avg_abse = 0
-                avg_proj = 0
 
-                axis0 = X[:, 3+3]
-                axis1 = X[:, 3+7]
-                axis_z = None
-                axis_z2 = None
+                #axis0 = X[:, 3+3]
+                #axis1 = X[:, 3+7]
+                #axis_z = None
+                #axis_z2 = None
 
                 # cross validation
                 for i in range(10):
@@ -150,25 +149,24 @@ if __name__ == "__main__":
                     abse = np.mean(np.abs(y_validation - y_hat_val))
                     avg_abse += abse
 
-                    dt = y_validation[:,0]
-                    dt_hat = y_hat_val[:,0]
-
-                    trans = y_validation[:,1]
-                    trans_hat = y_hat_val[:,1]
-
                     in_transition = X_validation[:,1]
 
-                    rel_err = np.abs(y_validation - y_hat_val) / (0.1 + np.abs(y_validation))
-                    rel_err = 0 if abse < 0.02 else rel_err
+                    rel_err = np.abs(y_validation - y_hat_val) / (np.maximum(0.1, np.abs(y_validation)))
+                    #rel_err = 0 if abse < 0.02 else rel_err
                     avg_rele += np.mean(rel_err)
 
-                    alpha = 0.5 / 0.6
-                    proj_error = np.abs(dt - trans * alpha - (dt_hat - trans_hat * alpha)) / (dt - trans * alpha + in_transition / 2)
+                    #dt = y_validation[:,0]
+                    #dt_hat = y_hat_val[:,0]
+                    #trans = y_validation[:,1]
+                    #trans_hat = y_hat_val[:,1]
 
-                    avg_proj += np.mean(proj_error)
+                    #alpha = 0.5 / 0.6
+                    #proj_error = np.abs(dt - trans * alpha - (dt_hat - trans_hat * alpha)) / (dt - trans * alpha + in_transition / 2)
 
-                    axis_z = np.concatenate([axis_z, rel_err[:,0]]) if i > 0 else rel_err[:,0]
-                    axis_z2 = np.concatenate([axis_z2, rel_err[:,1]]) if i > 0 else rel_err[:,1]
+                    #avg_proj += np.mean(proj_error)
+
+                    #axis_z = np.concatenate([axis_z, rel_err[:,0]]) if i > 0 else rel_err[:,0]
+                    #axis_z2 = np.concatenate([axis_z2, rel_err[:,1]]) if i > 0 else rel_err[:,1]
 
 
                     #worst_i = np.argmax(np.abs((y_validation[:, 0] - y_hat_val[:, 0]) / (0.1 + np.abs(y_validation[:, 0]))))
@@ -179,30 +177,29 @@ if __name__ == "__main__":
                     #print(rel_err, end= " ")
 
                 # 3d scatter
-                fig = plt.figure()
-                ax = fig.add_subplot(111, projection='3d')
-                ax.scatter(np.log10(axis0), np.log10(axis1), axis_z, c='r', marker='o')
-#                ax.scatter(axis0, np.log10(axis1), axis_z2, c='b', marker='o')
-                ax.set_xlabel('W9')
-                ax.set_ylabel('W10')
-                ax.set_zlabel('diff of Relative Error')
-                ax.set_zlim(0, 0.2)
-                plt.show()
+                #fig = plt.figure()
+                #ax = fig.add_subplot(111, projection='3d')
+                #ax.scatter(np.log10(axis0), np.log10(axis1), axis_z, c='r', marker='o')
+                # ax.scatter(axis0, np.log10(axis1), axis_z2, c='b', marker='o')
+                #ax.set_xlabel('W9')
+                #ax.set_ylabel('W10')
+                #ax.set_zlabel('diff of Relative Error')
+                #ax.set_zlim(0, 0.2)
+                #plt.show()
 
                 #print()
-                avg_proj /= 10
                 avg_rele /= 10
                 avg_rmse /= 10
                 avg_abse /= 10
 
-                print(file, key, avg_proj, avg_rele, avg_rmse, avg_abse, len(y))
+                print(file, key, avg_rele, avg_rmse, avg_abse, len(y))
 
                 # save configuration if avg_error is too high
                 if avg_rele > 0.05:
                     pin_config = ""
                     for i, pin in enumerate(pin_list):
                         pin_config += f"{pin}: {key[i]} "
-                    with open("bad_configs_4000_max001.txt", "a") as f:
+                    with open("bad_configs_6000_max001.txt", "a") as f:
                         f.write(f"{file} {pin_config}{avg_abse:.6}\n")
 
                 xtx = np.matmul(X.T, X)

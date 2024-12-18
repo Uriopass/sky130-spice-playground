@@ -52,7 +52,7 @@ def parse_netlist(netlist):
     subckt_pattern = re.compile(r"^\.subckt (\S+)(.*?)$")
     ends_pattern = re.compile(r"^\.ends$")
     transistor_pattern = re.compile(
-        r"^X(\d+) (\S+) (\S+) (\S+) (\S+) sky130_fd_pr__(nfet|pfet)_\S+"
+        r"^X(\d+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+sky130_fd_pr__(nfet|pfet)_\S+"
     )
 
     subcircuits = {}
@@ -120,6 +120,7 @@ def parse_netlist(netlist):
             transistor_match = transistor_pattern.match(line)
             if transistor_match:
                 name, source, gate, drain, bulk, type_ = transistor_match.groups()
+
                 subcircuits[current_subckt]["transistors"].append(
                     {
                         "type": type_,
@@ -142,6 +143,21 @@ def parse_netlist(netlist):
         size = int(name_split[-1])
         if size != smallest_sizes["_".join(name_split[:-1])]:
             del subcircuits[key]
+
+    for current_subckt, circuit in subcircuits.items():
+        for t1 in circuit["transistors"]:
+            source = t1["source"]
+            gate = t1["gate"]
+            drain = t1["drain"]
+            for transistor in circuit["transistors"]:
+                if t1["name"] == transistor["name"]:
+                    continue
+                if transistor["source"] == source and transistor["gate"] == gate and transistor["drain"] == drain:
+                    print("duplicate in", current_subckt)
+                    break
+                if transistor["source"] == drain and transistor["gate"] == gate and transistor["drain"] == source:
+                    print("duplicate in", current_subckt)
+                    break
 
     return subcircuits
 
@@ -256,6 +272,8 @@ if __name__ == "__main__":
     circuits = parse_netlist(open("hd_nopex.spice").read())
 
     for circuit_name, circuit in circuits.items():
+        if not ("bufbuf" in circuit_name or "bufinv" in circuit_name or  "clkinv" in circuit_name):
+            continue
         t_start = time.time()
         input_queue = mp.Queue()
         output_queue = mp.Queue()
@@ -283,7 +301,7 @@ if __name__ == "__main__":
         write_process = mp.Process(target=write_results, args=(f"data/{circuit_name}.njson", output_queue))
         write_process.start()
 
-        for i in range(2000):
+        for i in range(6000):
             input_queue.put(i)
 
         for _ in range(num_workers):
