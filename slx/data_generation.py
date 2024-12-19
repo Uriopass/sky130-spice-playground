@@ -5,7 +5,7 @@ import multiprocessing as mp
 import re
 from collections import defaultdict
 
-from spice import parse_measures, run_spice
+from spice import parse_measures, run_spice, run_spice_plot
 import numpy as np
 
 MINSIZE = 0.36
@@ -197,7 +197,7 @@ def get_timing(P, subckt):
     
     {fets}
     
-    .tran 0.01n {P["sim_time"]}n
+    .tran 0.001n {P["sim_time"]}n
     
     .options AUTOSTOP
     
@@ -207,8 +207,13 @@ def get_timing(P, subckt):
     
     .control
     run
+    
+    
+    *plot V({subckt["output_pin"]}) V(B)
     .endc
     """
+
+    print(spice)
 
     output, stderr = run_spice(spice)
     measures = parse_measures(output)
@@ -274,6 +279,25 @@ def worker(subckt, input_queue, output_queue):
 
 if __name__ == "__main__":
     circuits = parse_netlist(open("hd_nopex.spice").read())
+
+    P = {
+        "sim_time": sim_time,
+
+        "transition": 0.0364 / 0.6,
+
+        "capa_out_fF": 15.5435043,
+
+        f"val_B": "rise",
+        f"val_A": "0",
+
+        "w_0": 10.0,
+        "w_3": 3.0,
+        "w_2": 3 * 0.65,
+        "w_1": 0.36,
+    }
+
+    print(get_timing(P, circuits["sky130_fd_sc_hd__nor2_1"]))
+    exit(0)
 
     for circuit_name, circuit in circuits.items():
         if not ("clkinvlp" in circuit_name):

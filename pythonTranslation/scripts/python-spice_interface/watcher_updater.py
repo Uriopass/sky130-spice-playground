@@ -44,6 +44,27 @@ def run(filename):
         lines = content.split("\n")
 
         for i in range(len(lines)):
+            if not lines[i].startswith('# transition'):
+                continue
+
+            timing_name, timings_str = lines[i].split(":")
+            lines[i] = timing_name + ":"
+            name = timing_name.split(" ")[-1]
+            name = name.lower()
+
+            if 'rise_'+name in measures:
+                start = measures['rise_start_'+name]*1e9
+                end = measures['rise_end_'+name]*1e9
+                value = abs(end-start)
+                lines[i] += f" {value:.4f}"
+
+            if 'fall_'+name in measures:
+                start = measures['fall_start_'+name]*1e9
+                end = measures['fall_end_'+name]*1e9
+                value = abs(end-start)
+                lines[i] += f" {value:.4f}"
+
+        for i in range(len(lines)):
             if lines[i].startswith("# ==="):
                 timing_diffs.append(("skip_line", None, None))
 

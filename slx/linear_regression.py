@@ -1,8 +1,8 @@
 import json
 import os
 
-import matplotlib.pyplot as plt
 import numpy as np
+import netCDF4 as nc
 
 def read_data(data_path):
     content = open(data_path).readlines()
@@ -112,7 +112,46 @@ def read_data_numba(data_path, content_json):
 
     return input_tensors, output_tensors, pin_list
 
+def export_estimators():
+    os.makedirs("models", exist_ok=True)
+    # iterate of all files in data folder
+    for file in os.listdir("data"):
+        if file.endswith(".njson"):
+            print("gonna do", file)
+
+            all_estimators = {}
+
+            input_tensors, output_tensors, pin_list = read_data(data_path="data/" + file)
+            for key in sorted(input_tensors.keys()):
+                X, y = input_tensors[key], output_tensors[key]
+                if len(X) == 0:
+                    continue
+
+                xtx = np.matmul(X.T, X)
+                xtx_pinv = np.linalg.pinv(xtx)
+                linear_estimator = np.matmul(xtx_pinv, X.T @ y)
+
+                case_name = ",".join([f"{pin}:{key[i]}" for i, pin in enumerate(pin_list)])
+                print(case_name)
+                all_estimators[case_name] = linear_estimator
+
+            cell_name = file.split(".")[0]
+            cell_name = "_".join(cell_name.split("_")[:-1])
+
+            with nc.Dataset(f"models/{cell_name}.nc", "w") as f:
+                f.createDimension("dim", len(linear_estimator))
+                f.createDimension("out", 2)
+                f.createDimension("numb_cases", len(all_estimators))
+
+                for case_name, linear_estimator in all_estimators.items():
+                    case = f.createGroup(case_name)
+                    case.createVariable("linear_estimator", "f8", ("dim", "out"))
+                    case["linear_estimator"][:, :] = linear_estimator
+
 if __name__ == "__main__":
+    export_estimators()
+    exit(0)
+
     #iterate of all files in data folder
     for file in os.listdir("data"):
         if file.endswith(".njson"):

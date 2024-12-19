@@ -1463,12 +1463,14 @@ X39 Y C1 VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
 .ends
 
 .subckt sky130_fd_sc_hd__and2_0 A B VGND VNB VPB VPWR X
-X0 a_40_47# B VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=0.42 l=0.15
-X1 a_123_47# B VGND VNB sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
-X2 a_40_47# A a_123_47# VNB sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
-X3 VGND a_40_47# X VNB sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
 X4 VPWR A a_40_47# VPB sky130_fd_pr__pfet_01v8_hvt w=0.42 l=0.15
+X0 a_40_47# B VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=0.42 l=0.15
+
+X2 a_40_47# A a_123_47# VNB sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
+X1 a_123_47# B VGND VNB sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
+
 X5 VPWR a_40_47# X VPB sky130_fd_pr__pfet_01v8_hvt w=0.64 l=0.15
+X3 VGND a_40_47# X VNB sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
 .ends
 
 .subckt sky130_fd_sc_hd__and2_1 A B VGND VNB VPB VPWR X
@@ -5513,12 +5515,14 @@ X31 Y B VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1.0 l=0.15
 .ends
 
 .subckt sky130_fd_sc_hd__nand2b_1 A_N B VGND VNB VPB VPWR Y
-X0 a_206_47# a_27_93# Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
-X1 a_27_93# A_N VGND VNB sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
-X2 VGND B a_206_47# VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
-X3 VPWR B Y VPB sky130_fd_pr__pfet_01v8_hvt w=1.0 l=0.15
 X4 a_27_93# A_N VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=0.42 l=0.15
+X1 a_27_93# A_N VGND VNB sky130_fd_pr__nfet_01v8 w=0.42 l=0.15
+
+X3 VPWR B Y VPB sky130_fd_pr__pfet_01v8_hvt w=1.0 l=0.15
+X2 VGND B a_206_47# VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
+
 X5 Y a_27_93# VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1.0 l=0.15
+X0 a_206_47# a_27_93# Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
 .ends
 
 .subckt sky130_fd_sc_hd__nand2b_2 A_N B VGND VNB VPB VPWR Y
@@ -5878,9 +5882,9 @@ X35 a_850_47# a_193_47# a_432_47# VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
 
 .subckt sky130_fd_sc_hd__nor2_1 A B VGND VNB VPB VPWR Y
 X0 a_109_297# A VPWR VPB sky130_fd_pr__pfet_01v8_hvt w=1.0 l=0.15
+X3 Y B a_109_297# VPB sky130_fd_pr__pfet_01v8_hvt w=1.0 l=0.15
 X1 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
 X2 VGND B Y VNB sky130_fd_pr__nfet_01v8 w=0.65 l=0.15
-X3 Y B a_109_297# VPB sky130_fd_pr__pfet_01v8_hvt w=1.0 l=0.15
 .ends
 
 .subckt sky130_fd_sc_hd__nor2_2 A B VGND VNB VPB VPWR Y
