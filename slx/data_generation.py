@@ -209,7 +209,7 @@ def get_timing(P, subckt):
     run
     
     
-    *plot V({subckt["output_pin"]}) V(B)
+    *plot V({subckt["output_pin"]}) V(S)
     .endc
     """
 
@@ -217,7 +217,7 @@ def get_timing(P, subckt):
     measures = parse_measures(output)
 
     if "x_cross" not in measures or "x_start" not in measures or "x_end" not in measures:
-        #print(output, stderr)
+        print(output, stderr)
         return None, None
 
     transition = abs(measures["x_end"] - measures["x_start"])
@@ -281,29 +281,30 @@ if __name__ == "__main__":
     P = {
         "sim_time": sim_time,
 
-        "transition": 0.0611666,
+        "transition": 0.06116666,
 
-        "capa_out_fF": 16.8140134,
+        "capa_out_fF": 43.725986,
 
-        f"val_A0": "1.8",
-        f"val_A1": "0",
-        "val_S": "fall",
+        "val_A0": "fall",
+        "val_S": "0",
+        "val_A1": "1.8",
 
-        "w_3": 16 * 0.42,
-        "w_10": 16 * 0.42,
-        "w_2": 8 * 0.42,
-        "w_11": 8 * 0.42,
-        "w_4": 8 * 0.42,
-        "w_5": 8 * 0.42,
-        "w_0": 4 * 0.42,
-        "w_9": 4 * 0.42,
-        "w_6": 8 * 0.42,
+        "w_0": 10 * 0.64,
         "w_1": 8 * 0.42,
-        "w_8": 4 * 1.00,
-        "w_7": 4 * 0.65,
+        "w_2": 0.36,
+        "w_3": 0.64,
+        "w_4": 0.36,
+        "w_5": 0.36,
+        "w_6": 6 * 0.64,
+        "w_7": 2.0 * 1.30,
+        "w_8": 4.0 * 2.00,
+        "w_9": 0.36,
+        "w_10": 0.42,
+        "w_11": 10 * 0.42,
     }
 
-    print(get_timing(P, circuits["sky130_fd_sc_hd__mux2_1"]))
+    real_dt, real_trans = get_timing(P, circuits["sky130_fd_sc_hd__mux2_1"])
+    print(f"{real_dt * 1e9}n {real_trans * 1e9}n")
     exit(0)
 
     for circuit_name, circuit in circuits.items():

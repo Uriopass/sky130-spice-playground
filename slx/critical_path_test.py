@@ -49,6 +49,9 @@ def cell_name(n, name):
 def input_pin(n, name):
     data[n]['input_pin'] = name
 
+def pin_swap(n, pin1, pin2):
+    data[n]['pin_swap'] = (pin1, pin2)
+
 # ===  clkbuf ===
 cell_name(0, "clkbuf")
 other_pins(0, "")
@@ -151,21 +154,20 @@ transition_new(4, 0.0536, 0.0572)
 capa(5, 0.004687)
 capa(5, 0.006688504)
 
-pfet(1.00, 10*1.00, "8_I5",     "Vdd",     "I5/A", "I5/temp0")
-pfet(1.00,  2*1.00, "3_I5","I5/temp3",     "I5/B", "I5/temp0")
+pfet(1.00, 10*1.00, "6_I5",     "Vdd",     "I5/A", "I5/temp0")
+pfet(1.00,  2*1.00, "5_I5","I5/temp3",     "I5/B", "I5/temp0")
 
-nfet(0.65, 2*0.36, "5_I5",     "Vgnd",     "I5/A", "I5/temp3")
-nfet(0.65, 2*0.65, "2_I5",     "Vgnd",     "I5/B", "I5/temp3")
+nfet(0.65, 2*0.36, "0_I5",     "Vgnd",     "I5/A", "I5/temp3")
+nfet(0.65, 2*0.65, "1_I5",     "Vgnd",     "I5/B", "I5/temp3")
 
-pfet(1.00, 2*1.00, "0_I5", "I5/temp2", "I5/temp3",     "I5/X")
-nfet(0.65, 2*0.65, "6_I5",     "Vgnd", "I5/temp3",     "I5/X")
+pfet(1.00, 10*1.00, "4_I5",      "Vdd",     "I5/A", "I5/temp2")
+pfet(1.00, 3*1.00, "3_I5",      "Vdd",     "I5/B", "I5/temp2")
 
-pfet(1.00, 10*1.00, "7_I5",      "Vdd",     "I5/A", "I5/temp2")
-pfet(1.00, 3*1.00, "4_I5",      "Vdd",     "I5/B", "I5/temp2")
-
-nfet(0.65, 3*0.65, "1_I5", "I5/temp1",     "I5/B",     "I5/X")
 nfet(0.65, 10*0.65, "9_I5",     "Vgnd",     "I5/A", "I5/temp1")
 
+pfet(1.00, 2*1.00, "8_I5", "I5/temp2", "I5/temp3",     "I5/X")
+nfet(0.65, 2*0.65, "2_I5",     "Vgnd", "I5/temp3",     "I5/X")
+nfet(0.65, 3*0.65, "7_I5", "I5/temp1",     "I5/B",     "I5/X")
 
 ground_truth_start(5, 0.959, 1.208, 0.584, 0.822)
 ground_truth_end(5, 1.165, 1.517, 0.691, 0.968)
@@ -507,6 +509,7 @@ on_rise(18, "fall")
 # ===  o21a, A2=1, A1=1 ===
 cell_name(18, "o21a")
 other_pins(18, "A2=1, A1=1")
+input_pin(18, "B1")
 transition_new(18, 0.0363, 0.0634)
 capa(19, 0.0023304995)
 
@@ -530,6 +533,7 @@ on_rise(19, "fall")
 # ===  a21oi, A2=0, A1=1 ===
 cell_name(19, "a21oi")
 other_pins(19, "A2=0, A1=1")
+input_pin(19, "B1")
 transition_new(19, 0.0148, 0.0249)
 capa(20, 0.0023304995)
 
@@ -549,6 +553,7 @@ on_rise(20, "fall")
 # ===  xnor2, B=0 ===
 cell_name(20, "xnor2")
 other_pins(20, "B=0")
+input_pin(20, "A")
 transition_new(20, 0.0843, 0.0322)
 
 capa(21, 0.0023304995)
@@ -575,6 +580,7 @@ on_rise(21, "rise")
 # ===  a22o, A2=0, B2=1, A1=1 ===
 cell_name(21, "a22o")
 other_pins(21, "A2=0, B2=1, A1=1")
+input_pin(21, "B1")
 transition_new(21, 0.0350, 0.0619)
 
 capa(22, 0.0023304995)
@@ -600,6 +606,7 @@ on_rise(22, "fall")
 # ===  a21o, A1=1, B1=0 ===
 cell_name(22, "a21o")
 other_pins(22, "A1=1, B1=0")
+input_pin(22, "A2")
 transition_new(22, 0.0256, 0.0486)
 
 capa(23, 0.0023304995)
@@ -623,10 +630,12 @@ on_rise(23, "fall")
 # ===  and2, A=1 ===
 cell_name(23, "and2")
 other_pins(23, "A=1")
+input_pin(23, "B")
+pin_swap(23, "A", "B")
 transition_new(23, 0.0218, 0.0265)
 capa(24, 0.001678)
 capa(24, 0.0023304995)
-capa(24, 0.00126)
+capa(24, 0.00126) # capa for next dxtp
 pfet(0.42, 0.36, "0_I24",       "Vdd",     "I24/A", "I24/temp1")
 pfet(0.42, 3 * 0.42, "4_I24",       "Vdd",     "I24/B", "I24/temp1")
 
@@ -681,7 +690,7 @@ for cell_i, cell in data.items():
     if not os.path.exists(path):
         print(f"File not found: {path}")
         continue
-    if cell['cell_name'] != 'mux2':
+    if cell['cell_name'] != 'and2':
         continue
     estimator_data = nc.Dataset(path, "r")
     first_group = next(estimator_data.groups.__iter__())
@@ -693,13 +702,26 @@ for cell_i, cell in data.items():
     }
 
 
+    if 'pin_swap' in cell:
+        pin1, pin2 = cell['pin_swap']
+        pin1 = "val_" + pin1
+        pin2 = "val_" + pin2
+        if pin1 in other_pins_map and pin2 in other_pins_map:
+            other_pins_map[pin1], other_pins_map[pin2] = other_pins_map[pin2], other_pins_map[pin1]
+        elif pin1 in other_pins_map:
+            other_pins_map[pin2] = other_pins_map[pin1]
+            del other_pins_map[pin1]
+        elif pin2 in other_pins_map:
+            other_pins_map[pin1] = other_pins_map[pin2]
+            del other_pins_map[pin2]
+
     capa = cell['capa'] * 1000
 
     if cell_i+1 in data:
         next_cell_input_pin = data[cell_i+1]['input_pin']
         for trans in data[cell_i+1]['fet']:
             if trans[2].endswith('/'+next_cell_input_pin):
-                capa += trans[1] * 0.15 * 0.01 * 1000 # 0.01 is pF/um²
+                capa += trans[1] * 0.15 * 0.0083 * 1000 # 0.0083 is pF/um²
 
 
     for risefall in ["rise", "fall"]:
@@ -715,9 +737,6 @@ for cell_i, cell in data.items():
 
             if i < len(pin_list) - 1:
                 case += ","
-
-        if cell['cell_name'] == 'and2':
-            case = f"val_B:1.8,val_A:{rise_case}"
 
         estimator = estimator_data.groups[case]
         values = estimator.variables["linear_estimator"][:, :]
@@ -735,12 +754,12 @@ for cell_i, cell in data.items():
             print("Wrong number of transistors for cell", cell['cell_name'])
             continue
 
-        for fet in sorted(cell['fet'], key=lambda x: x[0]):
+        for fet in sorted(cell['fet'], key=lambda x: int(x[0])):
             fet_sizes.append(fet[1])
 
         transition = cell['transition_new'][1 if risefall == "fall" else 0]
 
-        print(transition* 1.0 / 0.6, capa,fet_sizes)
+        print(transition * 1.0 / 0.6, capa, fet_sizes, case)
         vector = mk_vector(values.shape[0], transition* 1.0 / 0.6, capa, fet_sizes)
 
         estimated = values.T @ vector
@@ -755,5 +774,5 @@ for cell_i, cell in data.items():
         rel_err_trans = np.abs(estimated[1] - real_trans) / real_trans
 
         print(cell['cell_name'], risefall, rel_err_dt, rel_err_trans, [real_dt, real_trans], estimated)
-
+        print()
         #print(vector)
