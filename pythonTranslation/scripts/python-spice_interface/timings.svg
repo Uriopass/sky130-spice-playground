@@ -10,8 +10,8 @@
   <rect x="5" y="80" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="80" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="95" font-size="12" font-family="Arial" fill="white">clk</text>
-  <rect x="5" y="105" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="105" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="105" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="105" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="120" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="140.0" x2="250" y2="140.0" stroke="white" stroke-width="1" />
   <rect x="5" y="155" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -23,8 +23,8 @@
   <rect x="5" y="205" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="205" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="220" font-size="12" font-family="Arial" fill="white">i1/temp0</text>
-  <rect x="5" y="230" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="230" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="230" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="230" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="245" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="265.0" x2="250" y2="265.0" stroke="white" stroke-width="1" />
   <rect x="5" y="280" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -36,8 +36,8 @@
   <rect x="5" y="330" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="330" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="345" font-size="12" font-family="Arial" fill="white">i2/x</text>
-  <rect x="5" y="355" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="355" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="355" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="355" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="370" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="390.0" x2="250" y2="390.0" stroke="white" stroke-width="1" />
   <rect x="5" y="405" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -64,8 +64,8 @@
   <rect x="5" y="580" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="580" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="595" font-size="12" font-family="Arial" fill="white">i3/temp1</text>
-  <rect x="5" y="605" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="605" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="605" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="605" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="620" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="640.0" x2="250" y2="640.0" stroke="white" stroke-width="1" />
   <rect x="5" y="655" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -92,8 +92,8 @@
   <rect x="5" y="830" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="830" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="845" font-size="12" font-family="Arial" fill="white">i4/temp5</text>
-  <rect x="5" y="855" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="855" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="855" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="855" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="870" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="890.0" x2="250" y2="890.0" stroke="white" stroke-width="1" />
   <rect x="5" y="905" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -114,8 +114,8 @@
   <rect x="5" y="1030" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="1030" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="1045" font-size="12" font-family="Arial" fill="white">i5/temp3</text>
-  <rect x="5" y="1055" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="1055" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="1055" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="1055" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="1070" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="1090.0" x2="250" y2="1090.0" stroke="white" stroke-width="1" />
   <rect x="5" y="1105" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -133,8 +133,8 @@
   <rect x="5" y="1205" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="1205" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="1220" font-size="12" font-family="Arial" fill="white">i6/temp2</text>
-  <rect x="5" y="1230" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="1230" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="1230" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="1230" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="1245" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="1265.0" x2="250" y2="1265.0" stroke="white" stroke-width="1" />
   <rect x="5" y="1280" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -155,8 +155,8 @@
   <rect x="5" y="1405" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="1405" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="1420" font-size="12" font-family="Arial" fill="white">i7/temp3</text>
-  <rect x="5" y="1430" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="1430" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="1430" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="1430" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="1445" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="1465.0" x2="250" y2="1465.0" stroke="white" stroke-width="1" />
   <rect x="5" y="1480" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -180,8 +180,8 @@
   <rect x="5" y="1630" width="20" height="20" fill="rgb(32, 32, 32)" />
   <rect x="30" y="1630" width="20" height="20" fill="rgb(32, 32, 32)" />
   <text x="55" y="1645" font-size="12" font-family="Arial" fill="white">i8/temp4</text>
-  <rect x="5" y="1655" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="1655" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="1655" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="1655" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="1670" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="1690.0" x2="250" y2="1690.0" stroke="white" stroke-width="1" />
   <rect x="5" y="1705" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -202,8 +202,8 @@
   <rect x="5" y="1830" width="20" height="20" fill="rgb(32, 32, 32)" />
   <rect x="30" y="1830" width="20" height="20" fill="rgb(32, 32, 32)" />
   <text x="55" y="1845" font-size="12" font-family="Arial" fill="white">i9/temp3</text>
-  <rect x="5" y="1855" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="1855" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="1855" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="1855" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="1870" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="1890.0" x2="250" y2="1890.0" stroke="white" stroke-width="1" />
   <rect x="5" y="1905" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -224,8 +224,8 @@
   <rect x="5" y="2030" width="20" height="20" fill="rgb(32, 32, 32)" />
   <rect x="30" y="2030" width="20" height="20" fill="rgb(32, 32, 32)" />
   <text x="55" y="2045" font-size="12" font-family="Arial" fill="white">i10/temp1</text>
-  <rect x="5" y="2055" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="2055" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="2055" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="2055" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="2070" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="2090.0" x2="250" y2="2090.0" stroke="white" stroke-width="1" />
   <rect x="5" y="2105" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -243,8 +243,8 @@
   <rect x="5" y="2205" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="2205" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="2220" font-size="12" font-family="Arial" fill="white">i11/temp2</text>
-  <rect x="5" y="2230" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="2230" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="2230" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="2230" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="2245" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="2265.0" x2="250" y2="2265.0" stroke="white" stroke-width="1" />
   <rect x="5" y="2280" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -265,8 +265,8 @@
   <rect x="5" y="2405" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="2405" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="2420" font-size="12" font-family="Arial" fill="white">i12/temp3</text>
-  <rect x="5" y="2430" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="2430" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="2430" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="2430" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="2445" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="2465.0" x2="250" y2="2465.0" stroke="white" stroke-width="1" />
   <rect x="5" y="2480" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -290,8 +290,8 @@
   <rect x="5" y="2630" width="20" height="20" fill="rgb(32, 32, 32)" />
   <rect x="30" y="2630" width="20" height="20" fill="rgb(32, 32, 32)" />
   <text x="55" y="2645" font-size="12" font-family="Arial" fill="white">i13/temp4</text>
-  <rect x="5" y="2655" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="2655" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="2655" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="2655" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="2670" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="2690.0" x2="250" y2="2690.0" stroke="white" stroke-width="1" />
   <rect x="5" y="2705" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -309,8 +309,8 @@
   <rect x="5" y="2805" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="2805" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="2820" font-size="12" font-family="Arial" fill="white">i14/temp2</text>
-  <rect x="5" y="2830" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="2830" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="2830" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="2830" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="2845" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="2865.0" x2="250" y2="2865.0" stroke="white" stroke-width="1" />
   <rect x="5" y="2880" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -325,8 +325,8 @@
   <rect x="5" y="2955" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="2955" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="2970" font-size="12" font-family="Arial" fill="white">i15/temp1</text>
-  <rect x="5" y="2980" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="2980" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="2980" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="2980" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="2995" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="3015.0" x2="250" y2="3015.0" stroke="white" stroke-width="1" />
   <rect x="5" y="3030" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -338,8 +338,8 @@
   <rect x="5" y="3080" width="20" height="20" fill="rgb(32, 32, 32)" />
   <rect x="30" y="3080" width="20" height="20" fill="rgb(32, 32, 32)" />
   <text x="55" y="3095" font-size="12" font-family="Arial" fill="white">i16/temp0</text>
-  <rect x="5" y="3105" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="3105" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="3105" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="3105" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="3120" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="3140.0" x2="250" y2="3140.0" stroke="white" stroke-width="1" />
   <rect x="5" y="3155" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -363,8 +363,8 @@
   <rect x="5" y="3305" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="3305" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="3320" font-size="12" font-family="Arial" fill="white">i17/temp4</text>
-  <rect x="5" y="3330" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="3330" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="3330" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="3330" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="3345" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="3365.0" x2="250" y2="3365.0" stroke="white" stroke-width="1" />
   <rect x="5" y="3380" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -382,8 +382,8 @@
   <rect x="5" y="3480" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="3480" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="3495" font-size="12" font-family="Arial" fill="white">i18/temp2</text>
-  <rect x="5" y="3505" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="3505" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="3505" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="3505" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="3520" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="3540.0" x2="250" y2="3540.0" stroke="white" stroke-width="1" />
   <rect x="5" y="3555" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -401,8 +401,8 @@
   <rect x="5" y="3655" width="20" height="20" fill="rgb(32, 32, 32)" />
   <rect x="30" y="3655" width="20" height="20" fill="rgb(32, 32, 32)" />
   <text x="55" y="3670" font-size="12" font-family="Arial" fill="white">i19/temp2</text>
-  <rect x="5" y="3680" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="3680" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="3680" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="3680" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="3695" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="3715.0" x2="250" y2="3715.0" stroke="white" stroke-width="1" />
   <rect x="5" y="3730" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -417,8 +417,8 @@
   <rect x="5" y="3805" width="20" height="20" fill="rgb(32, 32, 32)" />
   <rect x="30" y="3805" width="20" height="20" fill="rgb(32, 32, 32)" />
   <text x="55" y="3820" font-size="12" font-family="Arial" fill="white">i20/temp1</text>
-  <rect x="5" y="3830" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="3830" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="3830" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="3830" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="3845" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="3865.0" x2="250" y2="3865.0" stroke="white" stroke-width="1" />
   <rect x="5" y="3880" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -436,8 +436,8 @@
   <rect x="5" y="3980" width="20" height="20" fill="rgb(32, 32, 32)" />
   <rect x="30" y="3980" width="20" height="20" fill="rgb(32, 32, 32)" />
   <text x="55" y="3995" font-size="12" font-family="Arial" fill="white">i21/temp3</text>
-  <rect x="5" y="4005" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="4005" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="4005" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="4005" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="4020" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="4040.0" x2="250" y2="4040.0" stroke="white" stroke-width="1" />
   <rect x="5" y="4055" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -458,8 +458,8 @@
   <rect x="5" y="4180" width="20" height="20" fill="rgb(32, 32, 32)" />
   <rect x="30" y="4180" width="20" height="20" fill="rgb(32, 32, 32)" />
   <text x="55" y="4195" font-size="12" font-family="Arial" fill="white">i22/temp3</text>
-  <rect x="5" y="4205" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="4205" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="4205" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="4205" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="4220" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="4240.0" x2="250" y2="4240.0" stroke="white" stroke-width="1" />
   <rect x="5" y="4255" width="20" height="20" fill="rgb(0, 0, 0)" />
@@ -477,15 +477,15 @@
   <rect x="5" y="4355" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="4355" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="4370" font-size="12" font-family="Arial" fill="white">i23/temp2</text>
-  <rect x="5" y="4380" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="4380" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="4380" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="4380" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="4395" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="4415.0" x2="250" y2="4415.0" stroke="white" stroke-width="1" />
   <rect x="5" y="4430" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="4430" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="4445" font-size="12" font-family="Arial" fill="white">i24/b</text>
-  <rect x="5" y="4455" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="4455" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="4455" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="4455" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="4470" font-size="12" font-family="Arial" fill="white">i24/x</text>
   <rect x="5" y="4480" width="20" height="20" fill="rgb(32, 32, 32)" />
   <rect x="30" y="4480" width="20" height="20" fill="rgb(32, 32, 32)" />
@@ -493,11 +493,11 @@
   <rect x="5" y="4505" width="20" height="20" fill="rgb(0, 0, 0)" />
   <rect x="30" y="4505" width="20" height="20" fill="rgb(0, 0, 0)" />
   <text x="55" y="4520" font-size="12" font-family="Arial" fill="white">i24/temp1</text>
-  <rect x="5" y="4530" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="4530" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="4530" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="4530" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="4545" font-size="12" font-family="Arial" fill="white">i25/d</text>
   <line x1="0" y1="4565.0" x2="250" y2="4565.0" stroke="white" stroke-width="1" />
-  <rect x="5" y="4580" width="20" height="20" fill="rgb(0, 0, 0)" />
-  <rect x="30" y="4580" width="20" height="20" fill="rgb(0, 0, 0)" />
+  <rect x="5" y="4580" width="20" height="20" fill="rgb(0, 12, 0)" />
+  <rect x="30" y="4580" width="20" height="20" fill="rgb(0, 17, 0)" />
   <text x="55" y="4595" font-size="12" font-family="Arial" fill="white">i25/d</text>
 </svg>

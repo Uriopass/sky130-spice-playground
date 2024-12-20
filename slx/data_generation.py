@@ -197,7 +197,7 @@ def get_timing(P, subckt):
     
     {fets}
     
-    .tran 0.001n {P["sim_time"]}n
+    .tran 0.005n {P["sim_time"]}n
     
     .options AUTOSTOP
     
@@ -212,8 +212,6 @@ def get_timing(P, subckt):
     *plot V({subckt["output_pin"]}) V(B)
     .endc
     """
-
-    print(spice)
 
     output, stderr = run_spice(spice)
     measures = parse_measures(output)
@@ -283,20 +281,29 @@ if __name__ == "__main__":
     P = {
         "sim_time": sim_time,
 
-        "transition": 0.0364 / 0.6,
+        "transition": 0.0611666,
 
-        "capa_out_fF": 15.5435043,
+        "capa_out_fF": 16.8140134,
 
-        f"val_B": "rise",
-        f"val_A": "0",
+        f"val_A0": "1.8",
+        f"val_A1": "0",
+        "val_S": "fall",
 
-        "w_0": 10.0,
-        "w_3": 3.0,
-        "w_2": 3 * 0.65,
-        "w_1": 0.36,
+        "w_3": 16 * 0.42,
+        "w_10": 16 * 0.42,
+        "w_2": 8 * 0.42,
+        "w_11": 8 * 0.42,
+        "w_4": 8 * 0.42,
+        "w_5": 8 * 0.42,
+        "w_0": 4 * 0.42,
+        "w_9": 4 * 0.42,
+        "w_6": 8 * 0.42,
+        "w_1": 8 * 0.42,
+        "w_8": 4 * 1.00,
+        "w_7": 4 * 0.65,
     }
 
-    print(get_timing(P, circuits["sky130_fd_sc_hd__nor2_1"]))
+    print(get_timing(P, circuits["sky130_fd_sc_hd__mux2_1"]))
     exit(0)
 
     for circuit_name, circuit in circuits.items():

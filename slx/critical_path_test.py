@@ -15,7 +15,7 @@ def pfet(oldw, neww, name, d, g, s):
         data[n-1]['fet'] = []
 
     transistor_n = name.split('_')[0]
-    data[n-1]['fet'].append((transistor_n, neww))
+    data[n-1]['fet'].append((transistor_n, neww, g))
 
 def nfet(oldw, neww, name, d, g, s):
     n = int(name.split('_')[1][1:])
@@ -23,7 +23,7 @@ def nfet(oldw, neww, name, d, g, s):
         data[n-1]['fet'] = []
 
     transistor_n = name.split('_')[0]
-    data[n-1]['fet'].append((transistor_n, neww))
+    data[n-1]['fet'].append((transistor_n, neww, g))
 
 def capa(n, c):
     if 'capa' in data[n-1]:
@@ -46,16 +46,20 @@ def other_pins(n, pins):
 def cell_name(n, name):
     data[n]['cell_name'] = name
 
+def input_pin(n, name):
+    data[n]['input_pin'] = name
+
 # ===  clkbuf ===
 cell_name(0, "clkbuf")
 other_pins(0, "")
+input_pin(0, "A")
 transition_new(0, 0.0448, 0.0333)
 capa(1, 0.016008)
 capa(1, 0.0131965615)
-pfet(4 * 1.00, 6 * 1.00, "0_I1",  "Vdd",     "I1/A", "I1/temp0")
-nfet(4 * 0.42, 4 * 0.42, "5_I1", "Vgnd",     "I1/A", "I1/temp0")
-pfet(4 * 4.00, 4 * 4.00, "3_I1",  "Vdd", "I1/temp0",     "I1/X")
-nfet(4 * 1.68, 6 * 1.68, "1_I1", "Vgnd", "I1/temp0",     "I1/X")
+pfet(4 * 1.00, 6 * 1.00, "3_I1",  "Vdd",     "I1/A", "I1/temp0")
+nfet(4 * 0.42, 4 * 0.42, "0_I1", "Vgnd",     "I1/A", "I1/temp0")
+pfet(4 * 4.00, 4 * 4.00, "1_I1",  "Vdd", "I1/temp0",     "I1/X")
+nfet(4 * 1.68, 6 * 1.68, "2_I1", "Vgnd", "I1/temp0",     "I1/X")
 
 ground_truth_start(1, 0.074, 0.438, 0.033, 0.344)
 ground_truth_end(1, 0.204, 0.567, 0.152, 0.438)
@@ -64,6 +68,7 @@ on_rise(1, "rise")
 # ===  buf ===
 cell_name(1, "buf")
 other_pins(1, "")
+input_pin(1, "A")
 transition_new(1, 0.0383, 0.0243)
 capa(2, 0.029571)
 capa(2, 0.02167141)
@@ -80,27 +85,28 @@ on_rise(2, "rise")
 # ===  mux2, A0=1, A1=0 ===
 cell_name(2, "mux2")
 other_pins(2, "A0=1, A1=0")
+input_pin(2, "S")
 transition_new(2, 0.0396, 0.0413)
 capa(3, 0.001558)
 capa(3, 0.0044560134)
 
-pfet(0.42, 16 * 0.42, "1_I3" ,      "Vdd",     "I3/S", "I3/temp1")
-nfet(0.42, 16 * 0.42, "5_I3" ,     "Vgnd",     "I3/S", "I3/temp1")
+pfet(0.42, 16 * 0.42, "3_I3" ,      "Vdd",     "I3/S", "I3/temp1")
+nfet(0.42, 16 * 0.42, "10_I3" ,     "Vgnd",     "I3/S", "I3/temp1")
 
-pfet(0.42, 8 * 0.42, "0_I3" ,      "Vdd", "I3/temp1", "I3/temp3")
-nfet(0.42, 8 * 0.42, "3_I3" ,     "Vgnd", "I3/temp1", "I3/temp0")
+pfet(0.42, 8 * 0.42, "2_I3" ,      "Vdd", "I3/temp1", "I3/temp3")
+nfet(0.42, 8 * 0.42, "11_I3" ,     "Vgnd", "I3/temp1", "I3/temp0")
 
-pfet(0.42, 8 * 0.42, "7_I3" , "I3/temp3",    "I3/A1", "I3/temp5")
+pfet(0.42, 8 * 0.42, "4_I3" , "I3/temp3",    "I3/A1", "I3/temp5")
+nfet(0.42, 8 * 0.42, "5_I3" , "I3/temp2",    "I3/A1", "I3/temp5")
 
-nfet(0.42, 8 * 0.42, "8_I3" , "I3/temp2",    "I3/A1", "I3/temp5")
-nfet(0.42, 4 * 0.42, "9_I3" ,     "Vgnd",     "I3/S", "I3/temp2")
+nfet(0.42, 4 * 0.42, "0_I3" ,     "Vgnd",     "I3/S", "I3/temp2")
+pfet(0.42, 4 * 0.42, "9_I3" ,      "Vdd",     "I3/S", "I3/temp4")
 
-pfet(0.42, 4 * 0.42, "2_I3" ,      "Vdd",     "I3/S", "I3/temp4")
-pfet(0.42, 8 * 0.42, "4_I3" , "I3/temp4",    "I3/A0", "I3/temp5")
-nfet(0.42, 8 * 0.42, "6_I3" , "I3/temp0",    "I3/A0", "I3/temp5")
+pfet(0.42, 8 * 0.42, "6_I3" , "I3/temp4",    "I3/A0", "I3/temp5")
+nfet(0.42, 8 * 0.42, "1_I3" , "I3/temp0",    "I3/A0", "I3/temp5")
 
-pfet(1.00, 4 * 1.00, "10_I3",      "Vdd", "I3/temp5",     "I3/X")
-nfet(0.65, 4 * 0.65, "11_I3",     "Vgnd", "I3/temp5",     "I3/X")
+pfet(1.00, 4 * 1.00, "8_I3",      "Vdd", "I3/temp5",     "I3/X")
+nfet(0.65, 4 * 0.65, "7_I3",     "Vgnd", "I3/temp5",     "I3/X")
 
 
 ground_truth_start(3, 0.305, 0.696, 0.242, 0.597)
@@ -110,25 +116,28 @@ on_rise(3, "rise")
 # ===  mux2, S=0, A1=1 ===
 cell_name(3, "mux2")
 other_pins(3, "S=0, A1=1")
+input_pin(3, "A0")
 transition_new(3, 0.0367, 0.0456)
 capa(4, 0.013917)
 capa(4, 0.017433986)
 
-pfet(0.64, 0.64, "12_I4",      "Vdd",     "I4/S", "I4/temp4")
-nfet(0.42, 0.42, "9_I4" ,     "Vgnd",     "I4/S", "I4/temp4")
+pfet(0.64, 0.64, "3_I4",      "Vdd",     "I4/S", "I4/temp4")
+nfet(0.42, 0.42, "10_I4" ,     "Vgnd",     "I4/S", "I4/temp4")
+
+pfet(0.64, 0.36, "2_I4" ,      "Vdd", "I4/temp4", "I4/temp2")
+nfet(0.42, 10 * 0.42, "11_I4" ,     "Vgnd", "I4/temp4", "I4/temp1")
+
+pfet(0.64, 0.36, "4_I4" , "I4/temp5",    "I4/A1", "I4/temp2")
+nfet(0.42, 0.36, "5_I4", "I4/temp5",    "I4/A1", "I4/temp3")
 
 pfet(0.64, 10 * 0.64, "0_I4" ,      "Vdd",     "I4/S", "I4/temp0")
-pfet(0.64, 6 * 0.64, "1_I4" , "I4/temp5",    "I4/A0", "I4/temp0")
-nfet(0.42, 8 * 0.42, "7_I4" , "I4/temp5",    "I4/A0", "I4/temp1")
-nfet(0.42, 10 * 0.42, "8_I4" ,     "Vgnd", "I4/temp4", "I4/temp1")
+nfet(0.42, 0.36, "9_I4" ,     "Vgnd",     "I4/S", "I4/temp3")
 
-pfet(0.64, 0.36, "6_I4" ,      "Vdd", "I4/temp4", "I4/temp2")
-pfet(0.64, 0.36, "3_I4" , "I4/temp5",    "I4/A1", "I4/temp2")
-nfet(0.42, 0.36, "10_I4", "I4/temp5",    "I4/A1", "I4/temp3")
-nfet(0.42, 0.36, "5_I4" ,     "Vgnd",     "I4/S", "I4/temp3")
+pfet(0.64, 6 * 0.64, "6_I4" , "I4/temp5",    "I4/A0", "I4/temp0")
+nfet(0.42, 8 * 0.42, "1_I4" , "I4/temp5",    "I4/A0", "I4/temp1")
 
-pfet(2.00, 4.0 * 2.00, "2_I4" ,      "Vdd", "I4/temp5",     "I4/X")
-nfet(1.30, 2.0 * 1.30, "4_I4" ,     "Vgnd", "I4/temp5",     "I4/X")
+pfet(2.00, 4.0 * 2.00, "8_I4" ,      "Vdd", "I4/temp5",     "I4/X")
+nfet(1.30, 2.0 * 1.30, "7_I4" ,     "Vgnd", "I4/temp5",     "I4/X")
 
 ground_truth_start(4, 0.621, 0.925, 0.437, 0.729)
 ground_truth_end(4, 0.957, 1.206, 0.582, 0.820)
@@ -137,6 +146,7 @@ on_rise(4, "fall")
 # ===  xor2, A=0 ===
 cell_name(4, "xor2")
 other_pins(4, "A=0")
+input_pin(4, "B")
 transition_new(4, 0.0536, 0.0572)
 capa(5, 0.004687)
 capa(5, 0.006688504)
@@ -164,6 +174,7 @@ on_rise(5, "fall")
 # ===  a21o, A1=1, B1=0 ===
 cell_name(5, "a21o")
 other_pins(5, "A1=1, B1=0")
+input_pin(5, "A2")
 transition_new(5, 0.0433, 0.1389)
 capa(6, 0.007073)
 capa(6, 0.008910184)
@@ -188,6 +199,7 @@ on_rise(6, "fall")
 # ===  a211o, C1=0, A1=1, B1=0 ===
 cell_name(6, "a211o")
 other_pins(6, "C1=0, A1=1, B1=0")
+input_pin(6, "A2")
 transition_new(6, 0.0439, 0.0777)
 capa(7, 0.004707)
 capa(7, 0.006688504)
@@ -215,6 +227,7 @@ on_rise(7, "fall")
 # ===  a311o, C1=0, A1=1, A2=1, B1=0 ===
 cell_name(7, "a311o")
 other_pins(7, "C1=0, A1=1, A2=1, B1=0")
+input_pin(7, "A3")
 transition_new(7, 0.0474, 0.0711)
 capa(8, 0.0070869997)
 capa(8, 0.008910184)
@@ -243,6 +256,7 @@ on_rise(8, "fall")
 # ===  a221oi, B2=1, C1=0, A1=1, B1=0 ===
 cell_name(8, "a221oi")
 other_pins(8, "B2=1, C1=0, A1=1, B1=0")
+input_pin(8, "A2")
 transition_new(8, 0.0522, 0.0815)
 capa(9, 0.002373)
 capa(9, 0.0044560134)
@@ -270,6 +284,7 @@ on_rise(9, "fall")
 # ===  or4, D=0, C=0, B=0 ===
 cell_name(9, "or4")
 other_pins(9, "D=0, C=0, B=0")
+input_pin(9, "A")
 transition_new(9, 0.0775, 0.0318)
 capa(10, 0.00152)
 capa(10, 0.0044560134)
@@ -294,6 +309,7 @@ on_rise(10, "rise")
 # ===  a21oi, A2=1, B1=0 ===
 cell_name(10, "a21oi")
 other_pins(10, "A2=1, B1=0")
+input_pin(10, "A1")
 transition_new(10, 0.0563, 0.0374)
 capa(11, 0.007154)
 capa(11, 0.008910184)
@@ -318,6 +334,7 @@ on_rise(11, "rise")
 # ===  o211a, A2=0, C1=1, B1=1 ===
 cell_name(11, "o211a")
 other_pins(11, "A2=0, C1=1, B1=1")
+input_pin(11, "A1")
 transition_new(11, 0.0387, 0.1300)
 capa(12, 0.0073059998)
 capa(12, 0.008910184)
@@ -344,6 +361,7 @@ on_rise(12, "fall")
 # ===  a41o, A3=1, A4=1, A2=1, B1=0 ===
 cell_name(12, "a41o")
 other_pins(12, "A3=1, A4=1, A2=1, B1=0")
+input_pin(12, "A1")
 transition_new(12, 0.0377, 0.0820)
 capa(13, 0.004739)
 capa(13, 0.006688504)
@@ -371,6 +389,7 @@ on_rise(13, "fall")
 # ===  a21oi, A2=1, B1=0 ===
 cell_name(13, "a21oi")
 other_pins(13, "A2=1, B1=0")
+input_pin(13, "A1")
 transition_new(13, 0.0473, 0.0852)
 capa(14, 0.004508)
 capa(14, 0.0044560134)
@@ -394,6 +413,7 @@ on_rise(14, "fall")
 # ===  nand2b, B=1 ===
 cell_name(14, "nand2b")
 other_pins(14, "B=1")
+input_pin(14, "A_N")
 transition_new(14, 0.0791, 0.0295)
 capa(15, 0.0046929996)
 capa(15, 0.006688504)
@@ -414,6 +434,7 @@ on_rise(15, "fall")
 # ===  nor2, B=0 ===
 cell_name(15, "nor2")
 other_pins(15, "B=0")
+input_pin(15, "A")
 transition_new(15, 0.0646, 0.0364)
 capa(16, 0.0038550003)
 capa(16, 0.006688504)
@@ -432,6 +453,7 @@ on_rise(16, "rise")
 # ===  a311o, A3=1, C1=0, A1=1, B1=0 ===
 cell_name(16, "a311o")
 other_pins(16, "A3=1, C1=0, A1=1, B1=0")
+input_pin(16, "A2")
 transition_new(16, 0.0332, 0.0704)
 capa(17, 0.004377)
 capa(17, 0.0044560134)
@@ -460,6 +482,7 @@ on_rise(17, "fall")
 # ===  a21o, A2=1, B1=0 ===
 cell_name(17, "a21o")
 other_pins(17, "A2=1, B1=0")
+input_pin(17, "A1")
 transition_new(17, 0.0519, 0.0872)
 capa(18, 0.0047270004)
 capa(18, 0.006688504)
@@ -603,35 +626,19 @@ other_pins(23, "A=1")
 transition_new(23, 0.0218, 0.0265)
 capa(24, 0.001678)
 capa(24, 0.0023304995)
+capa(24, 0.00126)
 pfet(0.42, 0.36, "0_I24",       "Vdd",     "I24/A", "I24/temp1")
 pfet(0.42, 3 * 0.42, "4_I24",       "Vdd",     "I24/B", "I24/temp1")
 
-nfet(0.42, 20 * 0.42, "1_I24",      "Vgnd",     "I24/A", "I24/temp0")
+nfet(0.42, 5 * 0.42, "1_I24",      "Vgnd",     "I24/A", "I24/temp0")
 nfet(0.42, 3 * 0.42, "2_I24", "I24/temp1",     "I24/B", "I24/temp0")
 
 pfet(1.00, 3 * 1.00, "5_I24",       "Vdd", "I24/temp1",     "I24/X")
 nfet(0.65, 3 * 0.65, "3_I24",      "Vgnd", "I24/temp1",     "I24/X")
 
-ground_truth_start(24, 4.848, 5.246, 2.843, 2.740)
-ground_truth_end(24, 5.007, 5.419, 2.939, 2.812)
+ground_truth_start(24, 4.848, 5.246, 2.832, 2.728)
+ground_truth_end(24, 5.007, 5.419, 2.929, 2.806)
 on_rise(24, "fall")
-
-#for
-
-#cell looks like this
-{'capa': 0.0040084995,
-      'fet': [('3', 0.42),
-              ('0', 0.42),
-              ('2', 0.42),
-              ('5', 0.42),
-              ('1', 1.0),
-              ('4', 0.65)],
-      'ground_truth_end': (5.007, 5.419, 2.939, 2.812),
-      'ground_truth_start': (4.848, 5.246, 2.843, 2.74),
-      'on_rise': 'fall',
-      'other_pins': 'A=1',
-      'transition_new': (0.0218, 0.0265),
- 'name': 'mux4'}
 
 import netCDF4 as nc
 
@@ -669,12 +676,12 @@ def mk_vector(vec_size, transition, capa, sizes):
             addval(capa / (w_j + w_k))
 
     return vector
-for cell in data.values():
+for cell_i, cell in data.items():
     path = f"models/sky130_fd_sc_hd__{cell['cell_name']}.nc"
     if not os.path.exists(path):
         print(f"File not found: {path}")
         continue
-    if cell['cell_name'] != 'nor2':
+    if cell['cell_name'] != 'mux2':
         continue
     estimator_data = nc.Dataset(path, "r")
     first_group = next(estimator_data.groups.__iter__())
@@ -685,20 +692,32 @@ for cell in data.values():
         'val_'+value.split("=")[0].strip(): "1.8" if value.split("=")[1].strip() == "1" else "0" for value in cell['other_pins'].strip().split(",") if value != ''
     }
 
+
+    capa = cell['capa'] * 1000
+
+    if cell_i+1 in data:
+        next_cell_input_pin = data[cell_i+1]['input_pin']
+        for trans in data[cell_i+1]['fet']:
+            if trans[2].endswith('/'+next_cell_input_pin):
+                capa += trans[1] * 0.15 * 0.01 * 1000 # 0.01 is pF/um²
+
+
     for risefall in ["rise", "fall"]:
+        risefall_inv = "rise" if risefall == "fall" else "fall"
+        rise_case = risefall_inv if cell['on_rise'] == 'fall' else risefall
+
         case = ""
         for i,pin in enumerate(pin_list):
             if pin in other_pins_map:
                 case += f"{pin}:{other_pins_map[pin]}"
             else:
-                case += f"{pin}:{risefall}"
+                case += f"{pin}:{rise_case}"
 
             if i < len(pin_list) - 1:
                 case += ","
 
-        #print(estimator_data.groups)
-
-        case = f"val_B:{risefall},val_A:0"
+        if cell['cell_name'] == 'and2':
+            case = f"val_B:1.8,val_A:{rise_case}"
 
         estimator = estimator_data.groups[case]
         values = estimator.variables["linear_estimator"][:, :]
@@ -707,7 +726,7 @@ for cell in data.values():
 
         maxfet = max([int(fet[0]) for fet in cell['fet']])
         if maxfet != len(cell['fet']) - 1:
-            print("Wrong number of transistors for cell", cell['cell_name'])
+            print("fets are not contiguous for", cell['cell_name'])
             continue
 
         numb_fets = len(cell['fet'])
@@ -719,21 +738,22 @@ for cell in data.values():
         for fet in sorted(cell['fet'], key=lambda x: x[0]):
             fet_sizes.append(fet[1])
 
-
         transition = cell['transition_new'][1 if risefall == "fall" else 0]
 
-        print(transition* 1.0 / 0.6, cell['capa'] * 1000 * 1.5, fet_sizes, fet_sizes)
-        vector = mk_vector(values.shape[0], transition* 1.0 / 0.6, cell['capa'] * 1000 * 1.5, fet_sizes)
+        print(transition* 1.0 / 0.6, capa,fet_sizes)
+        vector = mk_vector(values.shape[0], transition* 1.0 / 0.6, capa, fet_sizes)
 
         estimated = values.T @ vector
 
 
         real_dt = cell['ground_truth_end'][3 if risefall == "fall" else 2] - cell['ground_truth_start'][3 if risefall == "fall" else 2]
-        #real_trans = cell['transition_new'][1 if risefall == 'fall' else 0]
+        real_trans = 0.1
+        if cell_i + 1 in data:
+            real_trans = data[cell_i + 1]['transition_new'][1 if risefall == 'fall' else 0]
 
         rel_err_dt = np.abs(estimated[0] - real_dt) / np.maximum(0.1, real_dt)
-        #rel_err_trans = (estimated[1] - real_trans) / real_trans
+        rel_err_trans = np.abs(estimated[1] - real_trans) / real_trans
 
-        print(cell['cell_name'], risefall, rel_err_dt, real_dt, estimated)
+        print(cell['cell_name'], risefall, rel_err_dt, rel_err_trans, [real_dt, real_trans], estimated)
 
         #print(vector)
