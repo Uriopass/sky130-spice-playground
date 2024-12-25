@@ -766,7 +766,7 @@ for cell_i, cell in data.items():
 
 
         real_dt = cell['ground_truth_end'][3 if risefall == "fall" else 2] - cell['ground_truth_start'][3 if risefall == "fall" else 2]
-        real_trans = 0.1
+        real_trans = 0.0278 if risefall == 'rise' else 0.0446
         if cell_i + 1 in data:
             real_trans = data[cell_i + 1]['transition_new'][1 if risefall == 'fall' else 0]
 
