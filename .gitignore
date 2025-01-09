@@ -5,3 +5,4 @@ simulations/and4_test.spice
 venv
 output.txt
 test.txt
+__pycache__
