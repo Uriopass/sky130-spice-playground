@@ -2,10 +2,12 @@ import json
 import pickle
 from collections import defaultdict, deque
 
+
+
 def dict_to_string(d):
     s = ""
     for k, v in d.items():
-        s += f"{k}={v},"
+        s += f"{k}:{v},"
     return s[:-1]
 
 # Step 1: Represent the DAG with node weights
@@ -99,13 +101,15 @@ class DAG:
         top_N_paths = all_paths[:N]
         return top_N_paths
 
-    def save_to_file(self, file_path):
+    def save_to_file(self, file_path, instance_to_cell_type):
+
         """Serialize the DAG to a JSON file."""
         # Convert defaultdict to a regular dict for JSON serialization
         graph_dict = {node: neighbors for node, neighbors in self.graph.items()}
         data = {
             'graph': graph_dict,
-            'node_weights': self.node_weights
+            'node_weights': self.node_weights,
+            'instance_to_cell_type': instance_to_cell_type
         }
         with open(file_path, 'w') as f:
             json.dump(data, f)
@@ -123,33 +127,19 @@ class DAG:
         })
         return dag
 
-def map_instance_to_cell_type():
-    # opens the sdf file and reads the content
-    sdf_data_path = "../../libs/sdf/picorv32__nom_tt_025C_1v80.sdf"
-    with open(sdf_data_path, 'r') as f:
-        sdf_content = f.read()
-
-    sdf_content = sdf_content.split("\n")
-
-    instance_to_cell = {}
-    for i in range(len(sdf_content)):
-        line = sdf_content[i]
-        if "CELLTYPE" in line and line != '  (CELLTYPE "picorv32")' and line != '  (CELLTYPE "spm")':
-            cell_short = "_".join(line.split("__")[1].split("_")[0:-1])
-            instance_to_cell[sdf_content[i+1][12:-1]] = cell_short
-
-    return instance_to_cell
 
 def temp():
-    instance_to_cell_type = map_instance_to_cell_type()
+    with open('hs_saved_instance_to_cell_type.pkl', 'rb') as f:
+        instance_to_cell_type = pickle.load(f)
+
     # opens the sdf file and reads the content
-    sdf_data_path = "../../libs/sdf/picorv32__nom_tt_025C_1v80.sdf"
+    sdf_data_path = "../../libs/sdf/hs_picorv32__nom_tt_025C_1v80.sdf"
     with open(sdf_data_path, 'r') as f:
         sdf_content = f.read()
 
     sdf_content = sdf_content.split("\n")
 
-    with open('saved_nods.pkl', 'rb') as f:
+    with open('hs_saved_nods.pkl', 'rb') as f:
         nods = pickle.load(f)
 
     nod_names = list(nods.keys())
@@ -172,7 +162,11 @@ def temp():
 
                 instance_1 = words[5].split(".")[0]
                 instance_2 = words[6].split(".")[0]
-                if instance_1 not in instance_to_cell_type.keys() or instance_2 not in instance_to_cell_type.keys() or "dfxtp" in instance_to_cell_type[instance_1] or "dfxtp" in instance_to_cell_type[instance_2] or "dfrtp" in instance_to_cell_type[instance_1] or "dfrtp" in instance_to_cell_type[instance_2]:
+                if instance_1 not in instance_to_cell_type.keys() or instance_2 not in instance_to_cell_type.keys():
+                    j += 1
+                    continue
+
+                if "dfxtp" in instance_to_cell_type[instance_1] or "dfxtp" in instance_to_cell_type[instance_2] or "dfrtp" in instance_to_cell_type[instance_1] or "dfrtp" in instance_to_cell_type[instance_2]:
                     j += 1
                     continue
 
@@ -180,22 +174,23 @@ def temp():
                 pin_1 = words[5].split(".")[1]
                 pin_2 = words[6].split(".")[1]
 
-
                 if instance_1 in nod_names and instance_2 in nod_names:
                     for s2 in nods[instance_2]:
                         for s1 in nods[instance_1]:
+                            if len(words) == 8:
+                                words.append(words[7])
                             if s2[0][pin_2] == "falling" and s1[1][0] == 0:
-                                dag.add_node(instance_1 + "_" + dict_to_string(s1[0]), float(s1[1][1]))
-                                dag.add_node(instance_2 + "_" + dict_to_string(s2[0]), float(s2[1][1]))
-                                dag.add_edge(instance_1 + "_" + dict_to_string(s1[0]), instance_2 + "_" + dict_to_string(s2[0]), float(words[8].split(":")[0]))
+                                dag.add_node(instance_1 + "@" + dict_to_string(s1[0]), float(s1[1][1]))
+                                dag.add_node(instance_2 + "@" + dict_to_string(s2[0]), float(s2[1][1]))
+                                dag.add_edge(instance_1 + "@" + dict_to_string(s1[0]), instance_2 + "@" + dict_to_string(s2[0]), float(words[8].split(":")[0]))
                             elif s2[0][pin_2] == "rising" and s1[1][0] == 1:
-                                dag.add_node(instance_1 + "_" + dict_to_string(s1[0]), float(s1[1][1]))
-                                dag.add_node(instance_2 + "_" + dict_to_string(s2[0]), float(s2[1][1]))
-                                dag.add_edge(instance_1 + "_" + dict_to_string(s1[0]), instance_2 + "_" + dict_to_string(s2[0]), float(words[7].split(":")[0]))
+                                dag.add_node(instance_1 + "@" + dict_to_string(s1[0]), float(s1[1][1]))
+                                dag.add_node(instance_2 + "@" + dict_to_string(s2[0]), float(s2[1][1]))
+                                dag.add_edge(instance_1 + "@" + dict_to_string(s1[0]), instance_2 + "@" + dict_to_string(s2[0]), float(words[7].split(":")[0]))
 
                 j += 1
 
-    dag.save_to_file("dag.json")
+    dag.save_to_file("dag_hs.json", instance_to_cell_type)
 
 if __name__ == "__main__":
     temp()

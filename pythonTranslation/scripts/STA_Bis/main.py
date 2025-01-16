@@ -15,7 +15,7 @@ from sdf_parser import SDF, SDFGraphAnalyzed, SDFGraph
 def main():
     parser = argparse.ArgumentParser(description="Analyze SDF graph.")
     parser.add_argument("--subckt", help="Path to the subckt file", default="../libs/ngspice/sky130_subckt")
-    parser.add_argument("--sdf", help="Path to the SDF file", default="../libs/sdf/picorv32__nom_tt_025C_1v80.sdf")
+    parser.add_argument("--sdf", help="Path to the SDF file", default="../libs/sdf/hd_picorv32__nom_tt_025C_1v80.sdf")
     parser.add_argument("--spef", help="Path to the SPEF file")
     args = parser.parse_args()
 

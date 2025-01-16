@@ -8,7 +8,7 @@ from collections import defaultdict
 
 def sdf_parser():
     #opens the sdf file and reads the content
-    sdf_data_path = "../../libs/sdf/picorv32__nom_tt_025C_1v80.sdf"
+    sdf_data_path = "../../libs/sdf/hs_picorv32__nom_tt_025C_1v80.sdf"
     with open(sdf_data_path, 'r') as f:
         sdf_content = f.read()
 
@@ -17,11 +17,19 @@ def sdf_parser():
     functions = generate_gate_function("../../../libjson_parse/libjson")
 
     nods  = defaultdict(list)
+
+    instance_to_cell_type = {}
+
     for i in range(len(sdf_content)):
         line = sdf_content[i]
         if "CELLTYPE" in line and line != '  (CELLTYPE "picorv32")' and line != '  (CELLTYPE "spm")':
             cell_short = "_".join(line.split("__")[1].split("_")[0:-1])
+            cell_long = line.split('"')[1]
             pins, function, function_str = functions[cell_short]
+
+            if "dfxtp" in cell_short or "dfrtp" in cell_short:
+                continue
+            instance_to_cell_type[sdf_content[i+1][12:-1]] = cell_long
 
             for j in range(len(pins)):
                 current_pin = pins[j]
@@ -93,9 +101,12 @@ def sdf_parser():
 
 
 
+    print(nods)
 
-    with open('saved_nods.pkl', 'wb') as f:
+    with open('hs_saved_nods.pkl', 'wb') as f:
         pickle.dump(nods, f)
 
+    with open('hs_saved_instance_to_cell_type.pkl', 'wb') as f:
+        pickle.dump(instance_to_cell_type, f)
 
 sdf_parser()

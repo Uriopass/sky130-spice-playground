@@ -1,9 +1,13 @@
-from temp import DAG, map_instance_to_cell_type
+from dag import DAG
 import time
+import pickle
 
 N = 170
 t0 = time.time()
-instance_to_cell_type = map_instance_to_cell_type()
+
+with open('hs_saved_instance_to_cell_type.pkl', 'rb') as f:
+    instance_to_cell_type = pickle.load(f)
+
 N_paths = DAG.load_from_file("dag.json").top_n_longest_paths(N)
 t1 = time.time()
 
