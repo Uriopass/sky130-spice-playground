@@ -201,7 +201,7 @@ def read_data(data_path="out_and3_test.njson"):
         #for _ in range(encoded_inputs):
         #    add_input(0)
         #add_input(1)
-        output_tensor.append([parsed["out_delta_time"] * 1e9, parsed["out_transition"] * 1e9])
+        output_tensor.append([parsed["out_delta_time"], parsed["out_transition"]])
 
         input_tensor.append(cell_carac)
 

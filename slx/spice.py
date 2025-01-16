@@ -46,11 +46,11 @@ def parse_measures(stdout):
     measures = {}
     for line in stdout.split("\n"):
         vals = line.strip().split()
-        if len(vals) != 3:
+        if len(vals) < 3:
             continue
         if vals[1] != "=":
             continue
-        if not vals[2][0].isdigit():
+        if not vals[2][0].isdigit() and not vals[2][0] == "-":
             continue
         measures[vals[0]] = float(vals[2])
     return measures

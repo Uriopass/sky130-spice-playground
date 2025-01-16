@@ -8,9 +8,6 @@ def read_data(data_path):
     content = open(data_path).readlines()
     content_json = [json.loads(line) for line in content if len(line) > 10]
 
-    return read_data_numba(data_path, content_json)
-
-def read_data_numba(data_path, content_json):
     # find number of fets
     numb_fets = 0
     pin_list = []
@@ -36,6 +33,9 @@ def read_data_numba(data_path, content_json):
     output_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), 2), dtype = "float64") for case in cases}
     iis = {case: 0 for case in cases}
 
+    input_tensors_inp_capa = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), numb_fets), dtype = "float64") for case in cases}
+    output_tensors_inp_capa = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), 1), dtype = "float64") for case in cases}
+
     for parsed in content_json:
         #if not(parsed["val_A1"] == "0" and parsed["val_B2"] == "0" and parsed["val_C2"] == "1.8" and parsed["val_B1"] == "0" and parsed["val_A2"] == "0" and parsed["val_C1"] == "fall"):
         #    continue
@@ -54,6 +54,9 @@ def read_data_numba(data_path, content_json):
         input_tensor = input_tensors[case]
         output_tensor = output_tensors[case]
 
+        inp_capa = parsed["commuting_pin_capacitance"]
+        output_tensors_inp_capa[case][ii, 0] = inp_capa
+
         capa = parsed["capa_out_fF"]
         transition = parsed["transition"]
         jj = 0
@@ -70,6 +73,8 @@ def read_data_numba(data_path, content_json):
         for j in range(numb_fets):
             w_j = parsed[f"w_{j}"]
             #addval(w_j)
+            input_tensors_inp_capa[case][ii, j] = w_j
+
 
         for j in range(numb_fets):
             w_j = parsed[f"w_{j}"]
@@ -99,8 +104,8 @@ def read_data_numba(data_path, content_json):
                 #addval(np.cbrt(w_j / w_k * capa))
                 #addval(np.cbrt(w_j / w_k * transition))
 
-        output_tensor[ii, 0] = parsed["out_delta_time"] * 1e9
-        output_tensor[ii, 1] = parsed["out_transition"] * 1e9
+        output_tensor[ii, 0] = parsed["out_delta_time"]
+        output_tensor[ii, 1] = parsed["out_transition"]
 
         iis[case] += 1
 
@@ -108,20 +113,24 @@ def read_data_numba(data_path, content_json):
         if iis[key] != len(input_tensors[key]):
             input_tensors[key] = input_tensors[key][:iis[key]]
             output_tensors[key] = output_tensors[key][:iis[key]]
+            input_tensors_inp_capa[key] = input_tensors_inp_capa[key][:iis[key]]
+            output_tensors_inp_capa[key] = output_tensors_inp_capa[key][:iis[key]]
         #print(f"Case: {key}, Total: {len(input_tensors[key])}")
 
-    return input_tensors, output_tensors, pin_list
+    return input_tensors, output_tensors, pin_list, input_tensors_inp_capa, output_tensors_inp_capa
 
 def export_estimators():
     os.makedirs("models", exist_ok=True)
     # iterate of all files in data folder
     for file in os.listdir("data"):
+        if not file.startswith("sky130_fd_sc_hs"):
+            continue
         if file.endswith(".njson"):
             print("gonna do", file)
 
             all_estimators = {}
 
-            input_tensors, output_tensors, pin_list = read_data(data_path="data/" + file)
+            input_tensors, output_tensors, pin_list, input_tensors_inp_capa, output_tensors_inp_capa = read_data(data_path="data/" + file)
             for key in sorted(input_tensors.keys()):
                 X, y = input_tensors[key], output_tensors[key]
                 if len(X) == 0:
@@ -134,6 +143,22 @@ def export_estimators():
                 case_name = ",".join([f"{pin}:{key[i]}" for i, pin in enumerate(pin_list)])
                 print(case_name)
                 all_estimators[case_name] = linear_estimator
+
+            for key in sorted(input_tensors_inp_capa.keys()):
+                X, y = input_tensors_inp_capa[key], output_tensors_inp_capa[key]
+                if len(X) == 0:
+                    continue
+
+                xtx = np.matmul(X.T, X)
+                xtx_pinv = np.linalg.pinv(xtx)
+                linear_estimator = np.matmul(xtx_pinv, X.T @ y)
+                linear_estimator = np.where(np.abs(linear_estimator) < 0.1, 0, linear_estimator)
+
+                mse = np.mean((X @ linear_estimator - y) ** 2)
+
+                case_name = ",".join([f"{pin}:{key[i]}" for i, pin in enumerate(pin_list)])
+                print(case_name, mse, linear_estimator)
+
 
             cell_name = file.split(".")[0]
             cell_name = "_".join(cell_name.split("_")[:-1])
@@ -154,9 +179,11 @@ if __name__ == "__main__":
 
     #iterate of all files in data folder
     for file in os.listdir("data"):
+        if not file.startswith("sky130_fd_sc_hs"):
+            continue
         if file.endswith(".njson"):
             print("gonna do", file)
-            input_tensors, output_tensors, pin_list = read_data(data_path="data/" + file)
+            input_tensors, output_tensors, pin_list, input_tensors_inp_capa, output_tensors_inp_capa = read_data(data_path="data/" + file)
             for key in sorted(input_tensors.keys()):
                 X, y = input_tensors[key], output_tensors[key]
                 if len(X) == 0:
@@ -193,7 +220,7 @@ if __name__ == "__main__":
                     #print(linear_estimator.shape)
 
                     y_hat_val = X_validation @ linear_estimator
-
+ 
                     abse = np.abs(y_validation - y_hat_val)
                     avg_abse += np.mean(abse)
 

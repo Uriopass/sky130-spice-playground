@@ -5,6 +5,8 @@ import multiprocessing as mp
 import re
 from collections import defaultdict
 
+from sympy.physics.units import capacitance
+
 from spice import parse_measures, run_spice, run_spice_plot
 import numpy as np
 
@@ -181,12 +183,21 @@ def get_timing(P, subckt):
 
     pin_values = []
 
+    commuting_pin = None
+
     for p in P:
         if p.startswith("val_"):
             pin = p[4:]
+            if P[p] == "rise" or P[p] == "fall":
+                commuting_pin = pin
             pin_values.append(f"V{pin} {pin} 0 {value_to_voltage(P[p], P['transition'])}")
 
     pin_values = "\n".join(pin_values)
+
+    measure_integral = ""
+
+    if P["i"] % 5 == 0:
+        measure_integral = f".meas tran tot_charge INTEG V{commuting_pin}#branch from=0 to={P['sim_time']}n"
 
     spice = f"""
     .title slx
@@ -207,11 +218,12 @@ def get_timing(P, subckt):
     
     .tran 0.005n {P["sim_time"]}n
     
-    .options AUTOSTOP
+*.options AUTOSTOP
     
     .meas tran x_cross when V({subckt["output_pin"]}) = 0.9
     .meas tran x_start WHEN V({subckt["output_pin"]}) = {1.8 * 0.8}
     .meas tran x_end   WHEN V({subckt["output_pin"]}) = {1.8 * 0.2}
+    {measure_integral}
     
     .control
     run
@@ -226,19 +238,22 @@ def get_timing(P, subckt):
 
     if "x_cross" not in measures or "x_start" not in measures or "x_end" not in measures:
         #print(output, stderr)
-        return None, None
+        return None, None, None
 
     transition = abs(measures["x_end"] - measures["x_start"])
     delta_time = measures["x_cross"] - P["transition"] * 0.5e-9
 
-    return delta_time, transition
+    pin_capacitance = None
+    if "tot_charge" in measures:
+        pin_capacitance = abs(measures["tot_charge"] / 1.8)
+    return delta_time, transition, pin_capacitance
 
 randnfet = lambda: min(100.0, 0.8 * (1.0 / math.sqrt(np.random.uniform(0, 1)) - 1) + 0.36)
 randpfet = lambda: min(100.0, 1.0 / math.sqrt(np.random.uniform(0, 1)) - 1 + 0.36)
 
 sim_time = 4
 
-def simulate(subckt):
+def simulate(subckt, i):
     combination_by_pin = pin_combinations[subckt["name"]]
 
 
@@ -247,6 +262,7 @@ def simulate(subckt):
             for pin_comb in pin_combs:
                 while True:
                     P = {
+                        "i": i,
                         "sim_time": sim_time,
 
                         "transition": np.random.random() * (0.5 - 0.05) + 0.05,
@@ -267,13 +283,16 @@ def simulate(subckt):
                         capa = P["capa_out_fF"]
                         P["w_" + transistor["name"]] += np.random.uniform(0, 1) * capa * 0.01
 
-                    delta_time, transition = get_timing(P, subckt)
+                    delta_time, transition, pin_capacitance = get_timing(P, subckt)
 
                     if delta_time is None:
                         continue
 
-                    P["out_delta_time"] = delta_time
-                    P["out_transition"] = transition
+                    P["out_delta_time"] = delta_time * 1e9
+                    P["out_transition"] = transition * 1e9
+
+                    if pin_capacitance is not None:
+                        P["commuting_pin_capacitance"] = pin_capacitance * 1e15
 
                     p_json = json.dumps(P)
                     yield p_json
@@ -284,7 +303,7 @@ def worker(subckt, input_queue, output_queue):
         i = input_queue.get()
         if i is None:
             break
-        for result in simulate(subckt):
+        for result in simulate(subckt, i):
             if result is None:
                 continue
             output_queue.put(result)
@@ -352,7 +371,7 @@ if __name__ == "__main__":
         write_process = mp.Process(target=write_results, args=(f"data/{circuit_name}.njson", output_queue))
         write_process.start()
 
-        for i in range(5000):
+        for i in range(2000):
             input_queue.put(i)
 
         for _ in range(num_workers):

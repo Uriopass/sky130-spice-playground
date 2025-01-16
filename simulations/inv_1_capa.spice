@@ -48,43 +48,180 @@ C12 A VNB 0.166643f
 C13 VPB VNB 0.338976f
 .ends
 
+.subckt sky130_fd_sc_hd__nand2_1 A B VNB VGND VPB VPWR Y
+X0 VPWR.t0 A.t0 Y.t1 VPB.t0 sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.135 ps=1.27 w=1 l=0.15
+X1 Y.t0 A.t1 a_113_47.t0 VNB.t0 sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.08775 ps=0.92 w=0.65 l=0.15
+X2 a_113_47.t1 B.t0 VGND.t0 VNB.t1 sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.169 ps=1.82 w=0.65 l=0.15
+X3 Y.t2 B.t1 VPWR.t1 VPB.t1 sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.26 ps=2.52 w=1 l=0.15
+R0 A.n0 A.t0 230.155
+R1 A.n0 A.t1 157.856
+R2 A A.n0 154.102
+R3 Y Y.n0 237.577
+R4 Y.n1 Y.t0 140.53
+R5 Y.n0 Y.t1 26.5955
+R6 Y.n0 Y.t2 26.5955
+R7 Y.n1 Y 16.5652
+R8 Y Y.n1 9.03579
+R9 Y.n1 Y 1.72748
+R10 VPWR.n0 VPWR.t0 256.344
+R11 VPWR.n0 VPWR.t1 254.13
+R12 VPWR VPWR.n0 0.493374
+R13 VPB.t1 VPB.t0 248.599
+R14 VPB VPB.t1 207.166
+R15 a_113_47.t0 a_113_47.t1 49.8467
+R16 VNB.t1 VNB.t0 1196.12
+R17 VNB VNB.t1 996.764
+R18 B.n0 B.t1 229.369
+R19 B B.n0 157.927
+R20 B.n0 B.t0 157.07
+R21 VGND VGND.t0 158.046
+C0 B Y 0.048071f
+C1 VPB VGND 0.004396f
+C2 B VGND 0.054404f
+C3 A Y 0.085479f
+C4 VPWR Y 0.211407f
+C5 A VGND 0.009489f
+C6 VPWR VGND 0.032185f
+C7 Y VGND 0.138901f
+C8 VPB B 0.039072f
+C9 VPB A 0.037877f
+C10 B A 0.050963f
+C11 VPB VPWR 0.050862f
+C12 B VPWR 0.047843f
+C13 A VPWR 0.04444f
+C14 VPB Y 0.006185f
+C15 VGND VNB 0.23167f
+C16 Y VNB 0.055661f
+C17 VPWR VNB 0.245114f
+C18 A VNB 0.143376f
+C19 B VNB 0.145827f
+C20 VPB VNB 0.338976f
+.ends
+
+.subckt sky130_fd_sc_hd__xor2_1 A B VNB VGND VPB VPWR X
+X0 X.t1 a_35_297.t3 a_285_297.t2 VPB.t4 sky130_fd_pr__pfet_01v8_hvt ad=0.3 pd=2.6 as=0.26 ps=2.52 w=1 l=0.15
+X1 X.t0 B.t0 a_285_47.t0 VNB.t1 sky130_fd_pr__nfet_01v8 ad=0.25025 pd=1.42 as=0.08775 ps=0.92 w=0.65 l=0.15
+X2 a_35_297.t0 B.t1 VGND.t0 VNB.t0 sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.169 ps=1.82 w=0.65 l=0.15
+X3 a_117_297.t1 B.t2 a_35_297.t1 VPB.t1 sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.26 ps=2.52 w=1 l=0.15
+X4 VPWR.t1 B.t3 a_285_297.t1 VPB.t3 sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.135 ps=1.27 w=1 l=0.15
+X5 VGND.t3 A.t0 a_35_297.t2 VNB.t4 sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15 m=10
+X6 VGND.t2 a_35_297.t4 X.t2 VNB.t3 sky130_fd_pr__nfet_01v8 ad=0.208 pd=1.94 as=0.25025 ps=1.42 w=0.65 l=0.15
+X7 a_285_297.t0 A.t1 VPWR.t2 VPB.t2 sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
+X8 VPWR.t0 A.t2 a_117_297.t0 VPB.t0 sky130_fd_pr__pfet_01v8_hvt ad=0.135 pd=1.27 as=0.135 ps=1.27 w=1 l=0.15
+X9 a_285_47.t1 A.t3 VGND.t1 VNB.t2 sky130_fd_pr__nfet_01v8 ad=0.08775 pd=0.92 as=0.08775 ps=0.92 w=0.65 l=0.15 m=10
+R0 a_35_297.t1 a_35_297.n2 442.868
+R1 a_35_297.n2 a_35_297.n1 343.923
+R2 a_35_297.n1 a_35_297.t3 215.482
+R3 a_35_297.n2 a_35_297.n0 196.672
+R4 a_35_297.n1 a_35_297.t4 139.78
+R5 a_35_297.n0 a_35_297.t2 24.9236
+R6 a_35_297.n0 a_35_297.t0 24.9236
+R7 a_285_297.n0 a_285_297.t2 661.615
+R8 a_285_297.n0 a_285_297.t1 26.5955
+R9 a_285_297.t0 a_285_297.n0 26.5955
+R10 X.n1 X.t1 235.792
+R11 X.n1 X.n0 173.87
+R12 X.n0 X.t0 66.0319
+R13 X.n0 X.t2 59.081
+R14 X X.n1 0.2005
+R15 VPB.t3 VPB.t4 556.386
+R16 VPB.t2 VPB.t3 248.599
+R17 VPB.t0 VPB.t2 248.599
+R18 VPB.t1 VPB.t0 248.599
+R19 VPB VPB.t1 216.044
+R20 B.n2 B.n0 249.882
+R21 B.n1 B.t2 241.536
+R22 B.n0 B.t3 241.536
+R23 B.n1 B.t1 169.237
+R24 B.n0 B.t0 169.237
+R25 B B.n1 166.891
+R26 B B.n2 4.89462
+R27 B.n2 B 4.44132
+R28 a_285_47.t0 a_285_47.t1 49.8467
+R29 VNB.t1 VNB.t3 2620.06
+R30 VNB.t2 VNB.t1 1196.12
+R31 VNB.t4 VNB.t2 1196.12
+R32 VNB.t0 VNB.t4 1196.12
+R33 VNB VNB.t0 1039.48
+R34 VGND.n5 VGND.t0 278.589
+R35 VGND.n3 VGND.n2 200.127
+R36 VGND.n1 VGND.t2 152.428
+R37 VGND.n2 VGND.t1 24.9236
+R38 VGND.n2 VGND.t3 24.9236
+R39 VGND.n4 VGND.n3 21.4593
+R40 VGND.n5 VGND.n4 16.9417
+R41 VGND.n6 VGND.n5 9.3005
+R42 VGND.n4 VGND.n0 9.3005
+R43 VGND.n3 VGND.n1 7.08982
+R44 VGND.n1 VGND.n0 0.170346
+R45 VGND.n6 VGND.n0 0.120292
+R46 VGND VGND.n6 0.0226354
+R47 a_117_297.t0 a_117_297.t1 53.1905
+R48 VPWR.n1 VPWR.t1 852.101
+R49 VPWR.n1 VPWR.n0 331.286
+R50 VPWR.n0 VPWR.t2 26.5955
+R51 VPWR.n0 VPWR.t0 26.5955
+R52 VPWR VPWR.n1 0.648038
+R53 A.n0 A.t1 212.081
+R54 A.n1 A.t2 212.081
+R55 A A.n2 153.28
+R56 A.n0 A.t3 139.78
+R57 A.n1 A.t0 139.78
+R58 A.n2 A.n0 37.246
+R59 A.n2 A.n1 24.1005
+C0 B VPWR 0.070314f
+C1 VPB X 0.015415f
+C2 VPB B 0.069694f
+C3 VPB VPWR 0.068915f
+C4 A VGND 0.032545f
+C5 X VGND 0.172898f
+C6 B VGND 0.030447f
+C7 A X 0.001658f
+C8 B A 0.221335f
+C9 VPWR VGND 0.064265f
+C10 A VPWR 0.034845f
+C11 B X 0.014878f
+C12 VPB VGND 0.006962f
+C13 VPB A 0.051013f
+C14 VPWR X 0.053654f
+C15 VGND VNB 0.434883f
+C16 X VNB 0.064909f
+C17 VPWR VNB 0.332777f
+C18 A VNB 0.166719f
+C19 B VNB 0.213371f
+C20 VPB VNB 0.69336f
+.ends
+
 .subckt ee_sky130_fd_sc_hd__inv_1 A VGND VNB VPB VPWR Y
-X0 Y A VGND VNB sky130_fd_pr__nfet_01v8 ad=0.169 pd=1.82 as=0.169 ps=1.82 w=1 l=0.15
-*X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8_hvt ad=0.26 pd=2.52 as=0.26 ps=2.52 w=1 l=0.15
+X1 Y A VPWR VPB sky130_fd_pr__pfet_01v8  w=1 l=0.15 m=20
+X0 Y A VGND VNB sky130_fd_pr__nfet_01v8 w=1 l=0.15
 .ends
 
 Vgnd Vgnd 0 0
 Vdd Vdd 0 1.8
 
-xcell0 A Vgnd Vgnd Vdd Vdd Y ee_sky130_fd_sc_hd__inv_1
+*Xin A Vgnd Vgnd Vdd Vdd B sky130_fd_sc_hd__inv_1
+xcell B Vgnd Vgnd Vgnd Vdd Vdd Y sky130_fd_sc_hd__xor2_1
+Cout Y Vgnd 2.3f
+Vtrans B Vgnd pulse(0 1.8 0.1n 0.1n 0n 20n 20n)
 
-*xcell21 A2 Vgnd Vgnd Vdd Vdd Y2 sky130_fd_sc_hd__inv_1
+*X2_in A Vgnd Vgnd Vdd Vdd B2 sky130_fd_sc_hd__inv_1
+R2_1 B C2 1m
+C2_out C2 Vgnd 20.7f
 
-Cout Y Vgnd 100000f
-*Cout2 Y2 Vgnd 100000f
+*.ic V(B)=0
+*.ic V(B2)=1.8
+.options AUTOSTOP
 
-R1ohm A R1 10k
-*R2ohm A2 R2 10k
-
-Vr1 R1 Vgnd pulse(1.8 0 0n 0n 0n 20n 20n)
-*Vr2 R2 Vgnd pulse(0 1.8 0n 0n 0n 20n 20n)
-
-.tran 0.1p 0.1n 0
+.tran 0.01p 2.0n 0
+.meas TRAN charge_integral_1 INTEG Vtrans#branch FROM=0 TO=2n
 
 .control
 run
 
-meas tran dt1s when V(A)=0.1
-*meas tran dt2s when V(A2)=0.1
-meas tran dt1 when V(A)=0.2
-*meas tran dt2 when V(A2)=0.2
-print (dt1 - dt1s) / (1k * 0.1)
-*print (dt2 - dt2s) / (1k * 0.1)
-
-*plot V(A) V(A2) V(R1)
-
-set filetype=ascii
-
-write output.txt V(A)
+plot V(B) V(Y) Vtrans#branch*3000
+*set filetype=ascii
+*write output.txt I(
 
 .endc
+
