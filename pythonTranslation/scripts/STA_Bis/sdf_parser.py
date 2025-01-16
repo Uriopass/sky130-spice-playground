@@ -24,7 +24,7 @@ def sdf_parser():
         line = sdf_content[i]
         if "CELLTYPE" in line and line != '  (CELLTYPE "picorv32")' and line != '  (CELLTYPE "spm")':
             cell_short = "_".join(line.split("__")[1].split("_")[0:-1])
-            cell_long = line.split('"')[1]
+            cell_long = "_".join(line.split('"')[1].split("_")[:-1])
             pins, function, function_str = functions[cell_short]
 
             if "dfxtp" in cell_short or "dfrtp" in cell_short:
