@@ -206,7 +206,7 @@ if __name__ == "__main__":
     #exit(0)
 
     #iterate of all files in data folder
-    for file in os.listdir("data"):
+    for file in sorted(os.listdir("data")):
         if not file.startswith("sky130_fd_sc_hs"):
             continue
         if file.endswith(".njson"):

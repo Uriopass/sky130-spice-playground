@@ -346,7 +346,7 @@ if __name__ == "__main__":
     exit(0)
     """
 
-    for circuit_name, circuit in circuits.items():
+    for circuit_name, circuit in sorted(circuits.items()):
         print("gonna do", circuit_name)
         t_start = time.time()
         input_queue = mp.Queue()
@@ -364,7 +364,7 @@ if __name__ == "__main__":
                 i = 0
                 while True:
                     i += 1
-                    if i % 100 == 0:
+                    if i % 1000 == 0:
                         print(i, time.time() - t)
                         t = time.time()
                     result = output_queue.get()
