@@ -16,8 +16,9 @@ def read_data(data_path):
             if key.startswith("w_"):
                 numb_fets += 1
             if key.startswith("val_"):
-                pin_list.append(key)
+                pin_list.append(key[4:])
         break
+    pin_list.sort()
 
     cases = set()
 
@@ -26,36 +27,45 @@ def read_data(data_path):
         check_cases_until = 8000
 
     for parsed in content_json[:check_cases_until]:
-        case = tuple([parsed[pin] for pin in pin_list])
+        case = tuple([parsed["val_"+pin] for pin in pin_list])
         cases.add(case)
 
     input_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), 3 + 5 * numb_fets + 2 * numb_fets * (numb_fets - 1)), dtype = "float64") for case in cases}
     output_tensors = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), 2), dtype = "float64") for case in cases}
     iis = {case: 0 for case in cases}
+    iis_capa = {case: 0 for case in cases}
 
     input_tensors_inp_capa = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), numb_fets), dtype = "float64") for case in cases}
     output_tensors_inp_capa = {case: np.zeros((int(1.1 * len(content_json) / len(cases)), 1), dtype = "float64") for case in cases}
 
     for parsed in content_json:
-        #if not(parsed["val_A1"] == "0" and parsed["val_B2"] == "0" and parsed["val_C2"] == "1.8" and parsed["val_B1"] == "0" and parsed["val_A2"] == "0" and parsed["val_C1"] == "fall"):
+        #if not(parsed["val_A1"] == "0" and parsed["val_B2"] == "0" and parsed["val_C2"] == "1" and parsed["val_B1"] == "0" and parsed["val_A2"] == "0" and parsed["val_C1"] == "fall"):
         #    continue
 
-        skip = False
-        for j in range(numb_fets):
-            if parsed[f"w_{j}"] > 5:
-                skip = True
-                break
-        if skip:
-            continue
+        #skip = False
+        #for j in range(numb_fets):
+        #    if parsed[f"w_{j}"] > 5:
+        #        skip = True
+        #        break
+        #if skip:
+        #    continue
 
-        case = tuple([parsed[pin] for pin in pin_list])
+        case = tuple([parsed["val_"+pin] for pin in pin_list])
 
         ii = iis[case]
         input_tensor = input_tensors[case]
         output_tensor = output_tensors[case]
 
-        inp_capa = parsed["commuting_pin_capacitance"]
-        output_tensors_inp_capa[case][ii, 0] = inp_capa
+        if "commuting_pin_capacitance" in parsed:
+            ii_capa = iis_capa[case]
+            for j in range(numb_fets):
+                w_j = parsed[f"w_{j}"]
+                input_tensors_inp_capa[case][ii_capa, j] = w_j
+
+            inp_capa = parsed["commuting_pin_capacitance"]
+            output_tensors_inp_capa[case][ii_capa, 0] = inp_capa
+
+            iis_capa[case] += 1
 
         capa = parsed["capa_out_fF"]
         transition = parsed["transition"]
@@ -70,10 +80,6 @@ def read_data(data_path):
         addval(transition)
         addval(capa)
 
-        for j in range(numb_fets):
-            w_j = parsed[f"w_{j}"]
-            #addval(w_j)
-            input_tensors_inp_capa[case][ii, j] = w_j
 
 
         for j in range(numb_fets):
@@ -113,8 +119,8 @@ def read_data(data_path):
         if iis[key] != len(input_tensors[key]):
             input_tensors[key] = input_tensors[key][:iis[key]]
             output_tensors[key] = output_tensors[key][:iis[key]]
-            input_tensors_inp_capa[key] = input_tensors_inp_capa[key][:iis[key]]
-            output_tensors_inp_capa[key] = output_tensors_inp_capa[key][:iis[key]]
+            input_tensors_inp_capa[key] = input_tensors_inp_capa[key][:iis_capa[key]]
+            output_tensors_inp_capa[key] = output_tensors_inp_capa[key][:iis_capa[key]]
         #print(f"Case: {key}, Total: {len(input_tensors[key])}")
 
     return input_tensors, output_tensors, pin_list, input_tensors_inp_capa, output_tensors_inp_capa
@@ -129,6 +135,7 @@ def export_estimators():
             print("gonna do", file)
 
             all_estimators = {}
+            all_estimators_capa = {}
 
             input_tensors, output_tensors, pin_list, input_tensors_inp_capa, output_tensors_inp_capa = read_data(data_path="data/" + file)
             for key in sorted(input_tensors.keys()):
@@ -143,6 +150,7 @@ def export_estimators():
                 case_name = ",".join([f"{pin}:{key[i]}" for i, pin in enumerate(pin_list)])
                 print(case_name)
                 all_estimators[case_name] = linear_estimator
+            dim = len(linear_estimator)
 
             for key in sorted(input_tensors_inp_capa.keys()):
                 X, y = input_tensors_inp_capa[key], output_tensors_inp_capa[key]
@@ -151,31 +159,51 @@ def export_estimators():
 
                 xtx = np.matmul(X.T, X)
                 xtx_pinv = np.linalg.pinv(xtx)
-                linear_estimator = np.matmul(xtx_pinv, X.T @ y)
-                linear_estimator = np.where(np.abs(linear_estimator) < 0.1, 0, linear_estimator)
+                linear_estimator_raw = np.matmul(xtx_pinv, X.T @ y)
+                linear_estimator_raw = linear_estimator_raw.flatten()
 
-                mse = np.mean((X @ linear_estimator - y) ** 2)
+                nonzeros = np.abs(linear_estimator_raw) > 0.1
+                filtered_inputs = X[:, nonzeros]
+                xtx = np.matmul(filtered_inputs.T, filtered_inputs)
+                xtx_pinv = np.linalg.pinv(xtx)
+                linear_estimator_small = np.matmul(xtx_pinv, filtered_inputs.T @ y).flatten()
+
+                linear_estimator = np.zeros(len(linear_estimator_raw))
+                linear_estimator[nonzeros] = linear_estimator_small
+                linear_estimator = linear_estimator.reshape(-1, 1)
 
                 case_name = ",".join([f"{pin}:{key[i]}" for i, pin in enumerate(pin_list)])
-                print(case_name, mse, linear_estimator)
 
+                #rel_err = np.mean(np.abs(y - X @ linear_estimator) / np.abs(y))
+                #if rel_err > 0.05:
+                #    print("!!!!!!!!!!!! bad config", case_name, rel_err, linear_estimator, linear_estimator_zero)
+
+                all_estimators_capa[case_name] = linear_estimator
+
+            dim_capa = len(linear_estimator)
 
             cell_name = file.split(".")[0]
-            cell_name = "_".join(cell_name.split("_")[:-1])
 
             with nc.Dataset(f"models/{cell_name}.nc", "w") as f:
-                f.createDimension("dim", len(linear_estimator))
+                f.createDimension("dim", dim)
                 f.createDimension("out", 2)
-                f.createDimension("numb_cases", len(all_estimators))
+
+                f.createDimension("dim_capa", dim_capa)
+                f.createDimension("out_capa", 1)
 
                 for case_name, linear_estimator in all_estimators.items():
                     case = f.createGroup(case_name)
                     case.createVariable("linear_estimator", "f8", ("dim", "out"))
                     case["linear_estimator"][:, :] = linear_estimator
 
+                for case_name, linear_estimator in all_estimators_capa.items():
+                    case = f.groups[case_name]
+                    case.createVariable("linear_estimator_capa", "f8", ("dim_capa", "out_capa"))
+                    case["linear_estimator_capa"][:, :] = linear_estimator
+
 if __name__ == "__main__":
-    export_estimators()
-    exit(0)
+    #export_estimators()
+    #exit(0)
 
     #iterate of all files in data folder
     for file in os.listdir("data"):
@@ -306,6 +334,6 @@ if __name__ == "__main__":
                     pin_config = ""
                     for i, pin in enumerate(pin_list):
                         pin_config += f"{pin}: {key[i]} "
-                    with open("bad_configs_6000_fetlt5.txt", "a") as f:
+                    with open("bad_configs_10000.txt", "a") as f:
                         f.write(f"{file} {pin_config} rel:{avg_rele:.6} abs:{avg_abse:.6} rel_train:{rel_e_all:.6} rel_max01:{avg_rele_max:.6}\n")
 

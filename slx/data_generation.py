@@ -5,8 +5,6 @@ import multiprocessing as mp
 import re
 from collections import defaultdict
 
-from sympy.physics.units import capacitance
-
 from spice import parse_measures, run_spice, run_spice_plot
 import numpy as np
 
@@ -25,34 +23,36 @@ def area(W):
 def perim(W):
     return 2 * (W + 0.15)
 
-def pfet(W, name, D, G, S):
+def pfet_hs(W, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: pfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
 
     mult = W
     ar = area(W) / mult
     pe = perim(W) / mult
-    return f"X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8_hvt ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={1} l=0.15"
+    return f"X{name} {D} {G} {S} Vdd sky130_fd_pr__pfet_01v8 ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={1} l=0.15"
 
 
-def nfet(W, name, D, G, S):
+def nfet_hs(W, name, D, G, S):
     if W < MINSIZE:
         print(f"Warning: nfet {name} has width {W} which is less than the minimum size of {MINSIZE}")
 
     mult = W
     ar = area(W) / mult
     pe = perim(W) / mult
-    return f"X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8 ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={1} l=0.15"
+    return f"X{name} {D} {G} {S} Vgnd sky130_fd_pr__nfet_01v8_lvt ad={ar} as={ar} pd={pe} ps={pe} m={mult} w={1} l=0.15"
 
-def value_to_voltage(value, transition):
+slew_to_pulse_arc = 1.0 / (0.8 - 0.2)
+
+def value_to_voltage(value, slew):
     if value == "0" or value == 0:
         return 0
-    if value == "1.8" or value == 1.8:
+    if value == "1" or value == 1:
         return 1.8
     if value == "rise":
-        return f"PULSE(0 1.8 0 {transition}n 0.1n 100n 100n)"
+        return f"PULSE(0 1.8 0 {slew * slew_to_pulse_arc}n 0.1n 100n 100n)"
     if value == "fall":
-        return f"PULSE(1.8 0 0 {transition}n 0.1n 100n 100n)"
+        return f"PULSE(1.8 0 0 {slew * slew_to_pulse_arc}n 0.1n 100n 100n)"
     raise ValueError(f"Unknown value for voltage conv {value}")
 
 def parse_netlist(netlist):
@@ -151,6 +151,10 @@ def parse_netlist(netlist):
         if size != smallest_sizes["_".join(name_split[:-1])]:
             del subcircuits[key]
 
+    for key in list(subcircuits.keys()):
+        circuit_name_without_size = "_".join(key.split("_")[:-1])
+        subcircuits[circuit_name_without_size] = subcircuits.pop(key)
+
     for current_subckt, circuit in subcircuits.items():
         circuit["output_transistors"] = []
         for t1 in circuit["transistors"]:
@@ -176,7 +180,7 @@ def get_timing(P, subckt):
     fets = []
 
     for transistor in subckt["transistors"]:
-        fetfun = pfet if transistor["type"] == "pfet" else nfet
+        fetfun = pfet_hs if transistor["type"] == "pfet" else nfet_hs
         fets.append(fetfun(P["w_" + transistor["name"]], transistor["name"], transistor["source"], transistor["gate"], transistor["drain"]))
 
     fets = "\n".join(fets)
@@ -190,7 +194,7 @@ def get_timing(P, subckt):
             pin = p[4:]
             if P[p] == "rise" or P[p] == "fall":
                 commuting_pin = pin
-            pin_values.append(f"V{pin} {pin} 0 {value_to_voltage(P[p], P['transition'])}")
+            pin_values.append(f"V{pin} {pin} 0 {value_to_voltage(P[p], P['slew'])}")
 
     pin_values = "\n".join(pin_values)
 
@@ -200,37 +204,37 @@ def get_timing(P, subckt):
         measure_integral = f".meas tran tot_charge INTEG V{commuting_pin}#branch from=0 to={P['sim_time']}n"
 
     spice = f"""
-    .title slx
-    .include "./prelude.spice"
-    
-    VVdd Vdd 0 1.8
-    
-    VVPWR VPWR 0 1.8
-    VVPB VPB 0 1.8
-    VVNB VNB 0 0
-    VVGND VGND 0 0
-    
-    {pin_values}
-    
-    Cout {subckt["output_pin"]} 0 {P["capa_out_fF"]}f
-    
-    {fets}
-    
-    .tran 0.005n {P["sim_time"]}n
-    
-*.options AUTOSTOP
-    
-    .meas tran x_cross when V({subckt["output_pin"]}) = 0.9
-    .meas tran x_start WHEN V({subckt["output_pin"]}) = {1.8 * 0.8}
-    .meas tran x_end   WHEN V({subckt["output_pin"]}) = {1.8 * 0.2}
-    {measure_integral}
-    
-    .control
-    run
-    
-    
-    *plot V({subckt["output_pin"]}) V(S)
-    .endc
+.title slx
+.include "./prelude.spice"
+
+VVdd Vdd 0 1.8
+
+VVPWR VPWR 0 1.8
+VVPB VPB 0 1.8
+VVNB VNB 0 0
+VVGND VGND 0 0
+
+{pin_values}
+
+Cout {subckt["output_pin"]} 0 {P["capa_out_fF"]}f
+
+{fets}
+
+.tran 0.005n {P["sim_time"]}n
+
+.options AUTOSTOP
+
+.meas tran x_cross when V({subckt["output_pin"]}) = 0.9
+.meas tran x_start WHEN V({subckt["output_pin"]}) = {1.8 * 0.8}
+.meas tran x_end   WHEN V({subckt["output_pin"]}) = {1.8 * 0.2}
+{measure_integral}
+
+.control
+run
+
+
+*plot V({subckt["output_pin"]}) V(S)
+.endc
     """
 
     output, stderr = run_spice(spice)
@@ -240,13 +244,13 @@ def get_timing(P, subckt):
         #print(output, stderr)
         return None, None, None
 
-    transition = abs(measures["x_end"] - measures["x_start"])
-    delta_time = measures["x_cross"] - P["transition"] * 0.5e-9
+    slew = abs(measures["x_end"] - measures["x_start"])
+    delta_time = measures["x_cross"] - P["slew"] * 0.5e-9
 
     pin_capacitance = None
     if "tot_charge" in measures:
         pin_capacitance = abs(measures["tot_charge"] / 1.8)
-    return delta_time, transition, pin_capacitance
+    return delta_time, slew, pin_capacitance
 
 randnfet = lambda: min(100.0, 0.8 * (1.0 / math.sqrt(np.random.uniform(0, 1)) - 1) + 0.36)
 randpfet = lambda: min(100.0, 1.0 / math.sqrt(np.random.uniform(0, 1)) - 1 + 0.36)
@@ -265,7 +269,7 @@ def simulate(subckt, i):
                         "i": i,
                         "sim_time": sim_time,
 
-                        "transition": np.random.random() * (0.5 - 0.05) + 0.05,
+                        "slew": np.random.random() * (0.5 - 0.05) + 0.04,
 
                         "capa_out_fF": 10 ** (2.7 * np.random.random()),
 
@@ -273,7 +277,7 @@ def simulate(subckt, i):
                     }
 
                     for other_pin, value in pin_comb["pins"].items():
-                        P["val_" + other_pin] = "1.8" if value else "0"
+                        P["val_" + other_pin] = "1" if value else "0"
 
                     for transistor in subckt["transistors"]:
                         fet_size = randpfet() if transistor["type"] == "pfet" else randnfet()
@@ -283,13 +287,13 @@ def simulate(subckt, i):
                         capa = P["capa_out_fF"]
                         P["w_" + transistor["name"]] += np.random.uniform(0, 1) * capa * 0.01
 
-                    delta_time, transition, pin_capacitance = get_timing(P, subckt)
+                    delta_time, slew, pin_capacitance = get_timing(P, subckt)
 
                     if delta_time is None:
                         continue
 
                     P["out_delta_time"] = delta_time * 1e9
-                    P["out_transition"] = transition * 1e9
+                    P["out_slew"] = slew * 1e9
 
                     if pin_capacitance is not None:
                         P["commuting_pin_capacitance"] = pin_capacitance * 1e15
@@ -315,13 +319,13 @@ if __name__ == "__main__":
     P = {
         "sim_time": sim_time,
 
-        "transition": 0.06116666,
+        "slew": 0.06116666,
 
         "capa_out_fF": 43.725986,
 
         "val_A0": "fall",
         "val_S": "0",
-        "val_A1": "1.8",
+        "val_A1": "1",
 
         "w_0": 10 * 0.64,
         "w_1": 8 * 0.42,
@@ -346,7 +350,7 @@ if __name__ == "__main__":
         t_start = time.time()
         input_queue = mp.Queue()
         output_queue = mp.Queue()
-        num_workers = 24
+        num_workers = 20
 
         processes = [mp.Process(target=worker, args=(circuit, input_queue, output_queue)) for _ in range(num_workers)]
         for p in processes:
@@ -371,7 +375,7 @@ if __name__ == "__main__":
         write_process = mp.Process(target=write_results, args=(f"data/{circuit_name}.njson", output_queue))
         write_process.start()
 
-        for i in range(2000):
+        for i in range(8000):
             input_queue.put(i)
 
         for _ in range(num_workers):
