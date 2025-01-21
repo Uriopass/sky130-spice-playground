@@ -269,7 +269,7 @@ def simulate(subckt, i):
                         "i": i,
                         "sim_time": sim_time,
 
-                        "slew": np.random.random() * (0.5 - 0.05) + 0.04,
+                        "slew": np.random.random() * (0.35 - 0.04) + 0.04,
 
                         "capa_out_fF": 10 ** (2.7 * np.random.random()),
 
@@ -347,6 +347,7 @@ if __name__ == "__main__":
     """
 
     for circuit_name, circuit in circuits.items():
+        print("gonna do", circuit_name)
         t_start = time.time()
         input_queue = mp.Queue()
         output_queue = mp.Queue()
@@ -375,7 +376,7 @@ if __name__ == "__main__":
         write_process = mp.Process(target=write_results, args=(f"data/{circuit_name}.njson", output_queue))
         write_process.start()
 
-        for i in range(8000):
+        for i in range(2000):
             input_queue.put(i)
 
         for _ in range(num_workers):
