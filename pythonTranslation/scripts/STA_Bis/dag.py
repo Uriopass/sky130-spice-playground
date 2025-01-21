@@ -17,8 +17,6 @@ pin_combinations["sky130_fd_sc_hs__bufinv_1"] = pin_combinations["sky130_fd_sc_h
 pin_combinations["sky130_fd_sc_hs__clkinv_0"] = pin_combinations["sky130_fd_sc_hs__clkinv_1"]
 
 
-pool = mp.Pool(24)
-
 def parallel_work(l, arg, f):
     num_workers = 24
     input_queue = mp.Queue(len(l))
