@@ -315,36 +315,7 @@ def worker(subckt, input_queue, output_queue):
 if __name__ == "__main__":
     circuits = parse_netlist(open("hs_nopex.spice").read())
 
-    """
-    P = {
-        "sim_time": sim_time,
-
-        "slew": 0.06116666,
-
-        "capa_out_fF": 43.725986,
-
-        "val_A0": "fall",
-        "val_S": "0",
-        "val_A1": "1",
-
-        "w_0": 10 * 0.64,
-        "w_1": 8 * 0.42,
-        "w_2": 0.36,
-        "w_3": 0.64,
-        "w_4": 0.36,
-        "w_5": 0.36,
-        "w_6": 6 * 0.64,
-        "w_7": 2.0 * 1.30,
-        "w_8": 4.0 * 2.00,
-        "w_9": 0.36,
-        "w_10": 0.42,
-        "w_11": 10 * 0.42,
-    }
-
-    real_dt, real_trans = get_timing(P, circuits["sky130_fd_sc_hd__mux2_1"])
-    print(f"{real_dt * 1e9}n {real_trans * 1e9}n")
-    exit(0)
-    """
+    t_all_start = time.time()
 
     for circuit_name, circuit in sorted(circuits.items()):
         print("gonna do", circuit_name)
@@ -389,3 +360,4 @@ if __name__ == "__main__":
         write_process.join()
 
         print(circuit_name, "in", time.time() - t_start)
+    print("all done in", time.time() - t_all_start)

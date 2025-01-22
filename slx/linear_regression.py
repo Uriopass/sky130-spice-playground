@@ -68,7 +68,7 @@ def read_data(data_path):
             iis_capa[case] += 1
 
         capa = parsed["capa_out_fF"]
-        transition = parsed["transition"]
+        slew = parsed["slew"]
         jj = 0
 
         def addval(v):
@@ -77,7 +77,7 @@ def read_data(data_path):
             jj += 1
 
         addval(1.0)
-        addval(transition)
+        addval(slew)
         addval(capa)
 
 
@@ -87,8 +87,8 @@ def read_data(data_path):
             addval(1.0 / w_j)
             addval(capa / w_j)
             addval(np.cbrt(capa / w_j))
-            addval(np.sqrt(transition / w_j))
-            addval(np.cbrt(transition * capa / w_j))
+            addval(np.sqrt(slew / w_j))
+            addval(np.cbrt(slew * capa / w_j))
 
         for j in range(numb_fets):
             w_j = parsed["w_" + str(j)]
@@ -102,16 +102,16 @@ def read_data(data_path):
                 #addval(np.cbrt(w_j / w_k))
 
                 #addval(np.cbrt((1.0 / w_j + 1.0 / w_k) * capa))
-                #addval(np.sqrt((1.0 / w_j + 1.0 / w_k) * capa * transition))
-                #addval(np.cbrt(w_j / w_k * capa * transition))
+                #addval(np.sqrt((1.0 / w_j + 1.0 / w_k) * capa * slew))
+                #addval(np.cbrt(w_j / w_k * capa * slew))
 
                 #addval(w_j / w_k * capa)
-                #addval(w_j / w_k * transition)
+                #addval(w_j / w_k * slew)
                 #addval(np.cbrt(w_j / w_k * capa))
-                #addval(np.cbrt(w_j / w_k * transition))
+                #addval(np.cbrt(w_j / w_k * slew))
 
         output_tensor[ii, 0] = parsed["out_delta_time"]
-        output_tensor[ii, 1] = parsed["out_transition"]
+        output_tensor[ii, 1] = parsed["out_slew"]
 
         iis[case] += 1
 
@@ -264,7 +264,7 @@ if __name__ == "__main__":
                     #trans_hat = y_hat_val[:,1]
 
                     #alpha = 0.5 / 0.6
-                    #proj_error = np.abs(dt - trans * alpha - (dt_hat - trans_hat * alpha)) / (dt - trans * alpha + in_transition / 2)
+                    #proj_error = np.abs(dt - trans * alpha - (dt_hat - trans_hat * alpha)) / (dt - trans * alpha + in_slew / 2)
 
                     #avg_proj += np.mean(proj_error)
 
@@ -307,7 +307,7 @@ if __name__ == "__main__":
                 #ax = fig.add_subplot(111, projection='3d')
                 #ax.scatter(axis0, np.log10(axis1), axis_z, c='r', marker='o')
                 ##ax.scatter(axis0, np.log10(axis1), axis_z, c='b', marker='o')
-                #ax.set_xlabel('Transition')
+                #ax.set_xlabel('Slew')
                 #ax.set_ylabel('Capacitance')
                 #ax.set_zlabel('abs Error')
                 #ax.set_zlim(0, 0.04)
