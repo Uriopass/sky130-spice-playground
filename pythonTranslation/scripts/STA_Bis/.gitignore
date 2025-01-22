@@ -2,3 +2,5 @@ dag_hd.json
 dag_hs.json
 saved_nods.pkl
 *.pkl
+*.so
+*.pyd

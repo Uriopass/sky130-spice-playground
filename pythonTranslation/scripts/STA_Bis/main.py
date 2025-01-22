@@ -10,7 +10,7 @@ with open('hs_saved_instance_to_cell_type.pkl', 'rb') as f:
 
 dag = DAG.load_from_file("dag_hs.json")
 
-path, max_length = dag.longest_path_linear_sta(groundtruth=True)
+path, max_length = dag.longest_path_linear_sta(groundtruth=False)
 #path, max_length = dag.longest_path()
 t1 = time.time()
 
