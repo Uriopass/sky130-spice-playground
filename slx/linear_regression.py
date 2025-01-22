@@ -128,7 +128,7 @@ def read_data(data_path):
 def export_estimators():
     os.makedirs("models", exist_ok=True)
     # iterate of all files in data folder
-    for file in os.listdir("data"):
+    for file in sorted(os.listdir("data")):
         if not file.startswith("sky130_fd_sc_hs"):
             continue
         if file.endswith(".njson"):
@@ -202,8 +202,8 @@ def export_estimators():
                     case["linear_estimator_capa"][:, :] = linear_estimator
 
 if __name__ == "__main__":
-    #export_estimators()
-    #exit(0)
+    export_estimators()
+    exit(0)
 
     #iterate of all files in data folder
     for file in sorted(os.listdir("data")):
