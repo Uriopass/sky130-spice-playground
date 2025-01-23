@@ -8,7 +8,6 @@ import multiprocessing as mp
 
 import numpy as np
 import netCDF4 as nc
-from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 from spice import run_spice_timing
@@ -19,16 +18,29 @@ pin_combinations["sky130_fd_sc_hs__bufinv_1"] = pin_combinations["sky130_fd_sc_h
 pin_combinations["sky130_fd_sc_hs__clkinv_0"] = pin_combinations["sky130_fd_sc_hs__clkinv_1"]
 
 
-def softmax(l):
-    e = 10000 ** l
-    return e / np.sum(e)
+alpha = 2000
 
+def LSE(l):
+    m = np.max(l)
+    e = np.exp(alpha * (l - m))
+    return m + 1/alpha * np.log(np.sum(e))
+
+def LSE_with_deriv(l):
+    m = np.max(l)
+    e = np.exp(alpha * (l - m))
+    s = np.sum(e)
+    return m + 1/alpha * np.log(s), e / np.sum(e)
+
+def LSE_deriv(l):
+    m = np.max(l)
+    e = np.exp(alpha * (l - m))
+    return e / np.sum(e)
 
 def parallel_work(l, f):
     num_workers = 1
 
     if num_workers == 1:
-        return [f(v) for v in tqdm(l)]
+        return [f(v) for v in l]
 
     results = [None] * len(l)
 
@@ -282,47 +294,34 @@ class DAG:
         linear_estimators = parse_linear_estimators(all_celltypes)
 
         linear_estimator_node = [None] * len(self.graph)
+        capa_estimator_node = [None] * len(self.graph)
 
         for node in self.graph:
             instance, pin_state = node.split("@")
             celltype = self.instance_to_cell_type[instance]
             linear_estimator_node[node_idx[node]] = linear_estimators[f"{celltype}@{pin_state}"][0]
+            capa_estimator_node[node_idx[node]] = linear_estimators[f"{celltype}@{pin_state}"][1]
         print("parsed needed linear estimators")
         # endregion
-
-        # region node capa
-        node_out_capa = [0.0] * len(self.graph)
-        node_seen_instance = defaultdict(list)
-
-        for child in self.rev_graph:
-            instance, pin_state = child.split("@")
-            celltype = self.instance_to_cell_type[instance]
-
-            _, capa_estimator = linear_estimators[f"{celltype}@{pin_state}"]
-
-            capa = (np.array(cell_widths[instance_idx[instance]]) @ capa_estimator)[0]
-            for parent, _ in self.rev_graph[child]:
-                if instance not in node_seen_instance[parent]:
-                    node_seen_instance[parent].append(instance)
-                    node_out_capa[node_idx[parent]] += capa
-
-        for node in self.rev_graph:
-            if node_out_capa[node_idx[node]] == 0:
-                node_out_capa[node_idx[node]] = 2.0
-        print("computed node capas")
-        # endregion
-
-        maxdepth, nodes_by_depths = self.depth_chunks(node_idx)
-
-        time_slew = np.zeros((len(self.graph), 2), dtype=np.float64)
-        path_parent = [None] * len(self.graph)
-
-        start_nodes = self.get_start_nodes()
-        print(f"got {len(start_nodes)} start nodes")
 
         rev_graph_idx = [[]] * len(self.graph)
         for node, neighbors in self.rev_graph.items():
             rev_graph_idx[node_idx[node]] = [(node_idx[neighbor], weight) for neighbor, weight in neighbors]
+
+        graph_idx = [[]] * len(self.graph)
+        for node, neighbors in self.graph.items():
+            graph_idx[node_idx[node]] = [(node_idx[neighbor], weight) for neighbor, weight in neighbors]
+
+        node_to_instance = np.zeros(len(self.graph), dtype=np.uint32)
+        for node in self.graph:
+            instance, _ = node.split("@")
+            node_to_instance[node_idx[node]] = instance_idx[instance]
+
+
+        maxdepth, nodes_by_depths = self.depth_chunks(node_idx)
+
+        start_nodes = self.get_start_nodes()
+        print(f"got {len(start_nodes)} start nodes")
 
         is_falling_node = [False] * len(self.graph)
         for node in self.graph:
@@ -330,90 +329,155 @@ class DAG:
             if "fall" in pin_state:
                 is_falling_node[node_idx[node]] = True
 
-        node_to_instance = np.zeros(len(self.graph), dtype=np.uint32)
-        for node in self.graph:
-            instance, _ = node.split("@")
-            node_to_instance[node_idx[node]] = instance_idx[instance]
+        end_nodes = np.array(list(node_idx[node] for node in self.get_end_nodes()), dtype=np.uint32)
 
         def process_node(child):
             instance = node_to_instance[child]
             linear_estimator = linear_estimator_node[child]
 
-            time_slews_parent = []
-            for parent, edge_weight in rev_graph_idx[child]:
-                t_parent, slew = time_slew[parent]
-                time_slews_parent.append((t_parent + edge_weight, slew, parent))
+            parents = [v[0] for v in rev_graph_idx[child]]
 
             parent = None
             t_parent = 0
-            if len(time_slews_parent) == 0:
+            if len(parents) == 0:
                 is_falling = is_falling_node[child]
 
-                slew = 0.1
+                slew_in = 0.1
                 if is_falling:
-                    slew = 0.06
+                    slew_in = 0.06
             else:
-                t_parent, slew, parent = max(time_slews_parent)
+                time_parents = time_slew[parents, 0]
+
+                t_parent, deriv = LSE_with_deriv(time_parents)
+                slew_in = np.dot(deriv, np.array([time_slew[parents, 1]]))
+                parent = np.argmax(time_parents)
 
             if groundtruth:
                 subckt = circuits[celltype]
-                dt, slew = run_spice_timing(subckt, pin_state, cell_widths[instance], node_out_capa[child], slew)
+                dt, slew = run_spice_timing(subckt, pin_state, cell_widths[instance], node_out_capa[child], slew_in)
             else:
-                v = mk_vector.mk_vector(cell_widths[instance], node_out_capa[child], slew)
+                v = mk_vector.mk_vector(cell_widths[instance], node_out_capa[child], slew_in)
                 dtslew = np.dot(v, linear_estimator)
                 dt, slew = dtslew[0], dtslew[1]
 
-            return t_parent + dt, slew, parent
+            return t_parent + dt, slew, slew_in, parent
 
-        t = time.time()
+        for iter in range(10000):
+            node_out_capa = np.zeros(len(rev_graph_idx))
+            node_seen_instance = defaultdict(set)
+
+            for child in range(len(rev_graph_idx)):
+                instance = node_to_instance[child]
+
+                capa_estimator = capa_estimator_node[child]
+
+                capa = (np.array(cell_widths[instance]) @ capa_estimator)[0]
+                for parent, _ in rev_graph_idx[child]:
+                    if instance not in node_seen_instance[parent]:
+                        node_seen_instance[parent].add(instance)
+                        node_out_capa[parent] += capa
+
+            node_out_capa = np.where(node_out_capa == 0, 2.0, node_out_capa)
+
+
+            time_slew = np.zeros((len(self.graph), 3), dtype=np.float64)
+            path_parent = [None] * len(self.graph)
+
+            for depth, nodes in enumerate(nodes_by_depths):
+                results = parallel_work(nodes, process_node)
+                for node, result in zip(nodes, results):
+                    time_slew[node][0] = result[0]
+                    time_slew[node][1] = result[1]
+                    time_slew[node][2] = result[2]
+                    path_parent[node] = result[3]
+
+            node_gradient = np.zeros(len(self.graph))
+
+            end_w = LSE_deriv(time_slew[end_nodes, 0])
+            node_gradient[end_nodes] = end_w
+
+            for depth in range(maxdepth - 1, -1, -1):
+                nodes = nodes_by_depths[depth]
+                for child in nodes:
+                    t_parents = []
+                    parent_idx = []
+                    for parent, edge_weight in rev_graph_idx[child]:
+                        parent_idx.append(parent)
+                        t_parent = time_slew[parent, 0]
+                        t_parents.append(t_parent + edge_weight)
+                    weights = LSE_deriv(np.array(t_parents))
+                    node_gradient[np.array(parent_idx, dtype=np.uint32)] += node_gradient[child] * weights
+
+            dws = []
+            dcapas = []
+
+            for node in range(len(rev_graph_idx)):
+                w = cell_widths[node_to_instance[node]]
+                capa = node_out_capa[node]
+                slew = time_slew[node, 2]
+                linear_estimator = linear_estimator_node[node]
+
+                dt_grad = node_gradient[node]
+                dv = linear_estimator[:, 0] * dt_grad
+
+                dw, dcapa = mk_vector.vector_grad(w, capa, slew, dv)
+
+                #print("   ", w, capa, slew, dv, dw, dcapa)
+                dws.append(dw)
+                dcapas.append(dcapa)
+
+            dws_instance = [[]] * len(self.instance_to_cell_type)
+
+            for node in range(len(rev_graph_idx)):
+                dcapa = dcapas[node]
+
+                for child, _ in graph_idx[node]:
+                    capa_estimator = capa_estimator_node[child]
+
+                    dw_capa = dcapa * capa_estimator
+                    dws[child] += dw_capa
+
+                instance = node_to_instance[node]
+                if len(dws_instance[instance]) == 0:
+                    dws_instance[instance] = dws[node]
+                else:
+                    dws_instance[instance] += dws[node]
+
+
+            if iter%100 == 0:
+                predicted_time = np.max(time_slew[end_nodes, 0])
+                groundtruth = True
+                time_slew = np.zeros((len(self.graph), 3), dtype=np.float64)
+                path_parent = [None] * len(self.graph)
+
+                for depth, nodes in enumerate(nodes_by_depths):
+                    results = parallel_work(nodes, process_node)
+                    for node, result in zip(nodes, results):
+                        time_slew[node][0] = result[0]
+                        time_slew[node][1] = result[1]
+                        time_slew[node][2] = result[2]
+                        path_parent[node] = result[3]
+
+                print("GT", np.round(predicted_time, 3), np.round(np.max(time_slew[end_nodes, 0]),3), cell_widths[0], dws_instance[0])
+                groundtruth = False
+
+            for instance, dw in enumerate(dws_instance):
+                cell_widths[instance] = np.clip(cell_widths[instance] - dw * 0.005, 0.36, 10.0)
+                #print(cell_widths[instance], dw)
+            #argmax_time = max(end_nodes, key=lambda x: time_slew[x][0])
+            #print(time_slew[argmax_time][0])
+
+
+        time_slew = np.zeros((len(self.graph), 3), dtype=np.float64)
+        path_parent = [None] * len(self.graph)
+
         for depth, nodes in enumerate(nodes_by_depths):
             results = parallel_work(nodes, process_node)
             for node, result in zip(nodes, results):
                 time_slew[node][0] = result[0]
                 time_slew[node][1] = result[1]
-                path_parent[node] = result[2]
-        print("first propagation", time.time() - t)
-        end_nodes = np.array(list(node_idx[node] for node in self.get_end_nodes()), dtype=np.uint32)
-
-        gradient = np.zeros(len(self.graph))
-
-        end_w = softmax(time_slew[end_nodes, 0])
-        gradient[end_nodes] = end_w
-        print(end_w)
-
-        for depth in range(maxdepth - 1, -1, -1):
-            nodes = nodes_by_depths[depth]
-            for child in nodes:
-                t_parents = []
-                parent_idx = []
-                for parent, edge_weight in rev_graph_idx[child]:
-                    parent_idx.append(parent)
-                    t_parent = time_slew[parent, 0]
-                    t_parents.append(t_parent + edge_weight)
-                weights = softmax(np.array(t_parents))
-                gradient[np.array(parent_idx, dtype=np.uint32)] += gradient[child] * weights
-
-        # filter out nodes with gradient > 1e-7
-        argmax_time = max(end_nodes, key=lambda x: time_slew[x][0])
-
-        path_1 = []
-        node = argmax_time
-        while node is not None:
-            path_1.append((node_idx_to_node[node], time_slew[node][0]))
-            node = path_parent[node]
-        path_1.reverse()
-
-        time_slew = np.zeros((len(self.graph), 2), dtype=np.float64)
-
-        t = time.time()
-        for depth, nodes in enumerate(nodes_by_depths):
-            nodes = [node for node in nodes if gradient[node] > 1e-7]
-            results = parallel_work(nodes, process_node)
-            for node, result in zip(nodes, results):
-                time_slew[node][0] = result[0]
-                time_slew[node][1] = result[1]
-                path_parent[node] = result[2]
-        print("second propagation", time.time() - t)
+                time_slew[node][2] = result[2]
+                path_parent[node] = result[3]
 
         argmax_time = max(end_nodes, key=lambda x: time_slew[x][0])
 
@@ -421,20 +485,10 @@ class DAG:
         node = argmax_time
         critical_grad = []
         while node is not None:
-            critical_grad.append(gradient[node])
+            critical_grad.append(node_gradient[node])
             path.append((node_idx_to_node[node], time_slew[node][0]))
             node = path_parent[node]
         path.reverse()
-        print(path == path_1)
-
-        histogram_start, bin_start = np.histogram(np.log10(end_w), bins=100, range=(-20, 0), density=True)
-        histogram_gradient, bin_edges = np.histogram(np.log10(gradient), bins=100, range=(-20, 0), density=True)
-        histogram_critical, bin_critical = np.histogram(np.log10(critical_grad), bins=50, range=(-20, 0), density=True)
-
-        plt.bar(bin_edges[:-1], histogram_gradient, width=0.2, color='b', alpha=0.7)
-        plt.bar(bin_start[:-1], histogram_start, width=0.2, color='r', alpha=0.7)
-        plt.bar(bin_critical[:-1], histogram_critical, width=0.4, color='g', alpha=0.7)
-        plt.show()
 
         return path, time_slew[argmax_time][0]
 
@@ -575,7 +629,7 @@ class DAG:
         return dag
 
 
-def temp():
+def gen_dag():
     with open('hs_saved_instance_to_cell_type.pkl', 'rb') as f:
         instance_to_cell_type = pickle.load(f)
 
@@ -598,9 +652,13 @@ def temp():
 
     dag = DAG()
 
+    for instance in nods:
+        for s in nods[instance]:
+            dag.add_node(instance + "@" + dict_to_string(s[0]), float(s[1][1]))
+
     for i in range(len(sdf_content)):
         line = sdf_content[i]
-        if line == '  (CELLTYPE "picorv32")' or line == '  (CELLTYPE "spm")':
+        if line == '  (CELLTYPE "picorv32")' or line == '  (CELLTYPE "spm")'or line == '  (CELLTYPE "test")':
             j = i + 4
             while "INTERCONNECT" in sdf_content[j]:
                 words = sdf_content[j].replace("(", "").replace(")", "").split(" ")
@@ -628,7 +686,7 @@ def temp():
                 #    j += 1
                 #    continue
 
-                pin_1 = words[5].split(".")[1]
+                #pin_1 = words[5].split(".")[1]
                 pin_2 = words[6].split(".")[1]
 
                 if instance_1 in nod_names and instance_2 in nod_names:
@@ -656,4 +714,4 @@ def temp():
 
 
 if __name__ == "__main__":
-    temp()
+    gen_dag()

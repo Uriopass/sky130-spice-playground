@@ -23,7 +23,7 @@ def sdf_parser():
 
     for i in range(len(sdf_content)):
         line = sdf_content[i]
-        if "CELLTYPE" in line and line != '  (CELLTYPE "picorv32")' and line != '  (CELLTYPE "spm")':
+        if "CELLTYPE" in line and line != '  (CELLTYPE "picorv32")' and line != '  (CELLTYPE "spm")' and line != '  (CELLTYPE "test")':
             cell_short = "_".join(line.split("__")[1].split("_")[0:-1])
             cell_long = "_".join(line.split('"')[1].split("_")[:-1])
             cell_full = line.split('"')[1]
@@ -106,7 +106,7 @@ def sdf_parser():
 
 
 
-    #print(nods)
+    print(nods)
 
     with open('hs_saved_nods.pkl', 'wb') as f:
         pickle.dump(nods, f)
