@@ -40,15 +40,19 @@ def vector_grad(w, capa, slew, dout):
     dw = np.zeros(numb_fets)
     dcapa = 0.0
 
+    dcapa += dout[2]
+
     for j in range(numb_fets):
         w_j = w[j]
         dw[j] += -dout[3 + j * 5] / w_j ** 2
         dw[j] += -dout[3 + j * 5 + 1] * capa / w_j ** 2
         dw[j] += -dout[3 + j * 5 + 2] * np.cbrt(capa / w_j ** 4) / 3
-        dw[j] += -dout[3 + j * 5 + 3] / (2 * np.sqrt(slew / w_j ** 3))
-        dw[j] += -dout[3 + j * 5 + 2] * np.cbrt(slew * capa / w_j ** 4) / 3
+        dw[j] += -dout[3 + j * 5 + 3] * np.sqrt(slew / w_j ** 3) / 2
+        dw[j] += -dout[3 + j * 5 + 4] * np.cbrt(slew * capa / w_j ** 4) / 3
 
         dcapa += dout[3 + j * 5 + 1] / w_j
+        dcapa += dout[3 + j * 5 + 2] * np.cbrt(1.0 / (capa ** 2 * w_j)) / 3
+        dcapa += dout[3 + j * 5 + 4] * np.cbrt(slew / (capa ** 2 * w_j)) / 3
 
     for j in range(numb_fets):
         w_j = w[j]
@@ -60,7 +64,10 @@ def vector_grad(w, capa, slew, dout):
             off2 = (k - (1 if k > j else 0)) * 2
             dw[j] += dout[off + off2] / w_k
             dw[k] -= dout[off + off2] * w_j / w_k ** 2
-            dcapa += dout[off + off2 + 1] / (w_j + w_k)
+
+            dcapa +=  dout[off + off2 + 1] / (w_j + w_k)
+            dw[j] += -dout[off + off2 + 1] * capa / (w_j + w_k) ** 2
+            dw[k] += -dout[off + off2 + 1] * capa / (w_j + w_k) ** 2
 
     return dw, dcapa
 

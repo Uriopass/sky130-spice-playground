@@ -17,28 +17,29 @@ pin_combinations["sky130_fd_sc_hs__bufbuf_1"] = pin_combinations["sky130_fd_sc_h
 pin_combinations["sky130_fd_sc_hs__bufinv_1"] = pin_combinations["sky130_fd_sc_hs__bufinv_8"]
 pin_combinations["sky130_fd_sc_hs__clkinv_0"] = pin_combinations["sky130_fd_sc_hs__clkinv_1"]
 
-
-alpha = 2000
+alpha = 50
+DEFAULT_CAPA = 2.0
 
 def LSE(l):
     m = np.max(l)
     e = np.exp(alpha * (l - m))
-    return m + 1/alpha * np.log(np.sum(e))
+    return m + 1 / alpha * np.log(np.sum(e))
+
 
 def LSE_with_deriv(l):
     m = np.max(l)
     e = np.exp(alpha * (l - m))
     s = np.sum(e)
-    return m + 1/alpha * np.log(s), e / np.sum(e)
+    return m + 1 / alpha * np.log(s), e / np.sum(e)
+
 
 def LSE_deriv(l):
     m = np.max(l)
     e = np.exp(alpha * (l - m))
     return e / np.sum(e)
 
-def parallel_work(l, f):
-    num_workers = 1
 
+def parallel_work(l, f, num_workers=1):
     if num_workers == 1:
         return [f(v) for v in l]
 
@@ -52,15 +53,15 @@ def parallel_work(l, f):
             result = f(v)
             output_queue.put((i, result))
 
-    for i, v in enumerate(l):
-        input_queue.put((i, v))
-
-    for _ in range(num_workers):
-        input_queue.put(None)
 
     processes = [mp.Process(target=f_worker, args=(input_queue, output_queue)) for _ in range(num_workers)]
     for p in processes:
         p.start()
+
+    for i, v in enumerate(l):
+        input_queue.put((i, v))
+    for _ in range(num_workers):
+        input_queue.put(None)
 
     for _ in tqdm(range(len(l))):
         i, result = output_queue.get()
@@ -270,6 +271,9 @@ class DAG:
         cell_widths = [None] * len(self.instance_to_cell_type)
         all_celltypes = set()
 
+        instance_to_celltype_idx = [""] * len(self.instance_to_cell_type)
+        node_to_pin_state_idx = [""] * len(self.graph)
+
         for instance, celltype in self.instance_to_cell_type.items():
             if celltype not in circuits:
                 print("Circuit not found for", celltype)
@@ -285,8 +289,12 @@ class DAG:
                 w[int(transistor["name"])] *= size
 
             cell_widths[instance_idx[instance]] = w
+            instance_to_celltype_idx[instance_idx[instance]] = celltype
             all_celltypes.add(celltype)
         # endregion
+        print("sum cell widths", sum(np.sum(v) for v in cell_widths))
+
+        cell_widths = pickle.load(open('hs_saved_cell_widths.pkl', 'rb'))
 
         print("created cell widths")
 
@@ -299,6 +307,7 @@ class DAG:
         for node in self.graph:
             instance, pin_state = node.split("@")
             celltype = self.instance_to_cell_type[instance]
+            node_to_pin_state_idx[node_idx[node]] = pin_state
             linear_estimator_node[node_idx[node]] = linear_estimators[f"{celltype}@{pin_state}"][0]
             capa_estimator_node[node_idx[node]] = linear_estimators[f"{celltype}@{pin_state}"][1]
         print("parsed needed linear estimators")
@@ -317,11 +326,7 @@ class DAG:
             instance, _ = node.split("@")
             node_to_instance[node_idx[node]] = instance_idx[instance]
 
-
         maxdepth, nodes_by_depths = self.depth_chunks(node_idx)
-
-        start_nodes = self.get_start_nodes()
-        print(f"got {len(start_nodes)} start nodes")
 
         is_falling_node = [False] * len(self.graph)
         for node in self.graph:
@@ -330,6 +335,8 @@ class DAG:
                 is_falling_node[node_idx[node]] = True
 
         end_nodes = np.array(list(node_idx[node] for node in self.get_end_nodes()), dtype=np.uint32)
+        start_nodes = np.array(list(node_idx[node] for node in self.get_start_nodes()), dtype=np.uint32)
+        print(f"got {len(start_nodes)} start nodes")
 
         def process_node(child):
             instance = node_to_instance[child]
@@ -349,11 +356,13 @@ class DAG:
                 time_parents = time_slew[parents, 0]
 
                 t_parent, deriv = LSE_with_deriv(time_parents)
-                slew_in = np.dot(deriv, np.array([time_slew[parents, 1]]))
-                parent = np.argmax(time_parents)
+                slew_in = np.dot(deriv, time_slew[parents, 1])
+                parent = parents[np.argmax(time_parents)]
 
             if groundtruth:
+                celltype = instance_to_celltype_idx[instance]
                 subckt = circuits[celltype]
+                pin_state = node_to_pin_state_idx[child]
                 dt, slew = run_spice_timing(subckt, pin_state, cell_widths[instance], node_out_capa[child], slew_in)
             else:
                 v = mk_vector.mk_vector(cell_widths[instance], node_out_capa[child], slew_in)
@@ -362,34 +371,24 @@ class DAG:
 
             return t_parent + dt, slew, slew_in, parent
 
-        for iter in range(10000):
-            node_out_capa = np.zeros(len(rev_graph_idx))
-            node_seen_instance = defaultdict(set)
+        first_time = 0
 
-            for child in range(len(rev_graph_idx)):
-                instance = node_to_instance[child]
+        node_filter = np.ones(len(self.graph), dtype=np.bool_)
 
-                capa_estimator = capa_estimator_node[child]
-
-                capa = (np.array(cell_widths[instance]) @ capa_estimator)[0]
-                for parent, _ in rev_graph_idx[child]:
-                    if instance not in node_seen_instance[parent]:
-                        node_seen_instance[parent].add(instance)
-                        node_out_capa[parent] += capa
-
-            node_out_capa = np.where(node_out_capa == 0, 2.0, node_out_capa)
-
+        for iter in range(1000000):
+            node_out_capa = self.node_capa(capa_estimator_node, cell_widths, node_to_instance, rev_graph_idx, graph_idx, node_filter)
 
             time_slew = np.zeros((len(self.graph), 3), dtype=np.float64)
-            path_parent = [None] * len(self.graph)
 
             for depth, nodes in enumerate(nodes_by_depths):
+                nodes = np.array(nodes, dtype=np.uint32)
+                nodes = nodes[node_filter[nodes]]
+
                 results = parallel_work(nodes, process_node)
                 for node, result in zip(nodes, results):
-                    time_slew[node][0] = result[0]
-                    time_slew[node][1] = result[1]
-                    time_slew[node][2] = result[2]
-                    path_parent[node] = result[3]
+                    time_slew[node, 0] = result[0]
+                    time_slew[node, 1] = result[1]
+                    time_slew[node, 2] = result[2]
 
             node_gradient = np.zeros(len(self.graph))
 
@@ -399,74 +398,143 @@ class DAG:
             for depth in range(maxdepth - 1, -1, -1):
                 nodes = nodes_by_depths[depth]
                 for child in nodes:
+                    if not node_filter[child]:
+                        continue
                     t_parents = []
                     parent_idx = []
                     for parent, edge_weight in rev_graph_idx[child]:
                         parent_idx.append(parent)
                         t_parent = time_slew[parent, 0]
                         t_parents.append(t_parent + edge_weight)
+                    if len(t_parents) == 0:
+                        continue
                     weights = LSE_deriv(np.array(t_parents))
                     node_gradient[np.array(parent_idx, dtype=np.uint32)] += node_gradient[child] * weights
 
-            dws = []
-            dcapas = []
+            if iter % 20 == 0:
+                # pickle the cell widths
+                with open('hs_saved_cell_widths.pkl', 'wb') as f:
+                    pickle.dump(cell_widths, f)
+
+                node_out_capa = self.node_capa(capa_estimator_node, cell_widths, node_to_instance, rev_graph_idx, graph_idx, None)
+
+                time_slew = np.zeros((len(self.graph), 3), dtype=np.float64)
+
+                for depth, nodes in enumerate(nodes_by_depths):
+                    results = parallel_work(nodes, process_node)
+                    for node, result in zip(nodes, results):
+                        time_slew[node, 0] = result[0]
+                        time_slew[node, 1] = result[1]
+                        time_slew[node, 2] = result[2]
+
+                node_gradient = np.zeros(len(self.graph))
+
+                end_w = LSE_deriv(time_slew[end_nodes, 0])
+                node_gradient[end_nodes] = end_w
+
+                for depth in range(maxdepth - 1, -1, -1):
+                    nodes = nodes_by_depths[depth]
+                    for child in nodes:
+                        t_parents = []
+                        parent_idx = []
+                        for parent, edge_weight in rev_graph_idx[child]:
+                            parent_idx.append(parent)
+                            t_parent = time_slew[parent, 0]
+                            t_parents.append(t_parent + edge_weight)
+                        if len(t_parents) == 0:
+                            continue
+                        weights = LSE_deriv(np.array(t_parents))
+                        node_gradient[np.array(parent_idx, dtype=np.uint32)] += node_gradient[child] * weights
+
+                node_filter = node_gradient > 1e-5
+
+            dws = [[]] * len(rev_graph_idx)
+            dcapas = [0.0] * len(rev_graph_idx)
 
             for node in range(len(rev_graph_idx)):
+                if not node_filter[node]:
+                    continue
                 w = cell_widths[node_to_instance[node]]
                 capa = node_out_capa[node]
-                slew = time_slew[node, 2]
+                slew_in = time_slew[node, 2]
                 linear_estimator = linear_estimator_node[node]
 
                 dt_grad = node_gradient[node]
                 dv = linear_estimator[:, 0] * dt_grad
 
-                dw, dcapa = mk_vector.vector_grad(w, capa, slew, dv)
+                dw, dcapa = mk_vector.vector_grad(w, capa, slew_in, dv)
 
-                #print("   ", w, capa, slew, dv, dw, dcapa)
-                dws.append(dw)
-                dcapas.append(dcapa)
+                dws[node] = dw
+                dcapas[node] = dcapa
 
-            dws_instance = [[]] * len(self.instance_to_cell_type)
+
+            for node in start_nodes:
+                if not node_filter[node]:
+                    continue
+                dws[node] += 0.01 * capa_estimator_node[node].flatten()
+
+            dws_instance = [np.zeros(0)] * len(self.instance_to_cell_type)
+
+            node_seen_instance = defaultdict(set)
 
             for node in range(len(rev_graph_idx)):
                 dcapa = dcapas[node]
 
                 for child, _ in graph_idx[node]:
+                    if not node_filter[child]:
+                        continue
+                    instance = node_to_instance[child]
+
+                    if instance not in node_seen_instance[node]:
+                        node_seen_instance[node].add(instance)
+                    else:
+                        continue
                     capa_estimator = capa_estimator_node[child]
 
                     dw_capa = dcapa * capa_estimator
-                    dws[child] += dw_capa
+                    dws[child] += dw_capa.flatten()
 
+                if not node_filter[node]:
+                    continue
                 instance = node_to_instance[node]
-                if len(dws_instance[instance]) == 0:
+                if dws_instance[instance].size == 0:
                     dws_instance[instance] = dws[node]
                 else:
                     dws_instance[instance] += dws[node]
 
 
-            if iter%100 == 0:
-                predicted_time = np.max(time_slew[end_nodes, 0])
+            #print("dws_instance", *dws_instance)
+
+            if iter % 20 == 0:
+                predicted_time = time_slew[end_nodes, 0]
+                maxtime = np.round(np.max(predicted_time), 5)
+                if first_time == 0:
+                    first_time = maxtime
+                print(iter, first_time, maxtime, first_time / maxtime)
+
+            if False and iter % 1 == 0:
+                #predicted_all = time_slew[:, 0]
                 groundtruth = True
                 time_slew = np.zeros((len(self.graph), 3), dtype=np.float64)
                 path_parent = [None] * len(self.graph)
-
                 for depth, nodes in enumerate(nodes_by_depths):
-                    results = parallel_work(nodes, process_node)
+                    results = parallel_work(nodes, process_node, 20)
                     for node, result in zip(nodes, results):
-                        time_slew[node][0] = result[0]
-                        time_slew[node][1] = result[1]
-                        time_slew[node][2] = result[2]
+                        time_slew[node, 0] = result[0]
+                        time_slew[node, 1] = result[1]
+                        time_slew[node, 2] = result[2]
                         path_parent[node] = result[3]
-
-                print("GT", np.round(predicted_time, 3), np.round(np.max(time_slew[end_nodes, 0]),3), cell_widths[0], dws_instance[0])
                 groundtruth = False
+                print("GT", np.max(time_slew[:, 0]))
+
 
             for instance, dw in enumerate(dws_instance):
-                cell_widths[instance] = np.clip(cell_widths[instance] - dw * 0.005, 0.36, 10.0)
-                #print(cell_widths[instance], dw)
-            #argmax_time = max(end_nodes, key=lambda x: time_slew[x][0])
-            #print(time_slew[argmax_time][0])
-
+                if len(dw) == 0:
+                    continue
+                cell_widths[instance] = np.clip(cell_widths[instance] - dw , 0.36, 30.0)
+                # print(cell_widths[instance], dw)
+            # argmax_time = max(end_nodes, key=lambda x: time_slew[x][0])
+            # print(time_slew[argmax_time][0])
 
         time_slew = np.zeros((len(self.graph), 3), dtype=np.float64)
         path_parent = [None] * len(self.graph)
@@ -492,6 +560,44 @@ class DAG:
 
         return path, time_slew[argmax_time][0]
 
+    def node_capa(self, capa_estimator_node, cell_widths, node_to_instance, rev_graph_idx, graph_idx, node_filter):
+        node_out_capa = np.zeros(len(rev_graph_idx))
+
+        if node_filter is None:
+            node_seen_instance = defaultdict(set)
+            for child in range(len(rev_graph_idx)):
+                instance = node_to_instance[child]
+
+                capa_estimator = capa_estimator_node[child]
+
+                capa = (np.array(cell_widths[instance]) @ capa_estimator)[0]
+                for parent, _ in rev_graph_idx[child]:
+                    if instance not in node_seen_instance[parent]:
+                        node_seen_instance[parent].add(instance)
+                        node_out_capa[parent] += capa
+        else:
+            node_seen_instance = set()
+            for parent in range(len(graph_idx)):
+                if not node_filter[parent]:
+                    continue
+
+                node_seen_instance.clear()
+                tot_capa = 0.0
+                for child, _ in graph_idx[parent]:
+                    instance = node_to_instance[child]
+
+                    if instance not in node_seen_instance:
+                        node_seen_instance.add(instance)
+
+                        capa_estimator = capa_estimator_node[child]
+                        capa = (np.array(cell_widths[instance]) @ capa_estimator)[0]
+
+                        tot_capa += capa
+                node_out_capa[parent] = tot_capa
+
+        node_out_capa = np.where(node_out_capa == 0, DEFAULT_CAPA, node_out_capa)
+        return node_out_capa
+
     def depth_chunks(self, node_idx):
         node_depth = defaultdict(int)
         cur_nodes = list(self.get_start_nodes())
@@ -504,12 +610,12 @@ class DAG:
                 for child, _ in self.graph.get(node, []):
                     node_depth[child] = max(node_depth[child], node_depth[node] + 1)
                     next_nodes.add(child)
+            maxdepth += 1
             if len(next_nodes) == 0:
                 break
             cur_nodes = list(next_nodes)
             next_nodes = set()
-            maxdepth += 1
-        nodes_by_depths = [[] for _ in range(maxdepth + 1)]
+        nodes_by_depths = [[] for _ in range(maxdepth)]
         for node, depth in node_depth.items():
             nodes_by_depths[depth].append(node_idx[node])
         return maxdepth, nodes_by_depths
@@ -658,7 +764,7 @@ def gen_dag():
 
     for i in range(len(sdf_content)):
         line = sdf_content[i]
-        if line == '  (CELLTYPE "picorv32")' or line == '  (CELLTYPE "spm")'or line == '  (CELLTYPE "test")':
+        if line == '  (CELLTYPE "picorv32")' or line == '  (CELLTYPE "spm")' or line == '  (CELLTYPE "test")':
             j = i + 4
             while "INTERCONNECT" in sdf_content[j]:
                 words = sdf_content[j].replace("(", "").replace(")", "").split(" ")
@@ -686,7 +792,7 @@ def gen_dag():
                 #    j += 1
                 #    continue
 
-                #pin_1 = words[5].split(".")[1]
+                # pin_1 = words[5].split(".")[1]
                 pin_2 = words[6].split(".")[1]
 
                 if instance_1 in nod_names and instance_2 in nod_names:

@@ -331,7 +331,6 @@ def bayesian_opt():
     optimizer.maximize(
         init_points=10,
         n_iter=1000,
-
     )
 
 # bayesian_opt()

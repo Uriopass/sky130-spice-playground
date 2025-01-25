@@ -15,6 +15,7 @@ def sdf_parser():
     sdf_content = sdf_content.split("\n")
 
     functions = generate_gate_function("../../../libjson_parse/libjson")
+    print("generated gate functions")
 
     nods  = defaultdict(list)
 
@@ -106,7 +107,7 @@ def sdf_parser():
 
 
 
-    print(nods)
+    print(len(nods))
 
     with open('hs_saved_nods.pkl', 'wb') as f:
         pickle.dump(nods, f)
