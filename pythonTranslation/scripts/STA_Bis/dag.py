@@ -261,6 +261,55 @@ class DAG:
         start_nodes = [child for child, parents in self.rev_graph.items() if len(parents) == 0]
         return start_nodes
 
+    def analyze_cell_widths(self):
+        import pickle
+        from collections import Counter
+
+        import matplotlib.pyplot as plt
+
+        cell_widths = pickle.load(open('hs_saved_cell_widths.pkl', 'rb'))
+
+        instance_idx = {instance: i for i, instance in enumerate(self.instance_to_cell_type)}
+
+        nfet_w = []
+        pfet_w = []
+
+        for instance, celltype in self.instance_to_cell_type.items():
+            if celltype not in circuits:
+                print("Circuit not found for", celltype)
+                continue
+            circuit = circuits[celltype]
+
+            w = np.zeros(len(circuit["transistors"]), dtype=np.float64)
+            for transistor in circuit["transistors"]:
+                w[int(transistor["name"])] = transistor["w"]
+
+            size = min(4, max(1, int(self.instance_to_cell_type_full[instance].split("_")[-1])))
+            for transistor in circuit["output_transistors"]:
+                w[int(transistor["name"])] *= size
+
+            cw = cell_widths[instance_idx[instance]]
+
+            for transistor in circuit["transistors"]:
+                if w[int(transistor["name"])] == cw[int(transistor["name"])]:
+                    continue
+                if transistor["type"] == "nfet":
+                    nfet_w.append(cw[int(transistor["name"])])
+                else:
+                    pfet_w.append(cw[int(transistor["name"])])
+
+        nfet_w = np.array(nfet_w)
+        pfet_w = np.array(pfet_w)
+
+        hist, bins = np.histogram(nfet_w, bins=100, range=(0, 7))
+        plt.bar(bins[:-1], hist, width=(bins[1] - bins[0]), alpha=0.5, label="NFET")
+
+        hist, bins = np.histogram(pfet_w, bins=100, range=(0, 7))
+        plt.bar(bins[:-1], hist, width=(bins[1] - bins[0]), alpha=0.5, label="PFET")
+
+        plt.legend()
+        plt.show()
+
     def longest_path_linear_sta(self, groundtruth=False):
         print(len(self.graph), len(self.rev_graph))
         node_idx = {node: i for i, node in enumerate(self.rev_graph)}

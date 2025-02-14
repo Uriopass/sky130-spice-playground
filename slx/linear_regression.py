@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 import numpy as np
 import netCDF4 as nc
@@ -131,6 +132,8 @@ def export_estimators():
     for file in sorted(os.listdir("data")):
         if not file.startswith("sky130_fd_sc_hs"):
             continue
+        if "_mux4." not in file:
+            continue
         if file.endswith(".njson"):
             print("gonna do", file)
 
@@ -143,11 +146,25 @@ def export_estimators():
                 if len(X) == 0:
                     continue
 
+                t_bis = time.time()
                 xtx = np.matmul(X.T, X)
                 xtx_pinv = np.linalg.pinv(xtx)
-                linear_estimator = np.matmul(xtx_pinv, X.T @ y)
+                linear_estimator_bis = np.matmul(xtx_pinv, X.T @ y)
+                t_bis = time.time() - t_bis
+                #print(X[0])
+                #print(key)
+                #print(xtx)
+                #print(xtx_pinv)
+                
+                
+                t = time.time()
+                linear_estimator = np.linalg.lstsq(X, y)[0]
+                t = time.time() - t
 
                 case_name = ",".join([f"{pin}:{key[i]}" for i, pin in enumerate(pin_list)])
+
+                print(t_bis/t)
+
                 print(case_name)
                 all_estimators[case_name] = linear_estimator
             dim = len(linear_estimator)
