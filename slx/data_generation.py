@@ -237,6 +237,8 @@ run
 .endc
     """
 
+    print(spice)
+
     output, stderr = run_spice(spice)
     measures = parse_measures(output)
 
@@ -314,6 +316,36 @@ def worker(subckt, input_queue, output_queue):
 
 if __name__ == "__main__":
     circuits = parse_netlist(open("hs_nopex.spice").read())
+
+    P = {
+        "sim_time": sim_time,
+
+        "slew": 0.0638316,
+
+        "capa_out_fF": 8.47437,
+
+        "val_A": "1",
+        "val_B": "1",
+        "val_C": "1",
+        "val_D": "rise",
+
+        "w_0": 0.84,
+        "w_1": 0.64,
+        "w_2": 1.12,
+        "w_3": 0.84,
+        "w_4": 0.84,
+        "w_5": 0.84,
+        "w_6": 0.64,
+        "w_7": 0.64,
+        "w_8": 0.64,
+        "w_9": 0.74,
+
+        "i": 0,
+    }
+
+    real_dt, real_trans, _ = get_timing(P, circuits["sky130_fd_sc_hs__and4"])
+    print(f"{real_dt * 1e9}n {real_trans * 1e9}n")
+    exit(0)
 
     t_all_start = time.time()
 

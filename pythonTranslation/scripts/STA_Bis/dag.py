@@ -8,6 +8,7 @@ import multiprocessing as mp
 
 import numpy as np
 import netCDF4 as nc
+from networkx.algorithms.matching import is_maximal_matching
 from tqdm import tqdm
 
 from spice import run_spice_timing
@@ -17,8 +18,8 @@ pin_combinations["sky130_fd_sc_hs__bufbuf_1"] = pin_combinations["sky130_fd_sc_h
 pin_combinations["sky130_fd_sc_hs__bufinv_1"] = pin_combinations["sky130_fd_sc_hs__bufinv_8"]
 pin_combinations["sky130_fd_sc_hs__clkinv_0"] = pin_combinations["sky130_fd_sc_hs__clkinv_1"]
 
-alpha = 50
-DEFAULT_CAPA = 2.0
+alpha = 100
+DEFAULT_CAPA = 1.0
 
 def LSE(l):
     m = np.max(l)
@@ -343,7 +344,7 @@ class DAG:
         # endregion
         print("sum cell widths", sum(np.sum(v) for v in cell_widths))
 
-        cell_widths = pickle.load(open('hs_saved_cell_widths.pkl', 'rb'))
+        #cell_widths = pickle.load(open('hs_saved_cell_widths.pkl', 'rb'))
 
         print("created cell widths")
 
@@ -425,9 +426,10 @@ class DAG:
         node_filter = np.ones(len(self.graph), dtype=np.bool_)
 
         for iter in range(1000000):
+            time_forward = time.time()
             node_out_capa = self.node_capa(capa_estimator_node, cell_widths, node_to_instance, rev_graph_idx, graph_idx, node_filter)
 
-            time_slew = np.zeros((len(self.graph), 3), dtype=np.float64)
+            time_slew = np.zeros((len(self.graph), 4), dtype=np.float64)
 
             for depth, nodes in enumerate(nodes_by_depths):
                 nodes = np.array(nodes, dtype=np.uint32)
@@ -438,7 +440,40 @@ class DAG:
                     time_slew[node, 0] = result[0]
                     time_slew[node, 1] = result[1]
                     time_slew[node, 2] = result[2]
+                    time_slew[node, 3] = result[3]
 
+            max_t = 0
+            node_max = 0
+            path = []
+            for node in end_nodes:
+                if time_slew[node, 0] > max_t:
+                    max_t = time_slew[node, 0]
+                    node_max = node
+
+            while node_max is not None:
+                path.append((node_max, time_slew[node_max, 0]))
+                node_max = time_slew[node_max, 3]
+                print(node_max)
+                if node_max is not None and not np.isnan(node_max):
+                    node_max = int(node_max)
+                else:
+                    node_max = None
+
+            for (node, t) in reversed(path):
+                print(node_idx_to_node[node], t, node_out_capa[node], time_slew[node, 1])
+
+            for (node, t) in reversed(path):
+                # print fet sizes
+                instance = node_to_instance[node]
+                celltype = instance_to_celltype_idx[instance]
+                subckt = circuits[celltype]
+                pin_state = node_to_pin_state_idx[node]
+                print(cell_widths[instance])
+
+
+            exit(0)
+
+            print("forward took", time.time() - time_forward)
             node_gradient = np.zeros(len(self.graph))
 
             end_w = LSE_deriv(time_slew[end_nodes, 0])
@@ -459,6 +494,9 @@ class DAG:
                         continue
                     weights = LSE_deriv(np.array(t_parents))
                     node_gradient[np.array(parent_idx, dtype=np.uint32)] += node_gradient[child] * weights
+
+
+
 
             if iter % 20 == 0:
                 # pickle the cell widths
@@ -674,6 +712,7 @@ class DAG:
         top_order = self.topological_sort()
         time = {node: 0 for node in self.sdf_node_time}
         parent_p = {node: None for node in self.sdf_node_time}
+        edge_weight_p = {node: None for node in self.sdf_node_time}
 
         for node in top_order:
             maxt = None
@@ -683,6 +722,7 @@ class DAG:
                 if maxt is None or newt > maxt:
                     maxt = newt
                     parent_p[node] = parent
+                    edge_weight_p[node] = edge_weight
             if maxt is None:
                 maxt = node_time
             time[node] = maxt
@@ -692,8 +732,9 @@ class DAG:
         path = []
         node = argmax_time
         while node is not None:
-            path.append((node, time[node]))
+            path.append((node, time[node], edge_weight_p[node]))
             node = parent_p[node]
+
 
         path.reverse()
         return path, time[argmax_time]
